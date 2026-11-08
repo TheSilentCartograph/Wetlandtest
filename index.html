@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Wetland data form – NE Illinois</title>
+<meta name="description" content="Offline wetland determination data form for Northeastern Illinois (Midwest Region).">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1D2623" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Wetland Form">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF1EC;--surface:#FFFFFF;--ink:#1C2A26;--muted:#56665F;--line:#C9D2CB;--soft:#E2E8E2;
+  --gley:#3F6672;--gley-ink:#FFFFFF;--yes:#2C6A4C;--no:#A9502A;--na:#8A9690;
+  --obl:#1F5E7A;--facw:#3B8A8D;--fac:#7E9C5E;--facu:#BB8F3F;--upl:#9E5F33;
+  --focus:#2C7DA0;
+  color-scheme:light;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141B19;--surface:#1D2623;--ink:#E4EBE6;--muted:#9DADA6;--line:#34423D;--soft:#26312D;
+  --gley:#7FA7B3;--gley-ink:#0F1715;--yes:#6CC29A;--no:#E58A5E;--na:#7C8984;
+  --obl:#5BA6C6;--facw:#62BDB9;--fac:#A7C487;--facu:#DDB36A;--upl:#D2905F;--focus:#7FC4E0;
+  color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#141B19;--surface:#1D2623;--ink:#E4EBE6;--muted:#9DADA6;--line:#34423D;--soft:#26312D;
+  --gley:#7FA7B3;--gley-ink:#0F1715;--yes:#6CC29A;--no:#E58A5E;--na:#7C8984;
+  --obl:#5BA6C6;--facw:#62BDB9;--fac:#A7C487;--facu:#DDB36A;--upl:#D2905F;--focus:#7FC4E0;
+  color-scheme:dark;}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 140px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.45;font-variant-numeric:tabular-nums}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:.6rem;padding:.6rem 1rem;max-width:1100px;margin:0 auto;flex-wrap:wrap}
+.bar h1{font-size:1.05rem;margin:0;font-weight:700;flex:1 1 auto;min-width:10rem}
+.bar select{max-width:15rem}
+.status{display:grid;grid-template-columns:repeat(4,1fr);max-width:1100px;margin:0 auto;border-top:1px solid var(--line)}
+.factor{padding:.45rem .7rem;display:flex;flex-direction:column;gap:.1rem;border-right:1px solid var(--line)}
+.factor:last-child{border-right:0}
+.factor span{font-size:.78rem;color:var(--muted)}
+.factor b{font-size:1rem}
+.factor[data-v="yes"] b{color:var(--yes)}.factor[data-v="no"] b{color:var(--no)}.factor[data-v="na"] b{color:var(--na)}
+.factor.final{background:var(--soft)}
+nav.tabs{display:flex;overflow-x:auto;gap:.25rem;padding:.4rem 1rem;max-width:1100px;margin:0 auto;border-top:1px solid var(--line)}
+nav.tabs button{border:0;background:none;padding:.45rem .8rem;border-radius:999px;cursor:pointer;white-space:nowrap;color:var(--muted)}
+nav.tabs button[aria-selected="true"]{background:var(--gley);color:var(--gley-ink);font-weight:700}
+main{max-width:1100px;margin:0 auto;padding:1rem}
+section.panel{display:none}section.panel.on{display:block}
+h2{font-size:1.25rem;margin:.3rem 0 .8rem}
+h3{font-size:1.02rem;margin:1.4rem 0 .5rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:.75rem 1rem}
+label.f{display:flex;flex-direction:column;gap:.25rem;font-size:.85rem;color:var(--muted)}
+input[type=text],input[type=number],input[type=date],select,textarea{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:.5rem .6rem;width:100%;color:var(--ink);min-height:2.5rem}
+textarea{min-height:4.5rem;resize:vertical}
+.btn{border:1px solid var(--gley);background:var(--surface);color:var(--gley);padding:.5rem .9rem;border-radius:6px;cursor:pointer;font-weight:700;min-height:2.5rem}
+.btn.primary{background:var(--gley);color:var(--gley-ink)}
+.btn.quiet{border-color:var(--line);color:var(--muted);font-weight:400}
+.btn.danger{border-color:var(--no);color:var(--no)}
+.row{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.note{font-size:.85rem;color:var(--muted);margin:.4rem 0}
+.warn{color:var(--no)}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{font-size:.8rem;color:var(--muted);font-weight:700;background:var(--soft)}
+td input,td select{min-height:2.2rem;padding:.35rem .45rem}
+td.num{width:6rem}
+.stratum{margin-bottom:1.3rem}
+.stratum header{all:unset;display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;flex-wrap:wrap;margin:.2rem 0 .4rem}
+.stratum h3{margin:0}
+.calc{font-size:.85rem;color:var(--muted);padding:.45rem .6rem}
+.dom{display:inline-block;font-size:.72rem;font-weight:700;padding:.08rem .4rem;border-radius:4px;background:var(--gley);color:var(--gley-ink)}
+.nl{font-size:.72rem;color:var(--no)}
+.ind{display:flex;align-items:center;gap:.35rem}
+.ind i{width:.8rem;height:.8rem;border-radius:2px;flex:none;background:var(--na)}
+.ind[data-s="OBL"] i{background:var(--obl)}.ind[data-s="FACW"] i{background:var(--facw)}.ind[data-s="FAC"] i{background:var(--fac)}.ind[data-s="FACU"] i{background:var(--facu)}.ind[data-s="UPL"] i{background:var(--upl)}
+.scale{display:flex;height:.55rem;border-radius:3px;overflow:hidden;margin:.6rem 0 .25rem;background:var(--soft)}
+.scale span{display:block;height:100%}
+.legend{display:flex;gap:.8rem;flex-wrap:wrap;font-size:.78rem;color:var(--muted)}
+.tests{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:.6rem;margin:.6rem 0}
+.test{border:1px solid var(--line);border-left:4px solid var(--na);background:var(--surface);border-radius:6px;padding:.6rem .7rem}
+.test[data-v="yes"]{border-left-color:var(--yes)}.test[data-v="no"]{border-left-color:var(--no)}
+.test b{display:block}
+.test small{color:var(--muted)}
+.checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:.15rem 1rem}
+.checks label{display:flex;gap:.55rem;align-items:flex-start;padding:.35rem 0;cursor:pointer}
+.checks input{width:1.15rem;height:1.15rem;margin-top:.15rem;flex:none;accent-color:var(--gley)}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(14rem,1fr));gap:.8rem}
+.photo{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.photo img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--soft)}
+.photo .meta{padding:.5rem;display:flex;flex-direction:column;gap:.4rem;font-size:.8rem;color:var(--muted)}
+.empty{border:1px dashed var(--line);border-radius:8px;padding:1.2rem;color:var(--muted);text-align:center}
+.summary{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:1rem}
+.summary dl{display:grid;grid-template-columns:1fr auto;gap:.5rem 1rem;margin:0}
+.summary dt{color:var(--muted)}.summary dd{margin:0;font-weight:700}
+.toast{position:fixed;left:50%;bottom:calc(1rem + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:.6rem 1rem;border-radius:6px;font-size:.9rem;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+img{max-width:100%}
+@media (max-width:640px){.status{grid-template-columns:repeat(2,1fr)}.factor:nth-child(2){border-right:0}.factor:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <h1>Wetland determination data form</h1>
+    <label class="sr" for="pointSel" style="position:absolute;left:-9999px">Sampling point</label>
+    <select id="pointSel"></select>
+    <button class="btn primary" id="newPt">New point</button>
+  </div>
+  <div class="status" id="status"></div>
+  <nav class="tabs" role="tablist" id="tabs"></nav>
+</header>
+<main id="main"></main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<datalist id="spp"></datalist>
+
+<script>
+/* ---------- Species starter list: Midwest region indicator statuses (verify against current NWPL) ---------- */
+const SPP_RAW = `Acer negundo|box elder|FAC
+Acer rubrum|red maple|FAC
+Acer saccharinum|silver maple|FACW
+Acer saccharum|sugar maple|FACU
+Betula nigra|river birch|FACW
+Carya ovata|shagbark hickory|FACU
+Celtis occidentalis|common hackberry|FAC
+Fraxinus pennsylvanica|green ash|FACW
+Gleditsia triacanthos|honey locust|FAC
+Juglans nigra|black walnut|FACU
+Morus alba|white mulberry|FAC
+Platanus occidentalis|American sycamore|FACW
+Populus deltoides|eastern cottonwood|FAC
+Prunus serotina|black cherry|FACU
+Quercus alba|white oak|FACU
+Quercus bicolor|swamp white oak|FACW
+Quercus macrocarpa|bur oak|FAC
+Quercus palustris|pin oak|FACW
+Quercus rubra|northern red oak|FACU
+Salix nigra|black willow|OBL
+Tilia americana|American basswood|FACU
+Ulmus americana|American elm|FACW
+Cephalanthus occidentalis|buttonbush|OBL
+Cornus obliqua|silky dogwood|FACW
+Cornus racemosa|gray dogwood|FAC
+Cornus sericea|red osier dogwood|FACW
+Frangula alnus|glossy buckthorn|FACW
+Lonicera maackii|Amur honeysuckle|UPL
+Lonicera tatarica|Tatarian honeysuckle|FACU
+Rhamnus cathartica|common buckthorn|FAC
+Rosa multiflora|multiflora rose|FACU
+Salix discolor|pussy willow|FACW
+Salix interior|sandbar willow|FACW
+Spiraea alba|white meadowsweet|FACW
+Viburnum lentago|nannyberry|FAC
+Parthenocissus quinquefolia|Virginia creeper|FACU
+Toxicodendron radicans|poison ivy|FAC
+Vitis riparia|riverbank grape|FACW
+Alisma subcordatum|southern water plantain|OBL
+Alliaria petiolata|garlic mustard|FAC
+Ambrosia artemisiifolia|common ragweed|FACU
+Ambrosia trifida|giant ragweed|FAC
+Angelica atropurpurea|purple-stem angelica|OBL
+Apios americana|groundnut|FACW
+Asclepias incarnata|swamp milkweed|OBL
+Bidens frondosa|devil's beggarticks|FACW
+Boehmeria cylindrica|false nettle|OBL
+Bromus inermis|smooth brome|UPL
+Calamagrostis canadensis|bluejoint|OBL
+Caltha palustris|marsh marigold|OBL
+Carex blanda|eastern woodland sedge|FAC
+Carex hystericina|porcupine sedge|OBL
+Carex lacustris|lake sedge|OBL
+Carex pellita|woolly sedge|OBL
+Carex stipata|awlfruit sedge|OBL
+Carex stricta|tussock sedge|OBL
+Carex vulpinoidea|fox sedge|FACW
+Chelone glabra|white turtlehead|OBL
+Cicuta maculata|spotted water hemlock|OBL
+Cirsium arvense|Canada thistle|FACU
+Cirsium vulgare|bull thistle|FACU
+Dactylis glomerata|orchardgrass|FACU
+Daucus carota|Queen Anne's lace|UPL
+Echinochloa crus-galli|barnyard grass|FACW
+Eleocharis erythropoda|bald spikerush|OBL
+Elymus virginicus|Virginia wild rye|FACW
+Equisetum arvense|field horsetail|FAC
+Eupatorium perfoliatum|common boneset|FACW
+Euthamia graminifolia|grass-leaved goldenrod|FACW
+Eutrochium maculatum|spotted Joe-Pye weed|OBL
+Galium aparine|cleavers|FACU
+Geum canadense|white avens|FAC
+Glechoma hederacea|ground ivy|FACU
+Glyceria striata|fowl mannagrass|OBL
+Helianthus grosseserratus|sawtooth sunflower|FACW
+Impatiens capensis|jewelweed|FACW
+Iris virginica|southern blue flag|OBL
+Juncus dudleyi|Dudley's rush|FACW
+Juncus effusus|common rush|OBL
+Juncus tenuis|path rush|FAC
+Juncus torreyi|Torrey's rush|FACW
+Laportea canadensis|wood nettle|FACW
+Leersia oryzoides|rice cutgrass|OBL
+Lemna minor|common duckweed|OBL
+Lobelia cardinalis|cardinal flower|OBL
+Lobelia siphilitica|great blue lobelia|FACW
+Lycopus americanus|American water horehound|OBL
+Lythrum salicaria|purple loosestrife|OBL
+Mentha arvensis|wild mint|FACW
+Mimulus ringens|Allegheny monkeyflower|OBL
+Onoclea sensibilis|sensitive fern|FACW
+Panicum virgatum|switchgrass|FAC
+Penthorum sedoides|ditch stonecrop|OBL
+Persicaria amphibia|water smartweed|OBL
+Persicaria lapathifolia|curlytop knotweed|FACW
+Persicaria pensylvanica|Pennsylvania smartweed|FACW
+Phalaris arundinacea|reed canary grass|FACW
+Phleum pratense|timothy|FACU
+Phragmites australis|common reed|FACW
+Pilea pumila|clearweed|FACW
+Plantago lanceolata|English plantain|FACU
+Plantago major|common plantain|FAC
+Poa palustris|fowl bluegrass|FACW
+Poa pratensis|Kentucky bluegrass|FAC
+Rudbeckia laciniata|cutleaf coneflower|FACW
+Rumex crispus|curly dock|FAC
+Sagittaria latifolia|broadleaf arrowhead|OBL
+Schedonorus arundinaceus|tall fescue|FACU
+Schoenoplectus tabernaemontani|softstem bulrush|OBL
+Scirpus atrovirens|green bulrush|OBL
+Scirpus cyperinus|woolgrass|OBL
+Silphium perfoliatum|cup plant|FACW
+Sium suave|hemlock water parsnip|OBL
+Solanum dulcamara|bittersweet nightshade|FAC
+Solidago altissima|tall goldenrod|FACU
+Solidago canadensis|Canada goldenrod|FACU
+Solidago gigantea|giant goldenrod|FACW
+Sparganium eurycarpum|broadfruit bur-reed|OBL
+Spartina pectinata|prairie cordgrass|FACW
+Symphyotrichum lanceolatum|white panicle aster|FACW
+Symphyotrichum novae-angliae|New England aster|FACW
+Symphyotrichum puniceum|purplestem aster|OBL
+Taraxacum officinale|common dandelion|FACU
+Thalictrum dasycarpum|purple meadow-rue|FACW
+Trifolium pratense|red clover|FACU
+Trifolium repens|white clover|FACU
+Typha angustifolia|narrowleaf cattail|OBL
+Typha latifolia|broadleaf cattail|OBL
+Typha ×glauca|hybrid cattail|OBL
+Urtica dioica|stinging nettle|FAC
+Verbena hastata|blue vervain|FACW
+Verbesina alternifolia|wingstem|FACW`;
+const SPP = SPP_RAW.split("\n").map(l=>{const [sci,com,s]=l.split("|");return {sci,com,s}});
+const SPP_IDX = new Map();
+SPP.forEach(x=>{SPP_IDX.set(x.sci.toLowerCase(),x);SPP_IDX.set(x.com.toLowerCase(),x)});
+document.getElementById("spp").innerHTML = SPP.map(x=>`<option value="${x.sci}">${x.com}</option>`).join("");
+const STATUSES=["OBL","FACW","FAC","FACU","UPL"];
+const W={OBL:1,FACW:2,FAC:3,FACU:4,UPL:5};
+
+/* ---------- Form vocab (Midwest Region data form) ---------- */
+const COUNTIES=["Cook","DuPage","Kane","Kendall","Lake","McHenry","Will","Grundy","DeKalb"];
+const STRATA=[
+  {k:"tree",name:"Tree stratum",plot:"30 ft radius"},
+  {k:"shrub",name:"Sapling/shrub stratum",plot:"15 ft radius"},
+  {k:"herb",name:"Herb stratum",plot:"5 ft radius"},
+  {k:"vine",name:"Woody vine stratum",plot:"30 ft radius"}];
+const SOIL_IND=[["A1","Histosol"],["A2","Histic epipedon"],["A3","Black histic"],["A4","Hydrogen sulfide"],["A5","Stratified layers"],["A10","2 cm muck"],["A11","Depleted below dark surface"],["A12","Thick dark surface"],["S1","Sandy mucky mineral"],["S4","Sandy gleyed matrix"],["S5","Sandy redox"],["S6","Stripped matrix"],["F1","Loamy mucky mineral"],["F2","Loamy gleyed matrix"],["F3","Depleted matrix"],["F6","Redox dark surface"],["F7","Depleted dark surface"],["F8","Redox depressions"]];
+const SOIL_PROB=[["A16","Coast prairie redox"],["S7","Dark surface"],["F12","Iron-manganese masses"],["TF12","Very shallow dark surface"],["OTHER","Other (explain in remarks)"]];
+const HYD_P=[["A1","Surface water"],["A2","High water table"],["A3","Saturation"],["B1","Water marks"],["B2","Sediment deposits"],["B3","Drift deposits"],["B4","Algal mat or crust"],["B5","Iron deposits"],["B7","Inundation visible on aerial imagery"],["B8","Sparsely vegetated concave surface"],["B9","Water-stained leaves"],["B13","Aquatic fauna"],["B14","True aquatic plants"],["C1","Hydrogen sulfide odor"],["C3","Oxidized rhizospheres on living roots"],["C4","Presence of reduced iron"],["C6","Recent iron reduction in tilled soils"],["C7","Thin muck surface"],["D9","Gauge or well data"],["OTHER","Other (explain in remarks)"]];
+const HYD_S=[["B6","Surface soil cracks"],["B10","Drainage patterns"],["C2","Dry-season water table"],["C8","Crayfish burrows"],["C9","Saturation visible on aerial imagery"],["D1","Stunted or stressed plants"],["D2","Geomorphic position"],["D5","FAC-neutral test"]];
+const TABS=[["site","Site"],["veg","Vegetation"],["soil","Soil"],["hydro","Hydrology"],["photos","Photos"],["summary","Summary"]];
+
+/* ---------- Storage (IndexedDB, falls back to memory) ---------- */
+let idb=null;
+function openDB(){return new Promise(res=>{try{const r=indexedDB.open("wetland-form",1);r.onupgradeneeded=()=>r.result.createObjectStore("points",{keyPath:"id"});r.onsuccess=()=>res(r.result);r.onerror=()=>res(null)}catch(e){res(null)}})}
+function dbAll(){return new Promise(res=>{if(!idb)return res([]);try{const q=idb.transaction("points").objectStore("points").getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([])}catch(e){res([])}})}
+function dbPut(p){if(!idb)return;try{idb.transaction("points","readwrite").objectStore("points").put(p)}catch(e){toast("Couldn’t save to this browser. Export your data to keep it.")}}
+function dbDel(id){if(!idb)return;try{idb.transaction("points","readwrite").objectStore("points").delete(id)}catch(e){}}
+
+/* ---------- State ---------- */
+let points=[],cur=null,tab="site",saveT=null;
+const uid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36);
+function blank(n){
+  const today=new Date().toISOString().slice(0,10);
+  return {id:uid(),created:Date.now(),
+    site:{point:"DP-"+n,project:"",county:"Lake",date:today,owner:"",investigator:"",str:"",landform:"",relief:"none",slope:"",lat:"",lon:"",datum:"WGS84",mapunit:"",nwi:"",typical:"yes",sigDist:"no",natProb:"no",normal:"yes",remarks:""},
+    veg:{tree:[],shrub:[],herb:[row()],vine:[],morph:false,remarks:""},
+    soil:{layers:[layer()],ind:{},restr:"",restrDepth:"",remarks:""},
+    hydro:{p:{},s:{},surf:"",wt:"",sat:"",remarks:""},
+    photos:[]};
+}
+function row(){return {sp:"",cover:"",st:"",nl:false}}
+function layer(){return {top:"",bot:"",mc:"",mp:"",rc:"",rp:"",rt:"",rl:"",tex:"",rem:""}}
+const P=()=>points.find(p=>p.id===cur);
+function save(){clearTimeout(saveT);saveT=setTimeout(()=>{const p=P();if(p)dbPut(p)},350)}
+function getPath(o,path){return path.split(".").reduce((a,k)=>a==null?a:a[k],o)}
+function setPath(o,path,v){const ks=path.split(".");const last=ks.pop();const t=ks.reduce((a,k)=>a[k],o);t[last]=v}
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* ---------- Calculations ---------- */
+function stratumCalc(rows){
+  const r=rows.map((x,i)=>({...x,i,c:parseFloat(x.cover)||0})).filter(x=>x.c>0&&x.sp.trim());
+  const tot=r.reduce((a,x)=>a+x.c,0);
+  const sorted=[...r].sort((a,b)=>b.c-a.c);
+  const fifty=tot*.5,twenty=tot*.2,dom=new Set();
+  let cum=0,lastC=null;
+  for(const x of sorted){
+    if(cum>fifty){if(x.c===lastC)dom.add(x.i);else break}
+    else{dom.add(x.i);cum+=x.c;lastC=x.c}
+  }
+  sorted.forEach(x=>{if(x.c>=twenty)dom.add(x.i)});
+  return {tot,fifty,twenty,dom,rows:r};
+}
+function vegCalc(p){
+  const per={};let doms=[],all=[];
+  STRATA.forEach(s=>{const c=stratumCalc(p.veg[s.k]);per[s.k]=c;c.rows.forEach(x=>{all.push(x);if(c.dom.has(x.i))doms.push(x)})});
+  const nDom=doms.length;
+  const nWet=doms.filter(x=>["OBL","FACW","FAC"].includes(x.st)).length;
+  const domPct=nDom?nWet/nDom*100:null;
+  const rapid=nDom>0&&doms.every(x=>x.st==="OBL"||x.st==="FACW");
+  const sums={OBL:0,FACW:0,FAC:0,FACU:0,UPL:0};
+  all.forEach(x=>{if(sums[x.st]!=null)sums[x.st]+=x.c});
+  const totC=Object.values(sums).reduce((a,b)=>a+b,0);
+  const pi=totC?Object.entries(sums).reduce((a,[k,v])=>a+v*W[k],0)/totC:null;
+  return {per,nDom,nWet,domPct,rapid,sums,totC,pi,any:all.length>0};
+}
+function soilCalc(p){
+  const on=[...SOIL_IND,...SOIL_PROB].filter(([k])=>p.soil.ind[k]).map(([k])=>k);
+  const has=p.soil.layers.some(l=>l.top!==""||l.mc);
+  return {on,v:on.length?"yes":(has?"no":"na"),prob:on.some(k=>SOIL_PROB.some(([j])=>j===k))};
+}
+function hydroCalc(p){
+  const np=HYD_P.filter(([k])=>p.hydro.p[k]).length, ns=HYD_S.filter(([k])=>p.hydro.s[k]).length;
+  const touched=np||ns||p.hydro.surf||p.hydro.wt||p.hydro.sat;
+  return {np,ns,v:(np>=1||ns>=2)?"yes":(touched?"no":"na")};
+}
+function determine(p){
+  const vc=vegCalc(p),sc=soilCalc(p),hc=hydroCalc(p);
+  let veg="na",via="";
+  if(vc.any){
+    if(vc.rapid){veg="yes";via="Rapid test (all dominants OBL or FACW)"}
+    else if(vc.domPct>50){veg="yes";via="Dominance test (>50% OBL, FACW, FAC)"}
+    else if(sc.v==="yes"&&hc.v==="yes"&&vc.pi!=null&&vc.pi<=3){veg="yes";via="Prevalence index ≤ 3.0"}
+    else if(sc.v==="yes"&&hc.v==="yes"&&p.veg.morph){veg="yes";via="Morphological adaptations"}
+    else{veg="no";via=(vc.pi!=null&&vc.pi<=3)?"Prevalence index passes, but it applies only when hydric soil and wetland hydrology are both present":"No hydrophytic vegetation indicator met"}
+  }
+  const vals=[veg,sc.v,hc.v];
+  const wet=vals.includes("no")?"no":vals.every(v=>v==="yes")?"yes":"na";
+  return {vc,sc,hc,veg,via,wet};
+}
+
+/* ---------- Header + tabs ---------- */
+const word=v=>v==="yes"?"Yes":v==="no"?"No":"Not yet";
+function renderStatus(){
+  const p=P();if(!p)return;const d=determine(p);
+  document.getElementById("status").innerHTML=
+    `<div class="factor" data-v="${d.veg}"><span>Hydrophytic vegetation</span><b>${word(d.veg)}</b></div>
+     <div class="factor" data-v="${d.sc.v}"><span>Hydric soil</span><b>${word(d.sc.v)}</b></div>
+     <div class="factor" data-v="${d.hc.v}"><span>Wetland hydrology</span><b>${word(d.hc.v)}</b></div>
+     <div class="factor final" data-v="${d.wet}"><span>Within a wetland?</span><b>${word(d.wet)}</b></div>`;
+  if(tab==="veg")renderVegCalcs();
+  if(tab==="summary")renderPanel();
+}
+function renderPointSel(){
+  const s=document.getElementById("pointSel");
+  s.innerHTML=points.map(p=>`<option value="${p.id}" ${p.id===cur?"selected":""}>${esc(p.site.point||"Untitled")}${p.site.project?" ("+esc(p.site.project)+")":""}</option>`).join("");
+}
+function renderTabs(){
+  document.getElementById("tabs").innerHTML=TABS.map(([k,n])=>`<button role="tab" aria-selected="${k===tab}" data-tab="${k}">${n}</button>`).join("");
+}
+document.getElementById("tabs").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(!b)return;tab=b.dataset.tab;renderTabs();renderPanel();window.scrollTo(0,0)});
+document.getElementById("pointSel").addEventListener("change",e=>{cur=e.target.value;renderAll()});
+document.getElementById("newPt").addEventListener("click",()=>{
+  const prev=P();const p=blank(points.length+1);
+  if(prev){["project","county","owner","investigator","str","datum"].forEach(k=>p.site[k]=prev.site[k])}
+  points.push(p);cur=p.id;dbPut(p);tab="site";renderAll();toast("New sampling point added");
+});
+
+/* ---------- Field helpers ---------- */
+const inp=(k,label,type="text",extra="")=>`<label class="f">${label}<input type="${type}" data-k="${k}" value="${esc(getPath(P(),k))}" ${extra}></label>`;
+const sel=(k,label,opts)=>`<label class="f">${label}<select data-k="${k}">${opts.map(o=>{const [v,t]=Array.isArray(o)?o:[o,o];return `<option value="${esc(v)}" ${getPath(P(),k)===v?"selected":""}>${esc(t)}</option>`}).join("")}</select></label>`;
+const yn=(k,label)=>sel(k,label,[["yes","Yes"],["no","No"]]);
+const area=(k,label)=>`<label class="f">${label}<textarea data-k="${k}">${esc(getPath(P(),k))}</textarea></label>`;
+const checks=(base,list)=>`<div class="checks">${list.map(([c,n])=>`<label><input type="checkbox" data-k="${base}.${c}" ${getPath(P(),base+"."+c)?"checked":""}><span>${esc(n)} (${c==="OTHER"?"other":c})</span></label>`).join("")}</div>`;
+
+/* ---------- Panels ---------- */
+function renderPanel(){
+  const m=document.getElementById("main");const p=P();if(!p){m.innerHTML="";return}
+  if(tab==="site")m.innerHTML=siteHTML();
+  if(tab==="veg"){m.innerHTML=vegHTML();renderVegCalcs()}
+  if(tab==="soil")m.innerHTML=soilHTML();
+  if(tab==="hydro")m.innerHTML=hydroHTML();
+  if(tab==="photos")m.innerHTML=photoHTML();
+  if(tab==="summary")m.innerHTML=summaryHTML();
+}
+function siteHTML(){
+  return `<section class="panel on"><h2>Site and sampling point</h2>
+  <div class="grid">
+   ${inp("site.point","Sampling point")}${inp("site.project","Project/site")}
+   ${sel("site.county","County",COUNTIES)}${inp("site.date","Sampling date","date")}
+   ${inp("site.owner","Applicant/owner")}${inp("site.investigator","Investigator(s)")}
+   ${inp("site.str","Section, township, range")}${inp("site.landform","Landform (hillslope, terrace, etc.)")}
+   ${sel("site.relief","Local relief",[["concave","Concave"],["convex","Convex"],["none","None"]])}${inp("site.slope","Slope (%)","number","min=0 step=0.5")}
+  </div>
+  <h3>Location</h3>
+  <div class="grid">${inp("site.lat","Latitude","number","step=any")}${inp("site.lon","Longitude","number","step=any")}${inp("site.datum","Datum")}</div>
+  <div class="row" style="margin-top:.6rem"><button class="btn" id="gps">Use my location</button><span class="note" id="gpsNote"></span></div>
+  <h3>Mapped resources</h3>
+  <div class="grid">${inp("site.mapunit","Soil map unit name")}${inp("site.nwi","NWI classification")}</div>
+  <p class="note">In the full app these two fill in automatically from NRCS Soil Data Access and the USFWS National Wetlands Inventory.</p>
+  <h3>Conditions</h3>
+  <div class="grid">
+   ${yn("site.typical","Climatic/hydrologic conditions typical for this time of year?")}
+   ${yn("site.sigDist","Vegetation, soil, or hydrology significantly disturbed?")}
+   ${yn("site.natProb","Vegetation, soil, or hydrology naturally problematic?")}
+   ${yn("site.normal","Are normal circumstances present?")}
+  </div>
+  <div style="margin-top:.8rem">${area("site.remarks","Remarks")}</div>
+  <div class="row" style="margin-top:1.2rem"><button class="btn danger" id="delPt">Delete this point</button></div>
+  </section>`;
+}
+function vegHTML(){
+  return `<section class="panel on"><h2>Vegetation</h2>
+  <p class="note">Type a scientific or common name. Indicator status fills in from the built-in Midwest list; species not on the list are treated as UPL. You can change any status.</p>
+  ${STRATA.map(s=>`<div class="stratum" id="st-${s.k}"><header><h3>${s.name}</h3><span class="note">Plot size: ${s.plot}</span></header>${stratumTable(s.k)}</div>`).join("")}
+  <h3>Hydrophytic vegetation tests</h3>
+  <div id="vegTests"></div>
+  <div class="checks" style="margin:.4rem 0"><label><input type="checkbox" data-k="veg.morph" ${P().veg.morph?"checked":""}><span>Morphological adaptations present (provide supporting data in remarks)</span></label></div>
+  ${area("veg.remarks","Vegetation remarks")}
+  </section>`;
+}
+function stratumTable(k){
+  const rows=P().veg[k];
+  return `<div class="scroll"><table><thead><tr><th>Species</th><th>Absolute % cover</th><th>Indicator status</th><th>Dominant?</th><th></th></tr></thead><tbody>
+  ${rows.map((r,i)=>`<tr data-s="${k}" data-i="${i}">
+    <td><input type="text" list="spp" data-k="veg.${k}.${i}.sp" value="${esc(r.sp)}" placeholder="Species" autocomplete="off"></td>
+    <td class="num"><input type="number" min="0" max="100" step="1" data-k="veg.${k}.${i}.cover" value="${esc(r.cover)}"></td>
+    <td><div class="ind" data-s="${esc(r.st)}"><i></i><select data-k="veg.${k}.${i}.st"><option value="">–</option>${STATUSES.map(s=>`<option ${r.st===s?"selected":""}>${s}</option>`).join("")}</select></div>${r.nl?'<div class="nl">Not on built-in list</div>':""}</td>
+    <td class="domcell"></td>
+    <td><button class="btn quiet" data-del="${k}.${i}" aria-label="Remove row">Remove</button></td></tr>`).join("")}
+  </tbody></table><div class="calc" id="calc-${k}"></div></div>
+  <div class="row" style="margin-top:.4rem"><button class="btn quiet" data-add="${k}">Add species</button></div>`;
+}
+function renderVegCalcs(){
+  const p=P(),d=determine(p),vc=d.vc;
+  STRATA.forEach(s=>{
+    const c=vc.per[s.k];const el=document.getElementById("calc-"+s.k);if(!el)return;
+    el.textContent=c.tot?`Total cover ${c.tot}%. 50% threshold ${+c.fifty.toFixed(1)}%, 20% threshold ${+c.twenty.toFixed(1)}%.`:"No cover entered.";
+    document.querySelectorAll(`#st-${s.k} tbody tr`).forEach(tr=>{tr.querySelector(".domcell").innerHTML=c.dom.has(+tr.dataset.i)?'<span class="dom">Dominant</span>':""});
+  });
+  const t=document.getElementById("vegTests");if(!t)return;
+  const pass=b=>b==null?"na":b?"yes":"no";
+  const scale=vc.totC?STATUSES.map(s=>`<span style="width:${vc.sums[s]/vc.totC*100}%;background:var(--${s.toLowerCase()})" title="${s} ${vc.sums[s]}%"></span>`).join(""):"";
+  t.innerHTML=`<div class="tests">
+   <div class="test" data-v="${vc.nDom?pass(vc.rapid):"na"}"><b>1. Rapid test</b><small>${vc.nDom?(vc.rapid?"All dominants are OBL or FACW":"Not all dominants are OBL or FACW"):"No dominants yet"}</small></div>
+   <div class="test" data-v="${pass(vc.domPct==null?null:vc.domPct>50)}"><b>2. Dominance test</b><small>${vc.nDom?`${vc.nWet} of ${vc.nDom} dominants are OBL, FACW, or FAC (${vc.domPct.toFixed(1)}%)`:"No dominants yet"}</small></div>
+   <div class="test" data-v="${pass(vc.pi==null?null:vc.pi<=3)}"><b>3. Prevalence index</b><small>${vc.pi!=null?`PI = ${vc.pi.toFixed(2)} (passes at 3.0 or less; used only when hydric soil and hydrology are present)`:"Enter cover values"}</small></div>
+  </div>
+  <div class="scale" aria-hidden="true">${scale}</div>
+  <div class="legend">${STATUSES.map(s=>`<span class="ind" data-s="${s}"><i></i>${s} ${vc.sums[s]}%</span>`).join("")}</div>
+  <p class="note"><b>Result:</b> ${d.veg==="na"?"Enter species to evaluate.":`${word(d.veg)}. ${esc(d.via)}.`}</p>`;
+}
+function soilHTML(){
+  const L=P().soil.layers;
+  const tf=(i,f,ph,t="text")=>`<input type="${t}" data-k="soil.layers.${i}.${f}" value="${esc(L[i][f])}" placeholder="${ph}">`;
+  return `<section class="panel on"><h2>Soil</h2>
+  <h3>Profile description</h3>
+  <div class="scroll"><table style="min-width:900px"><thead><tr><th>Depth (in)</th><th>Matrix color (moist)</th><th>%</th><th>Redox color</th><th>%</th><th>Type</th><th>Loc</th><th>Texture</th><th>Remarks</th><th></th></tr></thead><tbody>
+  ${L.map((l,i)=>`<tr><td style="min-width:7.5rem"><div class="row" style="flex-wrap:nowrap;gap:.25rem">${tf(i,"top","0","number")}${tf(i,"bot","6","number")}</div></td>
+   <td>${tf(i,"mc","10YR 2/1")}</td><td class="num">${tf(i,"mp","100","number")}</td>
+   <td>${tf(i,"rc","7.5YR 5/6")}</td><td class="num">${tf(i,"rp","","number")}</td>
+   <td><select data-k="soil.layers.${i}.rt">${["","C","D","RM","CS"].map(o=>`<option ${l.rt===o?"selected":""}>${o}</option>`).join("")}</select></td>
+   <td><select data-k="soil.layers.${i}.rl">${["","PL","M"].map(o=>`<option ${l.rl===o?"selected":""}>${o}</option>`).join("")}</select></td>
+   <td>${tf(i,"tex","SiCL")}</td><td>${tf(i,"rem","")}</td>
+   <td><button class="btn quiet" data-ldel="${i}">Remove</button></td></tr>`).join("")}
+  </tbody></table></div>
+  <div class="row" style="margin-top:.4rem"><button class="btn quiet" id="addLayer">Add layer</button></div>
+  <p class="note">Type: C = concentration, D = depletion, RM = reduced matrix, CS = covered/coated sand grains. Location: PL = pore lining, M = matrix.</p>
+  <h3>Hydric soil indicators</h3>${checks("soil.ind",SOIL_IND)}
+  <h3>Indicators for problematic hydric soils</h3>${checks("soil.ind",SOIL_PROB)}
+  <p class="note">Indicators of hydrophytic vegetation and wetland hydrology must be present for problematic soil indicators, unless disturbed or problematic.</p>
+  <h3>Restrictive layer</h3><div class="grid">${inp("soil.restr","Type")}${inp("soil.restrDepth","Depth (in)","number")}</div>
+  <div style="margin-top:.8rem">${area("soil.remarks","Soil remarks")}</div>
+  </section>`;
+}
+function hydroHTML(){
+  const h=hydroCalc(P());
+  return `<section class="panel on"><h2>Hydrology</h2>
+  <p class="note">Wetland hydrology is present with one primary indicator or two secondary indicators. Currently: ${h.np} primary, ${h.ns} secondary.</p>
+  <h3>Primary indicators</h3>${checks("hydro.p",HYD_P)}
+  <h3>Secondary indicators</h3>${checks("hydro.s",HYD_S)}
+  <h3>Field observations</h3>
+  <div class="grid">${inp("hydro.surf","Surface water depth (in)","number")}${inp("hydro.wt","Water table depth (in)","number")}${inp("hydro.sat","Saturation depth (in, includes capillary fringe)","number")}</div>
+  <div style="margin-top:.8rem">${area("hydro.remarks","Hydrology remarks")}</div>
+  </section>`;
+}
+function photoHTML(){
+  const ph=P().photos;
+  return `<section class="panel on"><h2>Photos</h2>
+  <div class="row"><label class="btn primary" style="display:inline-flex;align-items:center">Take or add photo<input type="file" accept="image/*" capture="environment" id="photoIn" multiple style="position:absolute;left:-9999px"></label>
+  <span class="note">Photos are resized and stored on this device with this sampling point.</span></div>
+  <div style="margin-top:1rem">${ph.length?`<div class="photos">${ph.map((x,i)=>`<figure class="photo" style="margin:0"><img src="${x.data}" alt="${esc(x.caption||"Site photo "+(i+1))}">
+   <div class="meta"><input type="text" data-k="photos.${i}.caption" value="${esc(x.caption)}" placeholder="Caption">
+   <select data-k="photos.${i}.bearing">${["","Facing N","Facing NE","Facing E","Facing SE","Facing S","Facing SW","Facing W","Facing NW","Soil pit","Close-up"].map(o=>`<option ${x.bearing===o?"selected":""}>${o}</option>`).join("")}</select>
+   <span>${new Date(x.time).toLocaleString()}${x.lat?`, ${(+x.lat).toFixed(5)}, ${(+x.lon).toFixed(5)}`:""}</span>
+   <button class="btn quiet" data-pdel="${i}">Remove photo</button></div></figure>`).join("")}</div>`:`<div class="empty">No photos yet. Add a photo of each direction from the plot center and one of the soil pit.</div>`}</div>
+  </section>`;
+}
+function summaryHTML(){
+  const p=P(),d=determine(p);
+  return `<section class="panel on"><h2>Summary of findings</h2>
+  <div class="summary"><dl>
+   <dt>Hydrophytic vegetation present?</dt><dd>${word(d.veg)}</dd>
+   <dt>Hydric soil present?</dt><dd>${word(d.sc.v)}</dd>
+   <dt>Wetland hydrology present?</dt><dd>${word(d.hc.v)}</dd>
+   <dt>Is the sampled area within a wetland?</dt><dd>${word(d.wet)}</dd>
+  </dl></div>
+  <p class="note">${d.veg!=="na"?esc(d.via)+".":""} ${d.sc.on.length?"Soil indicators: "+d.sc.on.join(", ")+".":""} ${d.hc.np||d.hc.ns?`Hydrology: ${d.hc.np} primary, ${d.hc.ns} secondary.`:""}</p>
+  ${d.sc.prob?'<p class="note warn">A problematic hydric soil indicator is checked. Explain it in soil remarks.</p>':""}
+  ${p.site.normal==="no"||p.site.sigDist==="yes"||p.site.natProb==="yes"?'<p class="note warn">Atypical or problematic conditions are noted on the Site tab. Explain them in remarks.</p>':""}
+  <h3>Export</h3>
+  <div class="row"><button class="btn primary" id="expReport">Download data form (HTML)</button><button class="btn" id="expAll">Download all points (JSON)</button></div>
+  <p class="note" id="expNote">The data form opens in any browser and prints to PDF. Indicator statuses come from a built-in starter list; confirm them against the current National Wetland Plant List before submitting.</p>
+  </section>`;
+}
+
+/* ---------- Events ---------- */
+const main=document.getElementById("main");
+main.addEventListener("input",e=>{
+  const k=e.target.dataset.k;if(!k)return;
+  const v=e.target.type==="checkbox"?e.target.checked:e.target.value;
+  const p=P();
+  if(k.startsWith("soil.ind.")||k.startsWith("hydro.p.")||k.startsWith("hydro.s.")){const parts=k.split(".");p[parts[0]][parts[1]][parts[2]]=v}
+  else setPath(p,k,v);
+  const m=k.match(/^veg\.(\w+)\.(\d+)\.(sp|st)$/);
+  if(m){
+    const r=p.veg[m[1]][+m[2]];
+    if(m[3]==="sp"){const hit=SPP_IDX.get(r.sp.trim().toLowerCase());
+      if(hit){r.sp=hit.sci;r.st=hit.s;r.nl=false;if(e.target.value!==hit.sci&&e.inputType!=="insertText")e.target.value=hit.sci}
+      else{r.nl=!!r.sp.trim();if(!r.st||r.nl)r.st=r.sp.trim()?"UPL":""}
+      const tr=e.target.closest("tr");const box=tr.querySelector(".ind");box.dataset.s=r.st;box.querySelector("select").value=r.st;
+      const old=tr.querySelector(".nl");if(old)old.remove();if(r.nl)box.insertAdjacentHTML("afterend",'<div class="nl">Not on built-in list</div>');
+    }else{r.nl=false;e.target.closest(".ind").dataset.s=r.st;const o=e.target.closest("td").querySelector(".nl");if(o)o.remove()}
+  }
+  if(k==="site.point"||k==="site.project")renderPointSel();
+  if(k.startsWith("hydro."))document.querySelector("#main .note").textContent=`Wetland hydrology is present with one primary indicator or two secondary indicators. Currently: ${hydroCalc(p).np} primary, ${hydroCalc(p).ns} secondary.`;
+  save();renderStatus();
+});
+main.addEventListener("change",e=>{
+  if(e.target.id==="photoIn"){addPhotos(e.target.files);return}
+  const m=(e.target.dataset.k||"").match(/^veg\.(\w+)\.(\d+)\.sp$/);
+  if(m){const r=P().veg[m[1]][+m[2]];if(r&&e.target.value!==r.sp)e.target.value=r.sp}
+});
+main.addEventListener("click",async e=>{
+  const p=P(),t=e.target;
+  if(t.dataset.add){p.veg[t.dataset.add].push(row());save();rerenderStratum(t.dataset.add,true)}
+  if(t.dataset.del){const [s,i]=t.dataset.del.split(".");p.veg[s].splice(+i,1);save();rerenderStratum(s);renderStatus()}
+  if(t.id==="addLayer"){p.soil.layers.push(layer());save();renderPanel()}
+  if(t.dataset.ldel!=null){p.soil.layers.splice(+t.dataset.ldel,1);save();renderPanel();renderStatus()}
+  if(t.dataset.pdel!=null){p.photos.splice(+t.dataset.pdel,1);save();renderPanel()}
+  if(t.id==="gps")locate();
+  if(t.id==="delPt"){if(!confirm(`Delete ${p.site.point||"this point"} and its photos? This can’t be undone.`))return;
+    dbDel(p.id);points=points.filter(x=>x.id!==p.id);if(!points.length){const n=blank(1);points.push(n);dbPut(n)}cur=points[0].id;renderAll();toast("Point deleted")}
+  if(t.id==="expReport")exportFile(`${(p.site.point||"point").replace(/[^\w-]+/g,"_")}_data_form.html`,reportHTML(p));
+  if(t.id==="expAll")exportFile("wetland_points.json",JSON.stringify(points,null,1));
+});
+function rerenderStratum(k,focus){
+  const el=document.getElementById("st-"+k);const s=STRATA.find(x=>x.k===k);
+  el.innerHTML=`<header><h3>${s.name}</h3><span class="note">Plot size: ${s.plot}</span></header>${stratumTable(k)}`;
+  renderVegCalcs();
+  if(focus){const ins=el.querySelectorAll('input[list="spp"]');ins[ins.length-1]?.focus()}
+}
+
+/* ---------- GPS ---------- */
+function locate(){
+  const note=document.getElementById("gpsNote");
+  if(!navigator.geolocation){note.textContent="Location isn’t available in this browser. Enter coordinates by hand.";return}
+  note.textContent="Getting location…";
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const p=P();p.site.lat=pos.coords.latitude.toFixed(6);p.site.lon=pos.coords.longitude.toFixed(6);save();renderPanel();
+    const n=document.getElementById("gpsNote");const acc=Math.round(pos.coords.accuracy*3.281);
+    const inArea=pos.coords.latitude>41.0&&pos.coords.latitude<42.55&&pos.coords.longitude>-89.0&&pos.coords.longitude<-87.4;
+    n.innerHTML=`Accuracy about ${acc} ft.${inArea?"":' <span class="warn">This point is outside Northeastern Illinois.</span>'}`;
+  },err=>{note.textContent=err.code===1?"Location permission was denied. Enter coordinates by hand.":"Couldn’t get a location fix. Try again or enter coordinates by hand."},{enableHighAccuracy:true,timeout:20000});
+}
+
+/* ---------- Photos ---------- */
+function shrink(file){return new Promise((res,rej)=>{const img=new Image();const url=URL.createObjectURL(file);
+  img.onload=()=>{const m=1600,s=Math.min(1,m/Math.max(img.width,img.height));const c=document.createElement("canvas");c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);c.getContext("2d").drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);res(c.toDataURL("image/jpeg",.82))};
+  img.onerror=()=>{URL.revokeObjectURL(url);rej()};img.src=url})}
+async function addPhotos(files){
+  const p=P();let loc=null;
+  try{loc=await new Promise(r=>{if(!navigator.geolocation)return r(null);navigator.geolocation.getCurrentPosition(x=>r(x.coords),()=>r(null),{timeout:8000,enableHighAccuracy:true})})}catch(e){}
+  for(const f of files){try{const data=await shrink(f);p.photos.push({data,caption:"",bearing:"",time:Date.now(),lat:loc?loc.latitude:(p.site.lat||""),lon:loc?loc.longitude:(p.site.lon||"")})}catch(e){toast("One photo couldn’t be read.")}}
+  save();renderPanel();toast(`${files.length} photo${files.length>1?"s":""} added`);
+}
+
+/* ---------- Report ---------- */
+function reportHTML(p){
+  const d=determine(p),s=p.site,vc=d.vc;
+  const yesno=v=>v==="yes"?"Yes":v==="no"?"No":"";
+  const strat=STRATA.map(st=>{const c=vc.per[st.k];if(!c.rows.length)return"";
+    return `<tr><th colspan="4">${st.name} (plot size: ${st.plot})</th></tr>${c.rows.map(r=>`<tr><td><i>${esc(r.sp)}</i></td><td>${r.c}</td><td>${c.dom.has(r.i)?"Y":"N"}</td><td>${esc(r.st)}</td></tr>`).join("")}<tr><td style="text-align:right">Total cover</td><td>${c.tot}</td><td colspan="2">50% = ${+c.fifty.toFixed(1)}, 20% = ${+c.twenty.toFixed(1)}</td></tr>`}).join("");
+  const lay=p.soil.layers.filter(l=>l.top!==""||l.mc).map(l=>`<tr><td>${esc(l.top)}–${esc(l.bot)}</td><td>${esc(l.mc)}</td><td>${esc(l.mp)}</td><td>${esc(l.rc)}</td><td>${esc(l.rp)}</td><td>${esc(l.rt)}</td><td>${esc(l.rl)}</td><td>${esc(l.tex)}</td><td>${esc(l.rem)}</td></tr>`).join("");
+  const list=(arr,obj)=>arr.filter(([k])=>obj[k]).map(([k,n])=>`${esc(n)} (${k==="OTHER"?"other":k})`).join("; ")||"None";
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Data form ${esc(s.point)}</title><style>
+  body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;max-width:8in;margin:.5in auto;color:#000}
+  h1{font-size:14pt;text-align:center;margin:0}h2{font-size:11.5pt;background:#ddd;padding:3px 6px;margin:14px 0 6px}
+  table{border-collapse:collapse;width:100%}td,th{border:1px solid #888;padding:3px 5px;font-size:10pt;text-align:left;vertical-align:top}
+  .kv td:first-child{width:38%;background:#f3f3f3}.c{text-align:center;font-size:9.5pt;margin:2px 0 10px}
+  img{width:48%;margin:1%;vertical-align:top}figure{display:inline-block;width:48%;margin:1%;vertical-align:top}figure img{width:100%;margin:0}figcaption{font-size:9pt}
+  @media print{h2{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body>
+  <h1>Wetland Determination Data Form – Midwest Region</h1><p class="c">Prepared from field app record. Transfer to or attach with the official USACE form as required.</p>
+  <table class="kv"><tr><td>Project/site</td><td>${esc(s.project)}</td></tr><tr><td>County, state</td><td>${esc(s.county)} County, Illinois</td></tr><tr><td>Sampling date</td><td>${esc(s.date)}</td></tr>
+  <tr><td>Applicant/owner</td><td>${esc(s.owner)}</td></tr><tr><td>Investigator(s)</td><td>${esc(s.investigator)}</td></tr><tr><td>Sampling point</td><td>${esc(s.point)}</td></tr>
+  <tr><td>Section, township, range</td><td>${esc(s.str)}</td></tr><tr><td>Landform / local relief / slope</td><td>${esc(s.landform)} / ${esc(s.relief)} / ${esc(s.slope)}${s.slope?"%":""}</td></tr>
+  <tr><td>Lat / long / datum</td><td>${esc(s.lat)} / ${esc(s.lon)} / ${esc(s.datum)}</td></tr><tr><td>Soil map unit name</td><td>${esc(s.mapunit)}</td></tr><tr><td>NWI classification</td><td>${esc(s.nwi)}</td></tr>
+  <tr><td>Conditions typical for time of year?</td><td>${yesno(s.typical)}</td></tr><tr><td>Significantly disturbed?</td><td>${yesno(s.sigDist)}</td></tr><tr><td>Naturally problematic?</td><td>${yesno(s.natProb)}</td></tr><tr><td>Normal circumstances present?</td><td>${yesno(s.normal)}</td></tr></table>
+  <h2>Summary of findings</h2><table class="kv"><tr><td>Hydrophytic vegetation present?</td><td>${yesno(d.veg)}</td></tr><tr><td>Hydric soil present?</td><td>${yesno(d.sc.v)}</td></tr><tr><td>Wetland hydrology present?</td><td>${yesno(d.hc.v)}</td></tr><tr><td><b>Is the sampled area within a wetland?</b></td><td><b>${yesno(d.wet)}</b></td></tr><tr><td>Remarks</td><td>${esc(s.remarks)}</td></tr></table>
+  <h2>Vegetation (use scientific names of plants)</h2><table><tr><th>Species</th><th>Absolute % cover</th><th>Dominant species?</th><th>Indicator status</th></tr>${strat||'<tr><td colspan="4">No species recorded</td></tr>'}</table>
+  <table class="kv" style="margin-top:6px"><tr><td>Dominance test</td><td>${vc.nWet} of ${vc.nDom} dominants OBL, FACW, or FAC${vc.domPct!=null?` = ${vc.domPct.toFixed(1)}%`:""}</td></tr>
+  <tr><td>Prevalence index worksheet</td><td>${STATUSES.map(k=>`${k} ${vc.sums[k]} × ${W[k]} = ${vc.sums[k]*W[k]}`).join("<br>")}<br>Totals: ${vc.totC} (A), ${STATUSES.reduce((a,k)=>a+vc.sums[k]*W[k],0)} (B); PI = B/A = ${vc.pi!=null?vc.pi.toFixed(2):"–"}</td></tr>
+  <tr><td>Hydrophytic vegetation indicators</td><td>${[vc.rapid?"1 – Rapid test":"",vc.domPct>50?"2 – Dominance test is >50%":"",vc.pi!=null&&vc.pi<=3?"3 – Prevalence index is ≤3.0":"",p.veg.morph?"4 – Morphological adaptations":""].filter(Boolean).join("<br>")||"None"}</td></tr>
+  <tr><td>Remarks</td><td>${esc(p.veg.remarks)}</td></tr></table>
+  <h2>Soil</h2><table><tr><th>Depth (in)</th><th>Matrix color</th><th>%</th><th>Redox color</th><th>%</th><th>Type</th><th>Loc</th><th>Texture</th><th>Remarks</th></tr>${lay||'<tr><td colspan="9">No layers recorded</td></tr>'}</table>
+  <table class="kv" style="margin-top:6px"><tr><td>Hydric soil indicators</td><td>${list(SOIL_IND,p.soil.ind)}</td></tr><tr><td>Indicators for problematic hydric soils</td><td>${list(SOIL_PROB,p.soil.ind)}</td></tr>
+  <tr><td>Restrictive layer</td><td>${esc(p.soil.restr)||"None"}${p.soil.restrDepth?`, ${esc(p.soil.restrDepth)} in`:""}</td></tr><tr><td>Remarks</td><td>${esc(p.soil.remarks)}</td></tr></table>
+  <h2>Hydrology</h2><table class="kv"><tr><td>Primary indicators</td><td>${list(HYD_P,p.hydro.p)}</td></tr><tr><td>Secondary indicators</td><td>${list(HYD_S,p.hydro.s)}</td></tr>
+  <tr><td>Surface water depth (in)</td><td>${esc(p.hydro.surf)||"Not present"}</td></tr><tr><td>Water table depth (in)</td><td>${esc(p.hydro.wt)||"Not present"}</td></tr><tr><td>Saturation depth (in)</td><td>${esc(p.hydro.sat)||"Not present"}</td></tr><tr><td>Remarks</td><td>${esc(p.hydro.remarks)}</td></tr></table>
+  ${p.photos.length?`<h2>Photo log</h2>${p.photos.map((x,i)=>`<figure><img src="${x.data}" alt=""><figcaption>Photo ${i+1}. ${esc(x.bearing)}${x.caption?" – "+esc(x.caption):""}<br>${new Date(x.time).toLocaleString()}${x.lat?` (${(+x.lat).toFixed(5)}, ${(+x.lon).toFixed(5)})`:""}</figcaption></figure>`).join("")}`:""}
+  </body></html>`;
+}
+function exportFile(name,data){
+  const note=document.getElementById("expNote");
+  try{
+    const type=name.endsWith(".json")?"application/json":"text/html";
+    const url=URL.createObjectURL(new Blob([data],{type:type+";charset=utf-8"}));
+    const a=document.createElement("a");a.href=url;a.download=name;a.rel="noopener";a.style.display="none";
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),60000);
+    toast("Downloading "+name);
+  }catch(e){note.innerHTML=`<span class="warn">Couldn’t save the file (${esc(e&&e.message||"error")}).</span>`}
+}
+
+/* ---------- Misc ---------- */
+let tt;function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),2400)}
+function renderAll(){renderPointSel();renderTabs();renderPanel();renderStatus()}
+(async()=>{
+  idb=await openDB();
+  points=(await dbAll()).sort((a,b)=>a.created-b.created);
+  if(!points.length){const p=blank(1);points.push(p);dbPut(p)}
+  cur=points[points.length-1].id;renderAll();
+  if(!idb)toast("This browser can’t store data. Export before closing.");
+  /* Ask the browser not to evict stored points and photos under storage pressure. */
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+})();
+
+/* ---------- Offline support (service worker) ---------- */
+if("serviceWorker" in navigator&&location.protocol!=="file:"){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("sw.js").then(reg=>{
+      reg.addEventListener("updatefound",()=>{const w=reg.installing;if(!w)return;
+        w.addEventListener("statechange",()=>{if(w.state==="installed"&&navigator.serviceWorker.controller)toast("App updated. Reopen it to use the new version.")})});
+    }).catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
