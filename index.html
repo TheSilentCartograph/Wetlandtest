@@ -110,6 +110,14 @@ td.num{width:6rem}
 img{max-width:100%}
 @media (max-width:640px){.status{grid-template-columns:repeat(2,1fr)}.factor:nth-child(2){border-right:0}.factor:nth-child(-n+2){border-bottom:1px solid var(--line)}}
 @media (prefers-reduced-motion:reduce){.toast{transition:none}}
+.sugg{position:absolute;z-index:20;max-height:min(22rem,50vh);overflow-y:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.18);padding:.2rem 0}
+.sugg[hidden]{display:none}
+.sugg .opt{display:grid;grid-template-columns:1fr auto;gap:.1rem .6rem;align-items:center;padding:.5rem .7rem;cursor:pointer;min-height:2.75rem}
+.sugg .opt[aria-selected="true"],.sugg .opt:hover{background:var(--soft)}
+.sugg .opt i{font-style:italic}
+.sugg .opt small{grid-column:1;color:var(--muted);font-size:.8rem}
+.sugg .opt .ind{grid-row:1 / span 2;grid-column:2;font-size:.8rem;font-weight:700}
+.sugg .none{padding:.6rem .7rem;color:var(--muted);font-size:.85rem}
 </style>
 </head>
 <body>
@@ -125,148 +133,49 @@ img{max-width:100%}
 </header>
 <main id="main"></main>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<datalist id="spp"></datalist>
+<div class="sugg" id="sugg" role="listbox" aria-label="Matching species" hidden></div>
 
 <script>
-/* ---------- Species starter list: Midwest region indicator statuses (verify against current NWPL) ---------- */
-const SPP_RAW = `Acer negundo|box elder|FAC
-Acer rubrum|red maple|FAC
-Acer saccharinum|silver maple|FACW
-Acer saccharum|sugar maple|FACU
-Betula nigra|river birch|FACW
-Carya ovata|shagbark hickory|FACU
-Celtis occidentalis|common hackberry|FAC
-Fraxinus pennsylvanica|green ash|FACW
-Gleditsia triacanthos|honey locust|FAC
-Juglans nigra|black walnut|FACU
-Morus alba|white mulberry|FAC
-Platanus occidentalis|American sycamore|FACW
-Populus deltoides|eastern cottonwood|FAC
-Prunus serotina|black cherry|FACU
-Quercus alba|white oak|FACU
-Quercus bicolor|swamp white oak|FACW
-Quercus macrocarpa|bur oak|FAC
-Quercus palustris|pin oak|FACW
-Quercus rubra|northern red oak|FACU
-Salix nigra|black willow|OBL
-Tilia americana|American basswood|FACU
-Ulmus americana|American elm|FACW
-Cephalanthus occidentalis|buttonbush|OBL
-Cornus obliqua|silky dogwood|FACW
-Cornus racemosa|gray dogwood|FAC
-Cornus sericea|red osier dogwood|FACW
-Frangula alnus|glossy buckthorn|FACW
-Lonicera maackii|Amur honeysuckle|UPL
-Lonicera tatarica|Tatarian honeysuckle|FACU
-Rhamnus cathartica|common buckthorn|FAC
-Rosa multiflora|multiflora rose|FACU
-Salix discolor|pussy willow|FACW
-Salix interior|sandbar willow|FACW
-Spiraea alba|white meadowsweet|FACW
-Viburnum lentago|nannyberry|FAC
-Parthenocissus quinquefolia|Virginia creeper|FACU
-Toxicodendron radicans|poison ivy|FAC
-Vitis riparia|riverbank grape|FACW
-Alisma subcordatum|southern water plantain|OBL
-Alliaria petiolata|garlic mustard|FAC
-Ambrosia artemisiifolia|common ragweed|FACU
-Ambrosia trifida|giant ragweed|FAC
-Angelica atropurpurea|purple-stem angelica|OBL
-Apios americana|groundnut|FACW
-Asclepias incarnata|swamp milkweed|OBL
-Bidens frondosa|devil's beggarticks|FACW
-Boehmeria cylindrica|false nettle|OBL
-Bromus inermis|smooth brome|UPL
-Calamagrostis canadensis|bluejoint|OBL
-Caltha palustris|marsh marigold|OBL
-Carex blanda|eastern woodland sedge|FAC
-Carex hystericina|porcupine sedge|OBL
-Carex lacustris|lake sedge|OBL
-Carex pellita|woolly sedge|OBL
-Carex stipata|awlfruit sedge|OBL
-Carex stricta|tussock sedge|OBL
-Carex vulpinoidea|fox sedge|FACW
-Chelone glabra|white turtlehead|OBL
-Cicuta maculata|spotted water hemlock|OBL
-Cirsium arvense|Canada thistle|FACU
-Cirsium vulgare|bull thistle|FACU
-Dactylis glomerata|orchardgrass|FACU
-Daucus carota|Queen Anne's lace|UPL
-Echinochloa crus-galli|barnyard grass|FACW
-Eleocharis erythropoda|bald spikerush|OBL
-Elymus virginicus|Virginia wild rye|FACW
-Equisetum arvense|field horsetail|FAC
-Eupatorium perfoliatum|common boneset|FACW
-Euthamia graminifolia|grass-leaved goldenrod|FACW
-Eutrochium maculatum|spotted Joe-Pye weed|OBL
-Galium aparine|cleavers|FACU
-Geum canadense|white avens|FAC
-Glechoma hederacea|ground ivy|FACU
-Glyceria striata|fowl mannagrass|OBL
-Helianthus grosseserratus|sawtooth sunflower|FACW
-Impatiens capensis|jewelweed|FACW
-Iris virginica|southern blue flag|OBL
-Juncus dudleyi|Dudley's rush|FACW
-Juncus effusus|common rush|OBL
-Juncus tenuis|path rush|FAC
-Juncus torreyi|Torrey's rush|FACW
-Laportea canadensis|wood nettle|FACW
-Leersia oryzoides|rice cutgrass|OBL
-Lemna minor|common duckweed|OBL
-Lobelia cardinalis|cardinal flower|OBL
-Lobelia siphilitica|great blue lobelia|FACW
-Lycopus americanus|American water horehound|OBL
-Lythrum salicaria|purple loosestrife|OBL
-Mentha arvensis|wild mint|FACW
-Mimulus ringens|Allegheny monkeyflower|OBL
-Onoclea sensibilis|sensitive fern|FACW
-Panicum virgatum|switchgrass|FAC
-Penthorum sedoides|ditch stonecrop|OBL
-Persicaria amphibia|water smartweed|OBL
-Persicaria lapathifolia|curlytop knotweed|FACW
-Persicaria pensylvanica|Pennsylvania smartweed|FACW
-Phalaris arundinacea|reed canary grass|FACW
-Phleum pratense|timothy|FACU
-Phragmites australis|common reed|FACW
-Pilea pumila|clearweed|FACW
-Plantago lanceolata|English plantain|FACU
-Plantago major|common plantain|FAC
-Poa palustris|fowl bluegrass|FACW
-Poa pratensis|Kentucky bluegrass|FAC
-Rudbeckia laciniata|cutleaf coneflower|FACW
-Rumex crispus|curly dock|FAC
-Sagittaria latifolia|broadleaf arrowhead|OBL
-Schedonorus arundinaceus|tall fescue|FACU
-Schoenoplectus tabernaemontani|softstem bulrush|OBL
-Scirpus atrovirens|green bulrush|OBL
-Scirpus cyperinus|woolgrass|OBL
-Silphium perfoliatum|cup plant|FACW
-Sium suave|hemlock water parsnip|OBL
-Solanum dulcamara|bittersweet nightshade|FAC
-Solidago altissima|tall goldenrod|FACU
-Solidago canadensis|Canada goldenrod|FACU
-Solidago gigantea|giant goldenrod|FACW
-Sparganium eurycarpum|broadfruit bur-reed|OBL
-Spartina pectinata|prairie cordgrass|FACW
-Symphyotrichum lanceolatum|white panicle aster|FACW
-Symphyotrichum novae-angliae|New England aster|FACW
-Symphyotrichum puniceum|purplestem aster|OBL
-Taraxacum officinale|common dandelion|FACU
-Thalictrum dasycarpum|purple meadow-rue|FACW
-Trifolium pratense|red clover|FACU
-Trifolium repens|white clover|FACU
-Typha angustifolia|narrowleaf cattail|OBL
-Typha latifolia|broadleaf cattail|OBL
-Typha ×glauca|hybrid cattail|OBL
-Urtica dioica|stinging nettle|FAC
-Verbena hastata|blue vervain|FACW
-Verbesina alternifolia|wingstem|FACW`;
-const SPP = SPP_RAW.split("\n").map(l=>{const [sci,com,s]=l.split("|");return {sci,com,s}});
-const SPP_IDX = new Map();
-SPP.forEach(x=>{SPP_IDX.set(x.sci.toLowerCase(),x);SPP_IDX.set(x.com.toLowerCase(),x)});
-document.getElementById("spp").innerHTML = SPP.map(x=>`<option value="${x.sci}">${x.com}</option>`).join("");
+/* ---------- Species list: species.json, built from the official NWPL by tools/build_species.py ---------- */
 const STATUSES=["OBL","FACW","FAC","FACU","UPL"];
 const W={OBL:1,FACW:2,FAC:3,FACU:4,UPL:5};
+/* Matching key: letters and digits only, so "Typha X glauca", "Typha ×glauca" and "typha xglauca" all match,
+   and "cattail" matches "Cat-Tail". Same rule as norm() in tools/build_species.py. */
+const key=s=>String(s??"").toLowerCase().replace(/×/g,"x").replace(/[^a-z0-9]/g,"");
+let SPP=[],SPP_IDX=new Map(),LIST=null;
+async function loadSpecies(){
+  try{
+    const r=await fetch("species.json");if(!r.ok)throw new Error(r.status);
+    const d=await r.json();LIST=d.version;
+    SPP=d.species.map(([sci,com,s])=>({sci,com,s,k:key(sci),kc:key(com),syn:[]}));
+    SPP.forEach(x=>SPP_IDX.set(x.k,x));
+    const comN=new Map();SPP.forEach(x=>{if(x.kc)comN.set(x.kc,(comN.get(x.kc)||0)+1)});
+    SPP.forEach(x=>{if(x.kc&&comN.get(x.kc)===1&&!SPP_IDX.has(x.kc))SPP_IDX.set(x.kc,x)}); // shared common names need picking from the list
+    (d.synonyms||[]).forEach(([old,acc])=>{const x=SPP_IDX.get(key(acc));if(x){x.syn.push(old);if(!SPP_IDX.has(key(old)))SPP_IDX.set(key(old),x)}});
+  }catch(e){LIST=null;toast("Couldn’t load the species list. Statuses won’t fill in automatically.")}
+}
+const listLabel=()=>LIST?LIST.label:"No species list loaded";
+function searchSpp(q,limit=40){
+  const k=key(q);if(!k)return[];
+  const words=q.toLowerCase().replace(/×/g,"x").split(/[^a-z0-9]+/).filter(Boolean);
+  const wordHit=txt=>{const ws=txt.toLowerCase().replace(/×/g,"x").split(/[^a-z0-9]+/);return words.every(w=>ws.some(t=>t.startsWith(w)))};
+  const out=[];
+  for(const x of SPP){
+    let sc=-1,via="";
+    const synK=x.syn.map(key);
+    if(x.k===k||x.kc===k)sc=0;
+    else if(synK.includes(k)){sc=0;via=x.syn[synK.indexOf(k)]}
+    else if(x.k.startsWith(k))sc=1;
+    else if(x.kc.startsWith(k))sc=2;
+    else if(wordHit(x.sci))sc=3;
+    else if(wordHit(x.sci+" "+x.com))sc=3.5;
+    else{const i=synK.findIndex(s=>s.startsWith(k));if(i>=0){sc=3;via=x.syn[i]}
+      else if(x.k.includes(k)||x.kc.includes(k))sc=4;
+      else{const j=synK.findIndex(s=>s.includes(k));if(j>=0){sc=5;via=x.syn[j]}}}
+    if(sc>=0)out.push({x,sc,via});
+  }
+  return out.sort((a,b)=>a.sc-b.sc||a.x.sci.localeCompare(b.x.sci)).slice(0,limit);
+}
 
 /* ---------- Form vocab (Midwest Region data form) ---------- */
 const COUNTIES=["Cook","DuPage","Kane","Kendall","Lake","McHenry","Will","Grundy","DeKalb"];
@@ -396,6 +305,7 @@ const checks=(base,list)=>`<div class="checks">${list.map(([c,n])=>`<label><inpu
 
 /* ---------- Panels ---------- */
 function renderPanel(){
+  closeSugg();
   const m=document.getElementById("main");const p=P();if(!p){m.innerHTML="";return}
   if(tab==="site")m.innerHTML=siteHTML();
   if(tab==="veg"){m.innerHTML=vegHTML();renderVegCalcs()}
@@ -432,7 +342,7 @@ function siteHTML(){
 }
 function vegHTML(){
   return `<section class="panel on"><h2>Vegetation</h2>
-  <p class="note">Type a scientific or common name. Indicator status fills in from the built-in Midwest list; species not on the list are treated as UPL. You can change any status.</p>
+  <p class="note">Type a scientific, common, or older scientific name and pick from the list. Indicator status fills in from the ${esc(listLabel())}; species not on the list are treated as UPL. You can change any status by hand.</p>
   ${STRATA.map(s=>`<div class="stratum" id="st-${s.k}"><header><h3>${s.name}</h3><span class="note">Plot size: ${s.plot}</span></header>${stratumTable(s.k)}</div>`).join("")}
   <h3>Hydrophytic vegetation tests</h3>
   <div id="vegTests"></div>
@@ -444,9 +354,9 @@ function stratumTable(k){
   const rows=P().veg[k];
   return `<div class="scroll"><table><thead><tr><th>Species</th><th>Absolute % cover</th><th>Indicator status</th><th>Dominant?</th><th></th></tr></thead><tbody>
   ${rows.map((r,i)=>`<tr data-s="${k}" data-i="${i}">
-    <td><input type="text" list="spp" data-k="veg.${k}.${i}.sp" value="${esc(r.sp)}" placeholder="Species" autocomplete="off"></td>
+    <td><input type="text" class="spin" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sugg" data-k="veg.${k}.${i}.sp" value="${esc(r.sp)}" placeholder="Scientific, common or old name" autocomplete="off" autocapitalize="off" spellcheck="false"></td>
     <td class="num"><input type="number" min="0" max="100" step="1" data-k="veg.${k}.${i}.cover" value="${esc(r.cover)}"></td>
-    <td><div class="ind" data-s="${esc(r.st)}"><i></i><select data-k="veg.${k}.${i}.st"><option value="">–</option>${STATUSES.map(s=>`<option ${r.st===s?"selected":""}>${s}</option>`).join("")}</select></div>${r.nl?'<div class="nl">Not on built-in list</div>':""}</td>
+    <td><div class="ind" data-s="${esc(r.st)}"><i></i><select data-k="veg.${k}.${i}.st"><option value="">–</option>${STATUSES.map(s=>`<option ${r.st===s?"selected":""}>${s}</option>`).join("")}</select></div>${r.nl?'<div class="nl">Not on NWPL list, UPL by default</div>':""}</td>
     <td class="domcell"></td>
     <td><button class="btn quiet" data-del="${k}.${i}" aria-label="Remove row">Remove</button></td></tr>`).join("")}
   </tbody></table><div class="calc" id="calc-${k}"></div></div>
@@ -531,7 +441,7 @@ function summaryHTML(){
   ${p.site.normal==="no"||p.site.sigDist==="yes"||p.site.natProb==="yes"?'<p class="note warn">Atypical or problematic conditions are noted on the Site tab. Explain them in remarks.</p>':""}
   <h3>Export</h3>
   <div class="row"><button class="btn primary" id="expReport">Download data form (HTML)</button><button class="btn" id="expAll">Download all points (JSON)</button></div>
-  <p class="note" id="expNote">The data form opens in any browser and prints to PDF. Indicator statuses come from a built-in starter list; confirm them against the current National Wetland Plant List before submitting.</p>
+  <p class="note" id="expNote">The data form opens in any browser and prints to PDF. Indicator statuses come from the ${esc(listLabel())}${LIST?` (${esc(LIST.source_file)})`:""}; the data form records this and marks any status set by hand.</p>
   </section>`;
 }
 
@@ -546,12 +456,12 @@ main.addEventListener("input",e=>{
   const m=k.match(/^veg\.(\w+)\.(\d+)\.(sp|st)$/);
   if(m){
     const r=p.veg[m[1]][+m[2]];
-    if(m[3]==="sp"){const hit=SPP_IDX.get(r.sp.trim().toLowerCase());
-      if(hit){r.sp=hit.sci;r.st=hit.s;r.nl=false;if(e.target.value!==hit.sci&&e.inputType!=="insertText")e.target.value=hit.sci}
-      else{r.nl=!!r.sp.trim();if(!r.st||r.nl)r.st=r.sp.trim()?"UPL":""}
+    if(m[3]==="sp"){const hit=SPP_IDX.get(key(r.sp));
+      if(hit){r.sp=hit.sci;r.st=hit.s;r.nl=false;r.src="list";r.list=listLabel();if(e.target.value!==hit.sci&&e.inputType!=="insertText")e.target.value=hit.sci}
+      else{r.nl=!!r.sp.trim();if(!r.st||r.nl){r.st=r.sp.trim()?"UPL":"";r.src=r.st?"default":""}if(LIST)r.list=listLabel()}
       const tr=e.target.closest("tr");const box=tr.querySelector(".ind");box.dataset.s=r.st;box.querySelector("select").value=r.st;
-      const old=tr.querySelector(".nl");if(old)old.remove();if(r.nl)box.insertAdjacentHTML("afterend",'<div class="nl">Not on built-in list</div>');
-    }else{r.nl=false;e.target.closest(".ind").dataset.s=r.st;const o=e.target.closest("td").querySelector(".nl");if(o)o.remove()}
+      const old=tr.querySelector(".nl");if(old)old.remove();if(r.nl)box.insertAdjacentHTML("afterend",'<div class="nl">Not on NWPL list, UPL by default</div>');
+    }else{r.nl=false;r.src="hand";e.target.closest(".ind").dataset.s=r.st;const o=e.target.closest("td").querySelector(".nl");if(o)o.remove()}
   }
   if(k==="site.point"||k==="site.project")renderPointSel();
   if(k.startsWith("hydro."))document.querySelector("#main .note").textContent=`Wetland hydrology is present with one primary indicator or two secondary indicators. Currently: ${hydroCalc(p).np} primary, ${hydroCalc(p).ns} secondary.`;
@@ -575,11 +485,40 @@ main.addEventListener("click",async e=>{
   if(t.id==="expReport")exportFile(`${(p.site.point||"point").replace(/[^\w-]+/g,"_")}_data_form.html`,reportHTML(p));
   if(t.id==="expAll")exportFile("wetland_points.json",JSON.stringify(points,null,1));
 });
+/* ---------- Species autocomplete (scientific, common and older names) ---------- */
+const sugg=document.getElementById("sugg");let suggFor=null,suggHits=[],suggAt=-1;
+function closeSugg(){sugg.hidden=true;suggHits=[];suggAt=-1;if(suggFor)suggFor.setAttribute("aria-expanded","false");suggFor=null}
+function placeSugg(){if(!suggFor||sugg.hidden)return;const b=suggFor.getBoundingClientRect();
+  const w=Math.min(Math.max(b.width,300),document.documentElement.clientWidth-16);
+  sugg.style.width=w+"px";sugg.style.left=Math.max(8,Math.min(b.left,document.documentElement.clientWidth-w-8))+scrollX+"px";sugg.style.top=b.bottom+scrollY+2+"px"}
+function openSugg(input){
+  suggFor=input;const q=input.value.trim();
+  if(!q){closeSugg();return}
+  suggHits=searchSpp(q);suggAt=-1;
+  sugg.innerHTML=suggHits.length?suggHits.map((h,i)=>`<div class="opt" role="option" id="opt${i}" data-i="${i}" aria-selected="false"><i>${esc(h.x.sci)}</i><span class="ind" data-s="${h.x.s}"><i></i>${h.x.s}</span><small>${esc(h.x.com||"No common name")}${h.via?` · old name ${esc(h.via)}`:""}</small></div>`).join("")
+    :`<div class="none">${SPP.length?"Not on the NWPL list. It will be recorded as UPL unless you change the status.":"Species list not loaded."}</div>`;
+  sugg.hidden=false;input.setAttribute("aria-expanded","true");placeSugg();
+}
+function moveSugg(d){if(!suggHits.length)return;suggAt=(suggAt+d+suggHits.length)%suggHits.length;
+  sugg.querySelectorAll(".opt").forEach((o,i)=>o.setAttribute("aria-selected",i===suggAt));
+  const o=document.getElementById("opt"+suggAt);o.scrollIntoView({block:"nearest"});suggFor.setAttribute("aria-activedescendant","opt"+suggAt)}
+function pickSugg(i){const h=suggHits[i],input=suggFor;if(!h||!input)return;closeSugg();
+  input.value=h.x.sci;input.dispatchEvent(new Event("input",{bubbles:true}));
+  toast(`${h.x.sci}${h.x.com?" ("+h.x.com+")":""}: ${h.x.s}${h.via?` · ${h.via} is an older name`:""}`)}
+main.addEventListener("input",e=>{if(e.target.classList.contains("spin")&&e.inputType)openSugg(e.target)});
+main.addEventListener("focusin",e=>{if(e.target.classList.contains("spin")&&e.target.value.trim()&&!SPP_IDX.has(key(e.target.value)))openSugg(e.target)});
+main.addEventListener("focusout",e=>{if(e.target===suggFor)setTimeout(()=>{if(document.activeElement!==suggFor)closeSugg()},0)});
+main.addEventListener("keydown",e=>{if(e.target!==suggFor||sugg.hidden)return;
+  if(e.key==="ArrowDown"){e.preventDefault();moveSugg(1)}else if(e.key==="ArrowUp"){e.preventDefault();moveSugg(-1)}
+  else if(e.key==="Enter"&&suggAt>=0){e.preventDefault();pickSugg(suggAt)}else if(e.key==="Escape")closeSugg()});
+sugg.addEventListener("pointerdown",e=>e.preventDefault()); // keep focus in the input
+sugg.addEventListener("click",e=>{const o=e.target.closest(".opt");if(o)pickSugg(+o.dataset.i)});
+addEventListener("resize",placeSugg);addEventListener("scroll",placeSugg,true);
 function rerenderStratum(k,focus){
   const el=document.getElementById("st-"+k);const s=STRATA.find(x=>x.k===k);
   el.innerHTML=`<header><h3>${s.name}</h3><span class="note">Plot size: ${s.plot}</span></header>${stratumTable(k)}`;
   renderVegCalcs();
-  if(focus){const ins=el.querySelectorAll('input[list="spp"]');ins[ins.length-1]?.focus()}
+  if(focus){const ins=el.querySelectorAll('input.spin');ins[ins.length-1]?.focus()}
 }
 
 /* ---------- GPS ---------- */
@@ -611,9 +550,20 @@ function reportHTML(p){
   const d=determine(p),s=p.site,vc=d.vc;
   const yesno=v=>v==="yes"?"Yes":v==="no"?"No":"";
   const strat=STRATA.map(st=>{const c=vc.per[st.k];if(!c.rows.length)return"";
-    return `<tr><th colspan="4">${st.name} (plot size: ${st.plot})</th></tr>${c.rows.map(r=>`<tr><td><i>${esc(r.sp)}</i></td><td>${r.c}</td><td>${c.dom.has(r.i)?"Y":"N"}</td><td>${esc(r.st)}</td></tr>`).join("")}<tr><td style="text-align:right">Total cover</td><td>${c.tot}</td><td colspan="2">50% = ${+c.fifty.toFixed(1)}, 20% = ${+c.twenty.toFixed(1)}</td></tr>`}).join("");
+    return `<tr><th colspan="4">${st.name} (plot size: ${st.plot})</th></tr>${c.rows.map(r=>`<tr><td><i>${esc(r.sp)}</i></td><td>${r.c}</td><td>${c.dom.has(r.i)?"Y":"N"}</td><td>${esc(r.st)}${r.src==="hand"?" *":r.nl?" †":""}</td></tr>`).join("")}<tr><td style="text-align:right">Total cover</td><td>${c.tot}</td><td colspan="2">50% = ${+c.fifty.toFixed(1)}, 20% = ${+c.twenty.toFixed(1)}</td></tr>`}).join("");
   const lay=p.soil.layers.filter(l=>l.top!==""||l.mc).map(l=>`<tr><td>${esc(l.top)}–${esc(l.bot)}</td><td>${esc(l.mc)}</td><td>${esc(l.mp)}</td><td>${esc(l.rc)}</td><td>${esc(l.rp)}</td><td>${esc(l.rt)}</td><td>${esc(l.rl)}</td><td>${esc(l.tex)}</td><td>${esc(l.rem)}</td></tr>`).join("");
   const list=(arr,obj)=>arr.filter(([k])=>obj[k]).map(([k,n])=>`${esc(n)} (${k==="OTHER"?"other":k})`).join("; ")||"None";
+  /* Where each status came from: the NWPL version that filled it, set by hand, or UPL default for unlisted species. */
+  const vrows=STRATA.flatMap(st=>vc.per[st.k].rows);
+  const lists=[...new Set(vrows.filter(r=>r.list).map(r=>r.list))];
+  const legacy=vrows.filter(r=>!r.list).length;
+  if(!lists.length&&LIST&&!legacy)lists.push(LIST.label);
+  const srcText=[...lists,legacy?"earlier built-in starter list (before NWPL import)":""].filter(Boolean).join("; ")||listLabel();
+  const named=f=>vrows.filter(f).map(r=>`<i>${esc(r.sp)}</i>`).join(", ");
+  const srcRows=[esc(srcText)+(LIST&&lists.includes(LIST.label)?`<br><small>Source file ${esc(LIST.source_file)}, SHA-256 ${esc(LIST.sha256.slice(0,16))}…</small>`:""),
+    vrows.some(r=>r.src==="hand")?`* Status set by hand: ${named(r=>r.src==="hand")}`:"",
+    vrows.some(r=>r.nl)?`† Not on the list, recorded as UPL: ${named(r=>r.nl)}`:"",
+    legacy?`From earlier built-in list (not checked against NWPL): ${named(r=>!r.list)}`:""].filter(Boolean).join("<br>");
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Data form ${esc(s.point)}</title><style>
   body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;max-width:8in;margin:.5in auto;color:#000}
   h1{font-size:14pt;text-align:center;margin:0}h2{font-size:11.5pt;background:#ddd;padding:3px 6px;margin:14px 0 6px}
@@ -621,7 +571,7 @@ function reportHTML(p){
   .kv td:first-child{width:38%;background:#f3f3f3}.c{text-align:center;font-size:9.5pt;margin:2px 0 10px}
   img{width:48%;margin:1%;vertical-align:top}figure{display:inline-block;width:48%;margin:1%;vertical-align:top}figure img{width:100%;margin:0}figcaption{font-size:9pt}
   @media print{h2{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body>
-  <h1>Wetland Determination Data Form – Midwest Region</h1><p class="c">Prepared from field app record. Transfer to or attach with the official USACE form as required.</p>
+  <h1>Wetland Determination Data Form – Midwest Region</h1><p class="c">Prepared from field app record. Transfer to or attach with the official USACE form as required.<br>Indicator statuses: ${esc(srcText)}</p>
   <table class="kv"><tr><td>Project/site</td><td>${esc(s.project)}</td></tr><tr><td>County, state</td><td>${esc(s.county)} County, Illinois</td></tr><tr><td>Sampling date</td><td>${esc(s.date)}</td></tr>
   <tr><td>Applicant/owner</td><td>${esc(s.owner)}</td></tr><tr><td>Investigator(s)</td><td>${esc(s.investigator)}</td></tr><tr><td>Sampling point</td><td>${esc(s.point)}</td></tr>
   <tr><td>Section, township, range</td><td>${esc(s.str)}</td></tr><tr><td>Landform / local relief / slope</td><td>${esc(s.landform)} / ${esc(s.relief)} / ${esc(s.slope)}${s.slope?"%":""}</td></tr>
@@ -631,6 +581,7 @@ function reportHTML(p){
   <h2>Vegetation (use scientific names of plants)</h2><table><tr><th>Species</th><th>Absolute % cover</th><th>Dominant species?</th><th>Indicator status</th></tr>${strat||'<tr><td colspan="4">No species recorded</td></tr>'}</table>
   <table class="kv" style="margin-top:6px"><tr><td>Dominance test</td><td>${vc.nWet} of ${vc.nDom} dominants OBL, FACW, or FAC${vc.domPct!=null?` = ${vc.domPct.toFixed(1)}%`:""}</td></tr>
   <tr><td>Prevalence index worksheet</td><td>${STATUSES.map(k=>`${k} ${vc.sums[k]} × ${W[k]} = ${vc.sums[k]*W[k]}`).join("<br>")}<br>Totals: ${vc.totC} (A), ${STATUSES.reduce((a,k)=>a+vc.sums[k]*W[k],0)} (B); PI = B/A = ${vc.pi!=null?vc.pi.toFixed(2):"–"}</td></tr>
+  <tr><td>Indicator status source</td><td>${srcRows}</td></tr>
   <tr><td>Hydrophytic vegetation indicators</td><td>${[vc.rapid?"1 – Rapid test":"",vc.domPct>50?"2 – Dominance test is >50%":"",vc.pi!=null&&vc.pi<=3?"3 – Prevalence index is ≤3.0":"",p.veg.morph?"4 – Morphological adaptations":""].filter(Boolean).join("<br>")||"None"}</td></tr>
   <tr><td>Remarks</td><td>${esc(p.veg.remarks)}</td></tr></table>
   <h2>Soil</h2><table><tr><th>Depth (in)</th><th>Matrix color</th><th>%</th><th>Redox color</th><th>%</th><th>Type</th><th>Loc</th><th>Texture</th><th>Remarks</th></tr>${lay||'<tr><td colspan="9">No layers recorded</td></tr>'}</table>
@@ -658,6 +609,7 @@ let tt;function toast(m){const t=document.getElementById("toast");t.textContent=
 function renderAll(){renderPointSel();renderTabs();renderPanel();renderStatus()}
 (async()=>{
   idb=await openDB();
+  await loadSpecies();
   points=(await dbAll()).sort((a,b)=>a.created-b.created);
   if(!points.length){const p=blank(1);points.push(p);dbPut(p)}
   cur=points[points.length-1].id;renderAll();

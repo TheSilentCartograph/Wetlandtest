@@ -1,12 +1,13 @@
 /* Service worker: makes the wetland form work offline.
    Bump VERSION whenever index.html or other app files change so phones pick up the update. */
-const VERSION = "v1";
+const VERSION = "v2";
 const APP_CACHE = "wetland-app-" + VERSION;
 const FONT_CACHE = "wetland-fonts";
 const APP_FILES = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
+  "./species.json",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/icon-maskable-512.png",
@@ -60,6 +61,23 @@ self.addEventListener("fetch", e => {
           return res;
         }).catch(() => null);
         return cached || (await network) || new Response("Offline", { status: 503 });
+      })
+    );
+    return;
+  }
+
+  // Species list: use the saved copy right away, and fetch a fresh one in the background so a
+  // rebuilt species.json reaches phones on the next launch without bumping VERSION.
+  if (url.pathname.endsWith("/species.json")) {
+    e.respondWith(
+      caches.open(APP_CACHE).then(async c => {
+        const cached = await c.match("./species.json");
+        const network = fetch(req).then(res => {
+          if (res.ok) c.put("./species.json", res.clone());
+          return res;
+        }).catch(() => null);
+        if (cached) { e.waitUntil(network); return cached; }
+        return (await network) || new Response("{}", { status: 503 });
       })
     );
     return;
