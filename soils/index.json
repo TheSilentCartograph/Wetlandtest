@@ -1,0 +1,66 @@
+{
+ "build": "4d1802d34722",
+ "built": "2026-11-08",
+ "source": "USDA-NRCS Soil Survey Geographic Database (SSURGO), downloaded from Web Soil Survey",
+ "surveys": [
+  {
+   "areasymbol": "IL031",
+   "areaname": "Cook County, Illinois",
+   "saversion": 20,
+   "saverest": "08/23/2026 19:52:05",
+   "tabularversion": 20,
+   "tabularverest": "08/23/2026 19:52:05",
+   "spatialversion": "10",
+   "certstatus": "certified, major components",
+   "polygons": 17786,
+   "mapunits": 148
+  },
+  {
+   "areasymbol": "IL043",
+   "areaname": "DuPage County, Illinois",
+   "saversion": 22,
+   "saverest": "08/23/2026 19:53:20",
+   "tabularversion": 21,
+   "tabularverest": "08/23/2026 19:53:20",
+   "spatialversion": "6",
+   "certstatus": "certified, major components",
+   "polygons": 12236,
+   "mapunits": 72
+  },
+  {
+   "areasymbol": "IL089",
+   "areaname": "Kane County, Illinois",
+   "saversion": 20,
+   "saverest": "08/23/2026 20:04:21",
+   "tabularversion": 19,
+   "tabularverest": "08/23/2026 20:04:21",
+   "spatialversion": "5",
+   "certstatus": "certified, major components",
+   "polygons": 19518,
+   "mapunits": 137
+  },
+  {
+   "areasymbol": "IL097",
+   "areaname": "Lake County, Illinois",
+   "saversion": 21,
+   "saverest": "08/24/2026 12:11:04",
+   "tabularversion": 20,
+   "tabularverest": "08/24/2026 12:11:04",
+   "spatialversion": "5",
+   "certstatus": "certified, major components",
+   "polygons": 26105,
+   "mapunits": 117
+  }
+ ],
+ "tolerance_m": 1.0,
+ "bbox": [
+  -88.602391,
+  41.469711,
+  -87.524133,
+  42.495792
+ ],
+ "files": {
+  "ssurgo.bin": 14364320,
+  "mapunits.json": 117648
+ }
+}

@@ -1,13 +1,18 @@
 /* Service worker: makes the wetland form work offline.
    Bump VERSION whenever index.html or other app files change so phones pick up the update. */
-const VERSION = "v2";
+const VERSION = "v6";
 const APP_CACHE = "wetland-app-" + VERSION;
 const FONT_CACHE = "wetland-fonts";
+const TILE_CACHE = "wetland-basemap";
+const TILE_HOSTS = ["basemap.nationalmap.gov"];
+const TILE_LIMIT = 3000; // basemap tiles kept for offline use (roughly 30-60 MB); oldest are dropped first
 const APP_FILES = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
   "./species.json",
+  "./lib/maplibre-gl.js",
+  "./lib/maplibre-gl.css",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/icon-maskable-512.png",
@@ -49,7 +54,35 @@ self.addEventListener("fetch", e => {
     return;
   }
 
+  // USGS basemap tiles: cache-first (downloaded offline areas or tiles viewed before), so they show offline.
+  // Viewed tiles are capped at TILE_LIMIT; tiles in downloaded areas are kept until the area is deleted.
+  if (TILE_HOSTS.includes(url.hostname)) {
+    e.respondWith(
+      caches.open(TILE_CACHE).then(async c => {
+        const hit = await caches.match(req);
+        if (hit) return hit;
+        try {
+          const res = await fetch(req);
+          if (res.ok) {
+            await c.put(req, res.clone());
+            if (Math.random() < 0.05) {  // trim now and then, not on every tile
+              const keys = await c.keys();
+              for (const k of keys.slice(0, Math.max(0, keys.length - TILE_LIMIT))) await c.delete(k);
+            }
+          }
+          return res;
+        } catch (err) {
+          return new Response("", { status: 504 });
+        }
+      })
+    );
+    return;
+  }
+
   if (url.origin !== self.location.origin) return;
+
+  // Soil and NWI data are large; the page downloads them into their own caches and reads them from there.
+  if (url.pathname.includes("/soils/") || url.pathname.includes("/nwi/")) return;
 
   // Page navigations: serve the cached app shell, refresh it in the background when online.
   if (req.mode === "navigate") {

@@ -1,0 +1,30 @@
+{
+ "build": "82f8b4b63353",
+ "built": "2026-11-08",
+ "source": "U.S. Fish and Wildlife Service, National Wetlands Inventory",
+ "title": "Wetlands and Deepwater Habitats of the United States",
+ "edition": "Version 2 - Surface Waters and Wetlands",
+ "published": "2025-10-01",
+ "modified": "2025-09-11",
+ "source_file": "IL_geodatabase_wetlands.gdb",
+ "layer": "IL_wetlands",
+ "areas": [
+  "IL031",
+  "IL043",
+  "IL089",
+  "IL097"
+ ],
+ "polygons": 26229,
+ "tolerance_m": 1.0,
+ "bbox": [
+  -88.602376,
+  41.469725,
+  -87.524133,
+  42.495787
+ ],
+ "files": {
+  "nwi.bin": 3911988,
+  "codes.json": 8338,
+  "projects.json": 143004
+ }
+}

@@ -112,12 +112,68 @@ img{max-width:100%}
 @media (prefers-reduced-motion:reduce){.toast{transition:none}}
 .sugg{position:absolute;z-index:20;max-height:min(22rem,50vh);overflow-y:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.18);padding:.2rem 0}
 .sugg[hidden]{display:none}
+.soil{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--gley);border-radius:8px;padding:.7rem .8rem;margin-top:.6rem}
+.soil-h{font-size:1.02rem}.soil-h b{margin-right:.35rem}
+.soil td,.soil th{font-size:.88rem}
+#dataStatus{margin-top:.6rem}#dataStatus summary{cursor:pointer}
+.soil.nwi{border-left-color:var(--facw)}
+.tag{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.02em;text-transform:uppercase;padding:.05rem .35rem;border-radius:4px;background:var(--gley);color:var(--gley-ink);margin-right:.4rem;vertical-align:.1em}
+.tag.nwi{background:var(--facw)}
+.code{font-weight:700;color:var(--ink)}
+.mapwrap{position:relative;height:min(62vh,440px);margin-top:.6rem;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#e4e9e4}
+.mapwrap #map{position:absolute;inset:0}
+.mapwrap.full{position:fixed;inset:0;height:auto;margin:0;border:0;border-radius:0;z-index:40;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+body.mapfull{overflow:hidden}
+.mapbar{position:absolute;top:calc(8px + env(safe-area-inset-top,0px) * 0);left:8px;display:flex;gap:6px;z-index:3}
+.mapwrap.full .mapbar{top:calc(8px + env(safe-area-inset-top,0px))}
+.mbtn{border:1px solid rgba(0,0,0,.25);background:#fff;color:#1c2a26;border-radius:6px;padding:.4rem .7rem;font-weight:700;font-size:.85rem;min-height:2.4rem;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.mappanel{position:absolute;top:56px;left:8px;z-index:3;width:min(19rem,calc(100% - 16px));max-height:calc(100% - 70px);overflow:auto;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:.6rem .7rem;box-shadow:0 6px 20px rgba(0,0,0,.25);display:flex;flex-direction:column;gap:.4rem;font-size:.9rem}
+.mappanel[hidden]{display:none}
+.mappanel label.ck{display:flex;gap:.45rem;align-items:center;font-weight:700}
+.mappanel input[type=checkbox]{width:1.1rem;height:1.1rem;accent-color:var(--gley)}
+.mappanel select{min-height:2.2rem;padding:.25rem .4rem;margin-top:.2rem}
+.lg{display:flex;flex-wrap:wrap;gap:.2rem .6rem;font-size:.75rem;color:var(--muted);margin:-.1rem 0 .2rem 1.6rem}
+.lg i{display:inline-block;width:.75rem;height:.75rem;border:2px solid transparent;border-radius:2px;margin-right:.25rem;vertical-align:-.1em}
+.maphint,.mapmsg{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);z-index:3;background:rgba(28,42,38,.88);color:#fff;padding:.4rem .75rem;border-radius:6px;font-size:.85rem;white-space:nowrap;pointer-events:none}
+.mapmsg{white-space:normal;width:min(90%,22rem);text-align:center;bottom:auto;top:50%;transform:translate(-50%,-50%)}
+.maphint[hidden],.mapmsg[hidden]{display:none}
+.pin{width:26px;height:36px;cursor:grab;background:no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 36'%3E%3Cpath d='M13 1C6.4 1 1 6.3 1 12.9 1 22 13 35 13 35s12-13 12-22.1C25 6.3 19.6 1 13 1z' fill='%23d1495b' stroke='%23fff' stroke-width='2'/%3E%3Ccircle cx='13' cy='13' r='4.5' fill='%23fff'/%3E%3C/svg%3E");filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
+.pin:active{cursor:grabbing}
+/* .mapwrap prefix: MapLibre's stylesheet loads later, so these need the extra specificity */
+.mapwrap .maplibregl-popup{z-index:5}
+.mapwrap .maplibregl-popup-content{background:var(--surface);color:var(--ink);border-radius:8px;padding:.7rem .8rem;font-size:.88rem;line-height:1.35}
+.mapwrap .maplibregl-popup-anchor-bottom .maplibregl-popup-tip{border-top-color:var(--surface)}.mapwrap .maplibregl-popup-anchor-top .maplibregl-popup-tip{border-bottom-color:var(--surface)}
+.mapwrap .maplibregl-popup-anchor-left .maplibregl-popup-tip{border-right-color:var(--surface)}.mapwrap .maplibregl-popup-anchor-right .maplibregl-popup-tip{border-left-color:var(--surface)}
+.mapwrap .maplibregl-popup-close-button{font-size:1.3rem;width:2rem;height:2rem;color:var(--muted)}
+.mappanel h4{margin:.4rem 0 .1rem;font-size:.92rem}
+.mappanel .bar{height:.6rem;border-radius:4px;background:var(--soft);overflow:hidden}.mappanel .bar span{display:block;height:100%;background:var(--gley)}
+.mappanel ul.areas{list-style:none;margin:.2rem 0;padding:0;display:flex;flex-direction:column;gap:.5rem}.mappanel ul.areas small{color:var(--muted)}
+.mappanel ul.areas .btn{min-height:2rem;padding:.2rem .6rem;margin-top:.2rem}
+.mappanel details.about p{font-size:.8rem;color:var(--muted);margin:.35rem 0}.mappanel details.about summary{cursor:pointer;font-weight:700}
+.pop>div{margin-bottom:.45rem;padding-right:1.2rem}.pop small{color:var(--muted)}.pop .btn{width:100%;margin-top:.2rem}
 .sugg .opt{display:grid;grid-template-columns:1fr auto;gap:.1rem .6rem;align-items:center;padding:.5rem .7rem;cursor:pointer;min-height:2.75rem}
 .sugg .opt[aria-selected="true"],.sugg .opt:hover{background:var(--soft)}
 .sugg .opt i{font-style:italic}
 .sugg .opt small{grid-column:1;color:var(--muted);font-size:.8rem}
 .sugg .opt .ind{grid-row:1 / span 2;grid-column:2;font-size:.8rem;font-weight:700}
 .sugg .none{padding:.6rem .7rem;color:var(--muted);font-size:.85rem}
+.mapimg{position:absolute;right:8px;bottom:30px;z-index:2;background:rgba(255,255,255,.92);color:#1c2a26;border-radius:6px;padding:.2rem .5rem;font-size:.75rem;font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.2);pointer-events:none;max-width:65%;text-align:right}
+.mapimg[hidden]{display:none}
+.mappanel .years{font-size:.75rem;color:var(--muted);margin:-.1rem 0 .2rem}
+.risk{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;padding:.45rem 1rem;font-size:.9rem;border-top:1px solid var(--line)}
+.risk[hidden]{display:none}
+.risk.bad{background:#fde2e1;color:#6e1510}.risk.mid{background:#fff3cf;color:#4f3a00}
+.risk span{flex:1 1 16rem}.risk .btn{min-height:2.1rem;padding:.2rem .65rem}
+.dev table{width:100%;min-width:0;border-collapse:collapse;font-size:.9rem;margin:.3rem 0 .8rem;table-layout:fixed;overflow-wrap:anywhere}
+.dev th:first-child{width:38%}.dev th.n{width:4.6rem}
+.dev ul.dareas{list-style:none;margin:.3rem 0;padding:0;display:flex;flex-direction:column;gap:.5rem}
+.dev ul.dareas li{border:1px solid var(--line);border-radius:8px;padding:.55rem .7rem;display:flex;flex-direction:column;gap:.3rem}
+.dev ul.dareas .sz{color:var(--muted);font-weight:700}.dev ul.dareas small{color:var(--muted)}
+.dev td,.dev th{border-bottom:1px solid var(--line);padding:.45rem .35rem;text-align:left;vertical-align:top}
+.dev td.n{text-align:right;white-space:nowrap}.dev .btn{min-height:2.2rem;padding:.25rem .7rem}
+.dev .meter{height:.75rem;border-radius:4px;background:var(--soft);overflow:hidden;margin:.3rem 0}.dev .meter span{display:block;height:100%;background:var(--gley)}
+.dev .good{color:var(--gley);font-weight:700}.dev .bad{color:var(--no);font-weight:700}
+#devBtn[aria-pressed="true"]{background:var(--gley);color:var(--gley-ink)}
 </style>
 </head>
 <body>
@@ -127,7 +183,9 @@ img{max-width:100%}
     <label class="sr" for="pointSel" style="position:absolute;left:-9999px">Sampling point</label>
     <select id="pointSel"></select>
     <button class="btn primary" id="newPt">New point</button>
+    <button class="btn" id="devBtn" aria-pressed="false">Offline &amp; backup</button>
   </div>
+  <div class="risk" id="risk" role="alert" hidden></div>
   <div class="status" id="status"></div>
   <nav class="tabs" role="tablist" id="tabs"></nav>
 </header>
@@ -192,10 +250,25 @@ const TABS=[["site","Site"],["veg","Vegetation"],["soil","Soil"],["hydro","Hydro
 
 /* ---------- Storage (IndexedDB, falls back to memory) ---------- */
 let idb=null;
-function openDB(){return new Promise(res=>{try{const r=indexedDB.open("wetland-form",1);r.onupgradeneeded=()=>r.result.createObjectStore("points",{keyPath:"id"});r.onsuccess=()=>res(r.result);r.onerror=()=>res(null)}catch(e){res(null)}})}
+function openDB(){return new Promise(res=>{try{const r=indexedDB.open("wetland-form",2);
+  r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains("points"))d.createObjectStore("points",{keyPath:"id"});if(!d.objectStoreNames.contains("meta"))d.createObjectStore("meta")};
+  r.onsuccess=()=>res(r.result);r.onerror=()=>res(null)}catch(e){res(null)}})}
 function dbAll(){return new Promise(res=>{if(!idb)return res([]);try{const q=idb.transaction("points").objectStore("points").getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([])}catch(e){res([])}})}
-function dbPut(p){if(!idb)return;try{idb.transaction("points","readwrite").objectStore("points").put(p)}catch(e){toast("Couldn’t save to this browser. Export your data to keep it.")}}
+/* Resolves true only once the write is committed to disk. A full disk shows up as an aborted transaction
+   (QuotaExceededError), which a try/catch alone never sees, so failures are tracked and retried. */
+function dbPut(p){return new Promise(res=>{
+  if(!idb)return res(false);
+  try{const tx=idb.transaction("points","readwrite");tx.objectStore("points").put(p);
+    tx.oncomplete=()=>{failedIds.delete(p.id);if(!failedIds.size&&saveErr){saveErr=null;updateRisk()}res(true)};
+    tx.onabort=()=>{saveFailed(p.id,tx.error);res(false)}}
+  catch(e){saveFailed(p.id,e);res(false)}})}
 function dbDel(id){if(!idb)return;try{idb.transaction("points","readwrite").objectStore("points").delete(id)}catch(e){}}
+function metaGet(k){return new Promise(res=>{if(!idb)return res(null);try{const q=idb.transaction("meta").objectStore("meta").get(k);q.onsuccess=()=>res(q.result??null);q.onerror=()=>res(null)}catch(e){res(null)}})}
+function metaSet(k,v){if(!idb)return;try{idb.transaction("meta","readwrite").objectStore("meta").put(v,k)}catch(e){}}
+let saveErr=null;const failedIds=new Set();
+function saveFailed(id,e){failedIds.add(id);const s=String((e&&e.name)||"")+" "+String((e&&e.message)||"");
+  saveErr={quota:/quota/i.test(s),msg:(e&&e.message)||(e&&e.name)||"unknown error"};updateRisk();checkStorage()}
+setInterval(()=>{if(failedIds.size)flushSave()},30000); // keep retrying failed saves (e.g. after space is freed)
 
 /* ---------- State ---------- */
 let points=[],cur=null,tab="site",saveT=null;
@@ -212,7 +285,13 @@ function blank(n){
 function row(){return {sp:"",cover:"",st:"",nl:false}}
 function layer(){return {top:"",bot:"",mc:"",mp:"",rc:"",rp:"",rt:"",rl:"",tex:"",rem:""}}
 const P=()=>points.find(p=>p.id===cur);
-function save(){clearTimeout(saveT);saveT=setTimeout(()=>{const p=P();if(p)dbPut(p)},350)}
+/* Edits are written 350 ms after the last change, and immediately when the app is hidden or closed. */
+const dirty=new Set();
+function save(){const p=P();if(p){p.modified=Date.now();dirty.add(p.id)}clearTimeout(saveT);saveT=setTimeout(flushSave,350)}
+function flushSave(){clearTimeout(saveT);const ids=new Set([...dirty,...failedIds]);dirty.clear();
+  return Promise.all([...ids].map(id=>{const p=points.find(x=>x.id===id);if(!p){failedIds.delete(id);return true}return dbPut(p)}))}
+addEventListener("pagehide",flushSave);
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")flushSave();else checkStorage()});
 function getPath(o,path){return path.split(".").reduce((a,k)=>a==null?a:a[k],o)}
 function setPath(o,path,v){const ks=path.split(".");const last=ks.pop();const t=ks.reduce((a,k)=>a[k],o);t[last]=v}
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -289,7 +368,8 @@ function renderTabs(){
   document.getElementById("tabs").innerHTML=TABS.map(([k,n])=>`<button role="tab" aria-selected="${k===tab}" data-tab="${k}">${n}</button>`).join("");
 }
 document.getElementById("tabs").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(!b)return;tab=b.dataset.tab;renderTabs();renderPanel();window.scrollTo(0,0)});
-document.getElementById("pointSel").addEventListener("change",e=>{cur=e.target.value;renderAll()});
+document.getElementById("pointSel").addEventListener("change",e=>{cur=e.target.value;if(tab==="device")tab="site";renderAll()});
+document.getElementById("devBtn").addEventListener("click",()=>{tab=tab==="device"?"site":"device";renderTabs();renderPanel();window.scrollTo(0,0)});
 document.getElementById("newPt").addEventListener("click",()=>{
   const prev=P();const p=blank(points.length+1);
   if(prev){["project","county","owner","investigator","str","datum"].forEach(k=>p.site[k]=prev.site[k])}
@@ -307,12 +387,14 @@ const checks=(base,list)=>`<div class="checks">${list.map(([c,n])=>`<label><inpu
 function renderPanel(){
   closeSugg();
   const m=document.getElementById("main");const p=P();if(!p){m.innerHTML="";return}
-  if(tab==="site")m.innerHTML=siteHTML();
+  if(tab==="site"){m.innerHTML=siteHTML();attachMap()}
   if(tab==="veg"){m.innerHTML=vegHTML();renderVegCalcs()}
   if(tab==="soil")m.innerHTML=soilHTML();
   if(tab==="hydro")m.innerHTML=hydroHTML();
   if(tab==="photos")m.innerHTML=photoHTML();
   if(tab==="summary")m.innerHTML=summaryHTML();
+  if(tab==="device"){m.innerHTML=`<section class="panel on dev"><h2>Offline and backup</h2><div id="devBody"><p class="note">Checking this device…</p></div></section>`;renderDevice()}
+  document.getElementById("devBtn").setAttribute("aria-pressed",tab==="device");
 }
 function siteHTML(){
   return `<section class="panel on"><h2>Site and sampling point</h2>
@@ -324,11 +406,18 @@ function siteHTML(){
    ${sel("site.relief","Local relief",[["concave","Concave"],["convex","Convex"],["none","None"]])}${inp("site.slope","Slope (%)","number","min=0 step=0.5")}
   </div>
   <h3>Location</h3>
+  <div class="row"><button class="btn primary" id="gps">Use my GPS location</button><button class="btn" id="placePt" aria-pressed="${placing}">${placing?"Cancel placing":"Tap map to place point"}</button></div>
+  <p class="note" id="gpsNote">${esc(locNote(P()))}</p>
+  <div id="mapSlot"></div>
+  <p class="note">Drag the red pin to adjust the point. Tap a soil or wetland polygon to see what is mapped there.</p>
   <div class="grid">${inp("site.lat","Latitude","number","step=any")}${inp("site.lon","Longitude","number","step=any")}${inp("site.datum","Datum")}</div>
-  <div class="row" style="margin-top:.6rem"><button class="btn" id="gps">Use my location</button><span class="note" id="gpsNote"></span></div>
   <h3>Mapped resources</h3>
   <div class="grid">${inp("site.mapunit","Soil map unit name")}${inp("site.nwi","NWI classification")}</div>
-  <p class="note">In the full app these two fill in automatically from NRCS Soil Data Access and the USFWS National Wetlands Inventory.</p>
+  <p class="note">Both fill in from the offline SSURGO and NWI data whenever the point moves. Anything you type yourself is kept.</p>
+  <div id="soilBox">${soilBoxHTML(P())}</div>
+  <div id="nwiBox">${nwiBoxHTML(P())}</div>
+  <div class="row" style="margin-top:.5rem">${P().site.lat&&P().site.lon?'<button class="btn quiet" id="lookAgain">Look up soil and NWI again</button>':""}</div>
+  ${dataStatusHTML()}
   <h3>Conditions</h3>
   <div class="grid">
    ${yn("site.typical","Climatic/hydrologic conditions typical for this time of year?")}
@@ -440,7 +529,7 @@ function summaryHTML(){
   ${d.sc.prob?'<p class="note warn">A problematic hydric soil indicator is checked. Explain it in soil remarks.</p>':""}
   ${p.site.normal==="no"||p.site.sigDist==="yes"||p.site.natProb==="yes"?'<p class="note warn">Atypical or problematic conditions are noted on the Site tab. Explain them in remarks.</p>':""}
   <h3>Export</h3>
-  <div class="row"><button class="btn primary" id="expReport">Download data form (HTML)</button><button class="btn" id="expAll">Download all points (JSON)</button></div>
+  <div class="row"><button class="btn primary" id="expReport">Download data form (HTML)</button><button class="btn" id="expAll">Back up all points and photos (JSON)</button></div>
   <p class="note" id="expNote">The data form opens in any browser and prints to PDF. Indicator statuses come from the ${esc(listLabel())}${LIST?` (${esc(LIST.source_file)})`:""}; the data form records this and marks any status set by hand.</p>
   </section>`;
 }
@@ -464,6 +553,7 @@ main.addEventListener("input",e=>{
     }else{r.nl=false;r.src="hand";e.target.closest(".ind").dataset.s=r.st;const o=e.target.closest("td").querySelector(".nl");if(o)o.remove()}
   }
   if(k==="site.point"||k==="site.project")renderPointSel();
+  if(k==="site.lat"||k==="site.lon"){p.site.locSrc="typed";p.site.acc=null;const n=document.getElementById("gpsNote");if(n)n.textContent=locNote(p);scheduleLookups()}
   if(k.startsWith("hydro."))document.querySelector("#main .note").textContent=`Wetland hydrology is present with one primary indicator or two secondary indicators. Currently: ${hydroCalc(p).np} primary, ${hydroCalc(p).ns} secondary.`;
   save();renderStatus();
 });
@@ -483,7 +573,7 @@ main.addEventListener("click",async e=>{
   if(t.id==="delPt"){if(!confirm(`Delete ${p.site.point||"this point"} and its photos? This can’t be undone.`))return;
     dbDel(p.id);points=points.filter(x=>x.id!==p.id);if(!points.length){const n=blank(1);points.push(n);dbPut(n)}cur=points[0].id;renderAll();toast("Point deleted")}
   if(t.id==="expReport")exportFile(`${(p.site.point||"point").replace(/[^\w-]+/g,"_")}_data_form.html`,reportHTML(p));
-  if(t.id==="expAll")exportFile("wetland_points.json",JSON.stringify(points,null,1));
+  if(t.id==="expAll")backupNow(false);
 });
 /* ---------- Species autocomplete (scientific, common and older names) ---------- */
 const sugg=document.getElementById("sugg");let suggFor=null,suggHits=[],suggAt=-1;
@@ -527,11 +617,675 @@ function locate(){
   if(!navigator.geolocation){note.textContent="Location isn’t available in this browser. Enter coordinates by hand.";return}
   note.textContent="Getting location…";
   navigator.geolocation.getCurrentPosition(pos=>{
-    const p=P();p.site.lat=pos.coords.latitude.toFixed(6);p.site.lon=pos.coords.longitude.toFixed(6);save();renderPanel();
-    const n=document.getElementById("gpsNote");const acc=Math.round(pos.coords.accuracy*3.281);
-    const inArea=pos.coords.latitude>41.0&&pos.coords.latitude<42.55&&pos.coords.longitude>-89.0&&pos.coords.longitude<-87.4;
-    n.innerHTML=`Accuracy about ${acc} ft.${inArea?"":' <span class="warn">This point is outside Northeastern Illinois.</span>'}`;
+    const {latitude:lat,longitude:lon,accuracy}=pos.coords;
+    movePoint(lat,lon,"GPS",accuracy);
+    if(mapReady)map.flyTo({center:[lon,lat],zoom:Math.max(map.getZoom(),17)});
   },err=>{note.textContent=err.code===1?"Location permission was denied. Enter coordinates by hand.":"Couldn’t get a location fix. Try again or enter coordinates by hand."},{enableHighAccuracy:true,timeout:20000});
+}
+
+/* ---------- Offline map data: SSURGO soils (tools/build_soils.py) and NWI wetlands (tools/build_nwi.py) ---------- */
+/* Each dataset is a folder with index.json, a polygon .bin file and JSON lookups. The page downloads it into its own
+   cache ("wetland-<folder>-<build>") and reads it from there, so lookups and the map overlays work offline. */
+const DS={
+  soils:{dir:"soils",bin:"ssurgo.bin",json:{mu:"mapunits.json"},label:"Soil data (SSURGO)"},
+  nwi:{dir:"nwi",bin:"nwi.bin",json:{codes:"codes.json",projects:"projects.json"},label:"NWI wetland data"}};
+Object.values(DS).forEach(d=>Object.assign(d,{idx:null,cache:null,data:null,loading:null,state:"checking",pct:0,err:""}));
+const dsURL=(d,f)=>new URL(d.dir+"/"+f,location.href).href;
+const dsPrefix=d=>`wetland-${d.dir}-`;
+async function dsInit(d){
+  try{
+    if(!("caches" in window))throw new Error("This browser can’t keep map data offline.");
+    for(const name of (await caches.keys()).filter(n=>n.startsWith(dsPrefix(d)))){ // index.json is written last, so it marks a complete download
+      const r=await (await caches.open(name)).match(dsURL(d,"index.json"));
+      if(r&&!d.idx){d.idx=await r.json();d.cache=name}else if(!r)await caches.delete(name);
+    }
+    d.state=d.idx?"ready":"missing";updateDataStatus();
+    let remote=null;
+    try{const r=await fetch(dsURL(d,"index.json"),{cache:"no-store"});if(r.ok)remote=await r.json()}catch(e){}
+    if(remote&&(!d.idx||remote.build!==d.idx.build))await dsDownload(d,remote);
+  }catch(e){d.state=d.idx?"ready":"error";d.err=e.message||String(e)}
+  updateDataStatus();
+  if(d.state==="ready"){refreshMapData();const p=P();if(p)runLookups(p)}
+}
+async function dsDownload(d,idx){
+  const name=dsPrefix(d)+idx.build,cache=await caches.open(name);
+  d.state="downloading";d.pct=0;updateDataStatus();
+  try{
+    const total=Object.values(idx.files).reduce((a,b)=>a+b,0);let got=0;
+    for(const f of Object.keys(idx.files)){
+      const res=await fetch(dsURL(d,f)+"?b="+idx.build,{cache:"no-store"});
+      if(!res.ok)throw new Error(`${f}: HTTP ${res.status}`);
+      const rd=res.body.getReader(),parts=[];
+      for(;;){const {done,value}=await rd.read();if(done)break;parts.push(value);got+=value.length;d.pct=Math.min(99,Math.round(got/total*100));updateDataStatus()}
+      await cache.put(dsURL(d,f),new Response(new Blob(parts),{headers:{"Content-Type":f.endsWith(".json")?"application/json":"application/octet-stream"}}));
+    }
+    await cache.put(dsURL(d,"index.json"),new Response(JSON.stringify(idx),{headers:{"Content-Type":"application/json"}}));
+    for(const n of await caches.keys())if(n.startsWith(dsPrefix(d))&&n!==name)await caches.delete(n);
+    Object.assign(d,{idx,cache:name,data:null,state:"ready"});
+  }catch(e){await caches.delete(name);d.state=d.idx?"ready":"error";d.err="Download failed: "+(e.message||e)}
+}
+async function dsFile(d,f,type){
+  if(d.cache){const r=await (await caches.open(d.cache)).match(dsURL(d,f));if(r)return r[type]()}
+  const r=await fetch(dsURL(d,f));if(!r.ok)throw new Error(`${d.label} isn’t downloaded yet. Connect to the internet once to get it.`);
+  return r[type]();
+}
+async function dsLoad(d){
+  if(d.data)return d.data;
+  if(!d.loading)d.loading=(async()=>{
+    const js=Object.entries(d.json);
+    const [buf,...vals]=await Promise.all([dsFile(d,d.bin,"arrayBuffer"),...js.map(([,f])=>dsFile(d,f,"json"))]);
+    const H=new Int32Array(buf,0,16);if(H[0]!==0x31475353||H[1]!==1)throw new Error("Unrecognised map data file.");
+    const D={H,u8:new Uint8Array(buf),arcOff:new Uint32Array(buf,H[7],H[4]),polyOff:new Uint32Array(buf,H[9],H[5]),
+      bbox:new Int32Array(buf,H[11],H[5]*4),keys:new Uint32Array(buf,H[12],H[6]),geo:new Map()};
+    js.forEach(([k],i)=>D[k]=vals[i]);
+    return d.data=D;
+  })().finally(()=>{d.loading=null});
+  return d.loading;
+}
+function dsPoly(D,i){ // one polygon as rings of [x,y,x,y,...] in 1e-6 degree units relative to the file origin
+  const u8=D.u8;let pos;
+  const rv=()=>{let v=0,s=1,c;do{c=u8[pos++];v+=(c&127)*s;s*=128}while(c>127);return v};
+  const zz=v=>v%2?-(v+1)/2:v/2;
+  pos=D.H[10]+D.polyOff[i];const mi=rv(),nr=rv(),rings=[];
+  for(let r=0;r<nr;r++){const na=rv(),ring=[];
+    for(let a=0;a<na;a++){const rf=rv(),save=pos;pos=D.H[8]+D.arcOff[Math.floor(rf/2)];
+      const n=rv(),pts=[];let x=0,y=0;for(let k=0;k<n;k++){x+=zz(rv());y+=zz(rv());pts.push(x,y)}
+      pos=save;
+      if(rf%2)for(let k=n-1;k>0;k--)ring.push(pts[2*k],pts[2*k+1]);else for(let k=0;k<n-1;k++)ring.push(pts[2*k],pts[2*k+1]);
+    }rings.push(ring)}
+  return {key:D.keys[mi],rings};
+}
+function dsCandidates(D,lat,lon,R){ // polygons within R metres: inside?, distance to their boundary
+  const H=D.H,x=Math.round(lon*1e6)-H[2],y=Math.round(lat*1e6)-H[3];
+  const kx=111320*Math.cos(lat*Math.PI/180)/1e6,ky=110574/1e6,rx=R/kx,ry=R/ky,out=[];
+  for(let i=0;i<H[5];i++){const b=i*4;if(x>=D.bbox[b]-rx&&x<=D.bbox[b+2]+rx&&y>=D.bbox[b+1]-ry&&y<=D.bbox[b+3]+ry){
+    const p=dsPoly(D,i);let ins=false,d=Infinity;
+    for(const r of p.rings){const n=r.length;
+      for(let j=0,k=n-2;j<n;k=j,j+=2){const x1=r[k],y1=r[k+1],x2=r[j],y2=r[j+1];
+        if((y1>y)!==(y2>y)&&x<(x2-x1)*(y-y1)/(y2-y1)+x1)ins=!ins;
+        const ax=(x1-x)*kx,ay=(y1-y)*ky,dx=(x2-x1)*kx,dy=(y2-y1)*ky,L=dx*dx+dy*dy;
+        const t=L?Math.max(0,Math.min(1,-(ax*dx+ay*dy)/L)):0;d=Math.min(d,Math.hypot(ax+t*dx,ay+t*dy))}}
+    out.push({i,key:p.key,ins,d})}}
+  return out;
+}
+function dsInView(D,w,s,e,n,max){
+  const H=D.H,x0=w*1e6-H[2],x1=e*1e6-H[2],y0=s*1e6-H[3],y1=n*1e6-H[3],out=[];
+  for(let i=0;i<H[5]&&out.length<max;i++){const b=i*4;if(D.bbox[b]<=x1&&D.bbox[b+2]>=x0&&D.bbox[b+1]<=y1&&D.bbox[b+3]>=y0)out.push(i)}
+  return out;
+}
+function ptInRing(pt,r){let c=false;for(let j=0,k=r.length-1;j<r.length;k=j++){const [x1,y1]=r[k],[x2,y2]=r[j];if((y1>pt[1])!==(y2>pt[1])&&pt[0]<(x2-x1)*(pt[1]-y1)/(y2-y1)+x1)c=!c}return c}
+function dsGeometry(D,i){ // GeoJSON geometry; rings nested by containment so holes and separate parts draw correctly
+  if(D.geo.has(i))return D.geo.get(i);
+  const ox=D.H[2],oy=D.H[3];
+  const R=dsPoly(D,i).rings.map(r=>{const c=[];for(let k=0;k<r.length;k+=2)c.push([(r[k]+ox)/1e6,(r[k+1]+oy)/1e6]);c.push(c[0]);return c});
+  let g;
+  if(R.length===1)g={type:"Polygon",coordinates:R};
+  else{
+    const area=r=>Math.abs(r.reduce((s,p,k)=>k?s+r[k-1][0]*p[1]-p[0]*r[k-1][1]:0,0));
+    const depth=R.map((r,a)=>R.reduce((n,o,b)=>n+(b!==a&&ptInRing(r[0],o)?1:0),0));
+    const outers=R.map((r,a)=>a).filter(a=>depth[a]%2===0),polys=outers.map(a=>[R[a]]);
+    R.forEach((r,a)=>{if(depth[a]%2){let best=-1,ba=Infinity;outers.forEach((o,j)=>{if(ptInRing(r[0],R[o])&&area(R[o])<ba){ba=area(R[o]);best=j}});if(best>=0)polys[best].push(r)}});
+    g={type:"MultiPolygon",coordinates:polys};
+  }
+  if(D.geo.size>20000)D.geo.clear();
+  D.geo.set(i,g);return g;
+}
+
+/* ---------- NWI codes in plain English (Cowardin et al. 1979; FGDC Wetlands Classification Standard) ---------- */
+const NWI={
+  sys:{M:"Marine",E:"Estuarine",R:"Riverine",L:"Lacustrine",P:"Palustrine"},
+  sub:{M:{1:"Subtidal",2:"Intertidal"},E:{1:"Subtidal",2:"Intertidal"},R:{1:"Tidal",2:"Lower Perennial",3:"Upper Perennial",4:"Intermittent",5:"Unknown Perennial"},L:{1:"Limnetic",2:"Littoral"}},
+  cls:{RB:"Rock Bottom",UB:"Unconsolidated Bottom",AB:"Aquatic Bed",RF:"Reef",SB:"Streambed",RS:"Rocky Shore",US:"Unconsolidated Shore",ML:"Moss-Lichen",EM:"Emergent",SS:"Scrub-Shrub",FO:"Forested",OW:"Open Water"},
+  subcls:{RB:{1:"Bedrock",2:"Rubble"},UB:{1:"Cobble-Gravel",2:"Sand",3:"Mud",4:"Organic"},AB:{1:"Algal",2:"Aquatic Moss",3:"Rooted Vascular",4:"Floating Vascular",5:"Unknown Submergent",6:"Unknown Surface"},
+    RF:{1:"Coral",2:"Mollusk",3:"Worm"},SB:{1:"Bedrock",2:"Rubble",3:"Cobble-Gravel",4:"Sand",5:"Mud",6:"Organic",7:"Vegetated"},RS:{1:"Bedrock",2:"Rubble"},
+    US:{1:"Cobble-Gravel",2:"Sand",3:"Mud",4:"Organic",5:"Vegetated"},ML:{1:"Moss",2:"Lichen"},EM:{1:"Persistent",2:"Nonpersistent",5:"Phragmites australis"},
+    SS:{1:"Broad-leaved Deciduous",2:"Needle-leaved Deciduous",3:"Broad-leaved Evergreen",4:"Needle-leaved Evergreen",5:"Dead",6:"Deciduous",7:"Evergreen"}},
+  reg:{A:"Temporarily Flooded",B:"Seasonally Saturated",C:"Seasonally Flooded",D:"Continuously Saturated",E:"Seasonally Flooded/Saturated",F:"Semipermanently Flooded",
+    G:"Intermittently Exposed",H:"Permanently Flooded",J:"Intermittently Flooded",K:"Artificially Flooded",L:"Subtidal",M:"Irregularly Exposed",N:"Regularly Flooded",
+    P:"Irregularly Flooded",R:"Seasonally Flooded-Tidal",S:"Temporarily Flooded-Tidal",T:"Semipermanently Flooded-Tidal",V:"Permanently Flooded-Tidal",U:"Unknown"},
+  mod:{b:"Beaver",d:"Partly Drained/Ditched",f:"Farmed",h:"Diked/Impounded",m:"Managed",r:"Artificial Substrate",s:"Spoil",x:"Excavated",
+    a:"Acid",t:"Circumneutral",i:"Alkaline",g:"Organic Soil",n:"Mineral Soil",0:"Fresh",1:"Hyperhaline",2:"Euhaline",3:"Mixohaline",4:"Polyhaline",5:"Mesohaline",6:"Oligohaline",7:"Hypersaline",8:"Eusaline",9:"Mixosaline"}};
+NWI.subcls.FO=NWI.subcls.SS;
+function nwiParse(code){
+  const s=String(code||"").trim();let i=0;const o={sys:s[0],sub:null,cls:[],reg:null,mods:[]};
+  if(!NWI.sys[o.sys])return null;i=1;
+  if(o.sys!=="P"&&/[0-9]/.test(s[i]||"")&&NWI.sub[o.sys]&&NWI.sub[o.sys][s[i]])o.sub=s[i++];
+  const cls=()=>{const c=s.slice(i,i+2);if(!NWI.cls[c])return null;i+=2;const x={c};if(/[0-9]/.test(s[i]||""))x.n=s[i++];return x};
+  let c=cls();
+  if(c){o.cls.push(c);while(s[i]==="/"){i++;if(/[0-9]/.test(s[i]||""))o.cls.push({c:c.c,n:s[i++]});else{const c2=cls();if(!c2)return null;o.cls.push(c2);c=c2}}}
+  if(NWI.reg[s[i]]&&/[A-Z]/.test(s[i]))o.reg=s[i++];
+  for(;i<s.length;i++){if(!NWI.mod[s[i]])return null;o.mods.push(s[i])}
+  return o;
+}
+function nwiDescribe(code){
+  const o=nwiParse(code);if(!o)return {short:`Code ${code} (not recognised; see the NWI code key)`,parts:[]};
+  const lc=x=>x.toLowerCase(),C=o.cls.map(x=>x.c),sub=o.sub&&NWI.sub[o.sys][o.sub];
+  const clsTxt=[...new Set(C)].map(c=>lc(NWI.cls[c])).join(" / ");
+  const subTxt=o.cls.filter(x=>x.n&&NWI.subcls[x.c]&&NWI.subcls[x.c][x.n]).map(x=>NWI.subcls[x.c][x.n]).map(t=>/^[A-Z][a-z]+ [a-z]+$/.test(t)?t:lc(t)).join(" / ");
+  let noun;
+  if(o.sys==="P"){
+    const kind={EM:"emergent",FO:"forested",SS:"scrub-shrub",ML:"moss-lichen"};
+    const veg=[...new Set(C.filter(c=>kind[c]).map(c=>kind[c]))];
+    if(veg.length)noun=`freshwater ${veg.join(" / ")} wetland`;
+    else if(C.some(c=>c==="UB"||c==="AB"||c==="RB"||c==="OW"))noun=`freshwater pond (${clsTxt})`;
+    else if(C.length)noun=`freshwater ${clsTxt}`;
+    else noun="freshwater wetland";
+  }else if(o.sys==="L")noun=`lake${sub?`, ${o.sub==="1"?"deep-water zone":"shallow edge"} (${lc(sub)})`:""}${clsTxt?`, ${clsTxt}`:""}`;
+  else if(o.sys==="R")noun=`${sub?lc(sub)+" ":""}river or stream${clsTxt?` (${clsTxt})`:""}`;
+  else noun=`${lc(NWI.sys[o.sys])}${sub?" "+lc(sub):""}${clsTxt?` ${clsTxt}`:""}`;
+  if(subTxt&&o.sys==="P"&&C.some(c=>c in {EM:1,FO:1,SS:1}))noun+=` (${subTxt})`;
+  const bits=[noun,o.reg?lc(NWI.reg[o.reg]):"",...o.mods.map(m=>lc(NWI.mod[m]))].filter(Boolean);
+  const short=bits.join(", ");
+  const parts=[[o.sys,NWI.sys[o.sys]]];
+  if(o.sub)parts.push([o.sub,sub]);
+  o.cls.forEach(x=>{parts.push([x.c,NWI.cls[x.c]]);if(x.n)parts.push([x.n,(NWI.subcls[x.c]||{})[x.n]||"?"])});
+  if(o.reg)parts.push([o.reg,NWI.reg[o.reg]]);
+  o.mods.forEach(m=>parts.push([m,NWI.mod[m]]));
+  return {short:short[0].toUpperCase()+short.slice(1),parts};
+}
+
+/* ---------- Point lookups (Site tab) ---------- */
+async function lookupSoil(lat,lon){
+  const D=await dsLoad(DS.soils),c=dsCandidates(D,lat,lon,30);
+  let hit=c.find(x=>x.ins),gap=false;
+  if(!hit){const n=c.filter(x=>x.d<=10).sort((a,b)=>a.d-b.d)[0];if(n){hit=n;gap=true}}
+  if(!hit)return null;
+  const nb=c.filter(x=>x.key!==hit.key&&x.d<=30).sort((a,b)=>a.d-b.d)[0];
+  return {i:hit.i,mk:String(hit.key),boundary:hit.ins?hit.d:0,gap,nb:nb?{mk:String(nb.key),d:nb.d}:null};
+}
+async function lookupNwi(lat,lon){
+  const D=await dsLoad(DS.nwi),c=dsCandidates(D,lat,lon,30);
+  const proj=D.projects.filter(p=>p.rings.some(r=>ptInRing([lon,lat],r))).sort((a,b)=>(b.year||0)-(a.year||0))[0]||null;
+  const hit=c.filter(x=>x.ins).sort((a,b)=>b.d-a.d)[0];
+  const info=x=>{const [code,type]=D.codes[x.key];return {code,type,desc:nwiDescribe(code).short}};
+  if(hit)return {i:hit.i,...info(hit),edge:Math.round(hit.d),proj};
+  const n=c.sort((a,b)=>a.d-b.d)[0];
+  return {none:true,covered:!!proj,near:n?{...info(n),d:Math.round(n.d)}:null,proj};
+}
+let lookT=null;
+function scheduleLookups(){clearTimeout(lookT);const id=cur;lookT=setTimeout(()=>{const p=points.find(q=>q.id===id);if(p){runLookups(p);updateMapPoint()}},800)}
+async function runLookups(p,manual){
+  const lat=parseFloat(p.site.lat),lon=parseFloat(p.site.lon);
+  if(!isFinite(lat)||!isFinite(lon)||Math.abs(lat)>90||Math.abs(lon)>180)return;
+  await Promise.all([runSoilLookup(p,lat,lon,manual),runNwiLookup(p,lat,lon,manual)]);
+}
+const muLabel=m=>`${m.s} – ${m.n}`;
+function setField(p,k,v){if(p.id!==cur)return;const f=document.querySelector(`[data-k="site.${k}"]`);if(f&&document.activeElement!==f)f.value=v}
+function setBox(p,id,html){if(p.id===cur){const b=document.getElementById(id);if(b)b.innerHTML=html}}
+async function runSoilLookup(p,lat,lon,manual){
+  const old=p.site.ssurgo,d=DS.soils;
+  if(!manual&&old&&old.lat===lat&&old.lon===lon&&(!d.idx||old.build===d.idx.build))return;
+  setBox(p,"soilBox",'<p class="note">Looking up the soil map unit…</p>');
+  let r;try{r=await lookupSoil(lat,lon)}catch(e){setBox(p,"soilBox",`<p class="note warn">${esc(e.message)}</p>`);return}
+  const idx=d.idx||{},prevAuto=p.site.mapunitAuto;
+  if(!r){
+    p.site.ssurgo={none:true,lat,lon,build:idx.build,areas:(idx.surveys||[]).map(s=>s.areaname.replace(/, Illinois$/,"")).join(", ")};
+    if(p.site.mapunit&&p.site.mapunit===prevAuto){p.site.mapunit="";p.site.mapunitAuto=""}
+  }else{
+    const m=d.data.mu[r.mk]||{s:"?",n:"Map unit "+r.mk,c:[]},sv=(idx.surveys||[]).find(s=>s.areasymbol===m.a)||{},nm=r.nb&&d.data.mu[r.nb.mk];
+    p.site.ssurgo={lat,lon,mukey:r.mk,musym:m.s,muname:m.n,hydric:m.h,comps:m.c,area:m.a,areaname:sv.areaname||m.a,
+      saversion:sv.saversion,saverest:sv.saverest,tabularversion:sv.tabularversion,tabularverest:sv.tabularverest,spatialversion:sv.spatialversion,
+      boundary:Math.round(r.boundary),gap:r.gap,nb:nm?{musym:nm.s,muname:nm.n,d:Math.round(r.nb.d)}:null,build:idx.build,built:idx.built,at:Date.now()};
+    const label=muLabel(m);
+    if(!p.site.mapunit||p.site.mapunit===prevAuto){p.site.mapunit=label;p.site.mapunitAuto=label}
+  }
+  setField(p,"mapunit",p.site.mapunit);save();setBox(p,"soilBox",soilBoxHTML(p));
+}
+async function runNwiLookup(p,lat,lon,manual){
+  const old=p.site.nwiAt,d=DS.nwi;
+  if(!manual&&old&&old.lat===lat&&old.lon===lon&&(!d.idx||old.version.build===d.idx.build))return;
+  setBox(p,"nwiBox",'<p class="note">Looking up the NWI classification…</p>');
+  let r;try{r=await lookupNwi(lat,lon)}catch(e){setBox(p,"nwiBox",`<p class="note warn">${esc(e.message)}</p>`);return}
+  const i=d.idx||{},prevAuto=p.site.nwiAuto;
+  const version={title:i.title,edition:i.edition,published:i.published,modified:i.modified,source_file:i.source_file,built:i.built,build:i.build};
+  p.site.nwiAt={lat,lon,...r,i:undefined,version,at:Date.now()};
+  const val=r.none?(r.covered?"None mapped":""):r.code;
+  if(!p.site.nwi||p.site.nwi===prevAuto){p.site.nwi=val;p.site.nwiAuto=val}
+  setField(p,"nwi",p.site.nwi);save();setBox(p,"nwiBox",nwiBoxHTML(p));
+}
+const dateOnly=s=>String(s||"").split(" ")[0];
+const soilVersionText=s=>`SSURGO ${s.areaname} (${s.area}): survey area version ${s.saversion}, ${dateOnly(s.saverest)}; tabular version ${s.tabularversion}, ${dateOnly(s.tabularverest)}; spatial version ${s.spatialversion}.`;
+const nwiVersionText=v=>`${v.title||"National Wetlands Inventory"}${v.edition?`, ${v.edition}`:""}; published ${v.published||"?"}, data modified ${v.modified||"?"} (${v.source_file||"NWI geodatabase"}).`;
+const projText=pr=>pr?`Mapped from ${pr.year||"?"} ${pr.type||""} imagery${pr.scale?` at ${pr.scale}`:""} (${pr.name} project${pr.date?`, imagery date ${pr.date}`:""})`:"";
+function soilBoxHTML(p){
+  const s=p.site.ssurgo;let h;
+  if(s&&s.none)h=`<div class="soil"><p class="note warn" style="margin:0">No SSURGO map unit at ${s.lat.toFixed(5)}, ${s.lon.toFixed(5)}. The offline soil data covers ${esc(s.areas||"the downloaded counties")}.</p></div>`;
+  else if(s){
+    const maj=s.comps.filter(c=>c[4]),minH=s.comps.filter(c=>!c[4]&&c[3]==="Yes");
+    h=`<div class="soil"><div class="soil-h"><span class="tag">Soil</span><b>${esc(s.musym)}</b> ${esc(s.muname)}</div>
+    <div class="note" style="margin:.1rem 0 .5rem">${esc(s.areaname)} · map unit key ${esc(s.mukey)}</div>
+    <div>Map unit percent hydric <b>${s.hydric==null?"not rated":s.hydric+"%"}</b></div>
+    <div class="scroll" style="margin-top:.5rem"><table style="min-width:0"><thead><tr><th>Major component</th><th>%</th><th>Drainage class</th><th>Hydric</th></tr></thead><tbody>
+    ${maj.map(c=>`<tr><td>${esc(c[0])}</td><td>${c[1]??"–"}</td><td>${esc(c[2]||"–")}</td><td>${esc(c[3]||"–")}</td></tr>`).join("")||'<tr><td colspan="4">No major components listed</td></tr>'}</tbody></table></div>
+    ${minH.length?`<p class="note">Minor hydric components: ${minH.map(c=>`${esc(c[0])} ${c[1]??"?"}%`).join(", ")}.</p>`:""}
+    ${s.gap?`<p class="note warn">The point fell in a hairline gap between map unit polygons; this is the nearest map unit.</p>`:""}
+    ${s.nb&&s.nb.d<=15?`<p class="note warn">About ${s.nb.d} m from the boundary with ${esc(s.nb.musym)} ${esc(s.nb.muname)}. Soil lines are mapped at 1:12,000 to 1:24,000, so confirm the soil in the field.</p>`:""}
+    <p class="note">${esc(soilVersionText(s))}</p>
+    ${p.site.mapunit!==muLabel({s:s.musym,n:s.muname})?`<button class="btn quiet" id="useMu">Use SSURGO name in the soil map unit field</button>`:""}</div>`;
+  }else h=`<div class="soil"><p class="note" style="margin:0">Drop a point (GPS, map tap, or coordinates) to look up the soil map unit.</p></div>`;
+  return h;
+}
+function nwiBoxHTML(p){
+  const n=p.site.nwiAt;if(!n)return "";
+  let h;
+  if(n.none&&!n.covered)h=`<p class="note warn" style="margin:0">This point is outside the offline NWI data (${esc((DS.nwi.idx&&DS.nwi.idx.areas||[]).join(", ")||"downloaded counties")}).</p>`;
+  else if(n.none)h=`<div class="soil-h"><span class="tag nwi">NWI</span>Not in a mapped wetland</div>
+    ${n.near?`<p class="note">Nearest mapped wetland: <b>${esc(n.near.code)}</b> ${esc(n.near.desc)}, about ${n.near.d} m away.</p>`:'<p class="note">No mapped wetland within 30 m.</p>'}`;
+  else{const dsc=nwiDescribe(n.code);
+    h=`<div class="soil-h"><span class="tag nwi">NWI</span><b>${esc(n.code)}</b> ${esc(dsc.short)}</div>
+    <div class="note" style="margin:.2rem 0">${dsc.parts.map(([c,t])=>`<span class="code">${esc(c)}</span> ${esc(t)}`).join(" · ")}</div>
+    ${n.edge<=15?`<p class="note warn">About ${n.edge} m inside the mapped wetland edge. NWI lines are approximate; confirm in the field.</p>`:""}`}
+  return `<div class="soil nwi">${h}
+    ${n.proj?`<p class="note">${esc(projText(n.proj))}.</p>`:""}
+    <p class="note">${esc(nwiVersionText(n.version))}</p>
+    ${!(n.none&&!n.covered)&&p.site.nwi!==(n.none?"None mapped":n.code)?`<button class="btn quiet" id="useNwi">Use this in the NWI field</button>`:""}</div>`;
+}
+function dataStatusHTML(){
+  const one=d=>{const i=d.idx,mb=i?(Object.values(i.files).reduce((a,b)=>a+b,0)/1e6).toFixed(1):"";
+    return {checking:`${d.label}: checking…`,downloading:`${d.label}: downloading for offline use… ${d.pct}%`,ready:`${d.label}: ready offline (${mb} MB, built ${i&&i.built}).`,
+      missing:`${d.label}: not on this device yet. Open the app once with an internet connection to download it.`,error:`${d.label}: unavailable. ${esc(d.err)}`}[d.state]};
+  const s=DS.soils.idx,n=DS.nwi.idx;
+  const details=(s||n)?`<details><summary>Data versions</summary><ul style="margin:.3rem 0;padding-left:1.2rem">
+    ${s?s.surveys.map(v=>`<li>${esc(v.areaname)} (${esc(v.areasymbol)}): survey area version ${v.saversion}, ${esc(dateOnly(v.saverest))}; tabular ${v.tabularversion}; spatial ${esc(v.spatialversion)}</li>`).join(""):""}
+    ${n?`<li>NWI: ${esc(nwiVersionText(n))}</li>`:""}</ul></details>`:"";
+  const retry=Object.values(DS).some(d=>d.state==="error"||d.state==="missing")?' <button class="btn quiet" id="dataRetry">Try again</button>':"";
+  return `<div class="note" id="dataStatus">${Object.values(DS).map(one).join("<br>")}${retry}${details}</div>`;
+}
+function updateDataStatus(){const el=document.getElementById("dataStatus");if(el)el.outerHTML=dataStatusHTML()}
+main.addEventListener("click",e=>{
+  const p=P(),t=e.target;
+  if(t.id==="lookAgain")runLookups(p,true);
+  if(t.id==="dataRetry"){Object.values(DS).forEach(d=>{if(d.state!=="ready"){d.state="checking";dsInit(d)}});updateDataStatus()}
+  if(t.id==="useMu"&&p.site.ssurgo){p.site.mapunit=p.site.mapunitAuto=muLabel({s:p.site.ssurgo.musym,n:p.site.ssurgo.muname});save();renderPanel()}
+  if(t.id==="useNwi"&&p.site.nwiAt){const n=p.site.nwiAt;p.site.nwi=p.site.nwiAuto=n.none?"None mapped":n.code;save();renderPanel()}
+  if(t.id==="placePt")setPlacing(!placing);
+});
+
+/* ---------- Location ---------- */
+function locNote(p){
+  const s=p.site;if(!s.lat||!s.lon)return "No location yet.";
+  const src={GPS:"from GPS","map tap":"tapped on the map","dragged on map":"adjusted by dragging on the map",typed:"entered by hand"}[s.locSrc]||"";
+  return `${src?"Location "+src+".":""}${s.locSrc==="GPS"&&s.acc!=null?` Accuracy ±${Math.round(s.acc)} m (${Math.round(s.acc*3.281)} ft).`:""}`;
+}
+function movePoint(lat,lon,src,acc){
+  const p=P();if(!p)return;
+  p.site.lat=lat.toFixed(6);p.site.lon=lon.toFixed(6);p.site.locSrc=src;p.site.acc=acc??null;save();
+  setField(p,"lat",p.site.lat);setField(p,"lon",p.site.lon);
+  const n=document.getElementById("gpsNote");if(n)n.innerHTML=esc(locNote(p))+gpsAreaWarn(lat,lon);
+  updateMapPoint();runLookups(p);
+}
+const gpsAreaWarn=(lat,lon)=>lat>41.0&&lat<42.55&&lon>-89.0&&lon<-87.4?"":' <span class="warn">This point is outside Northeastern Illinois.</span>';
+
+/* ---------- Map (MapLibre GL JS, lib/) ---------- */
+/* ---------- Aerial imagery: free public services only, no API keys. Terms are shown in Layers › About imagery. ---------- */
+const IMG={
+  usgs:{label:"USGS imagery",kind:"xyz",url:"https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}",maxzoom:16,
+    attr:"USGS The National Map: Orthoimagery",link:"https://www.usgs.gov/faqs/what-are-terms-uselicensing-map-services-and-data-national-map",
+    terms:"Public domain (U.S. Government work); USGS asks for credit to “USGS The National Map”. Sharp only to zoom level 16 (about 2.4 m per pixel)."},
+  naip:{label:"NAIP 2019, 0.6 m",kind:"export",url:"https://data.isgs.illinois.edu/arcgis/rest/services/Imagery/IL_NAIP_2019/ImageServer/exportImage",fmt:"jpgpng",minzoom:13,maxzoom:18,
+    attr:"NAIP 2019: USDA Farm Service Agency, via Illinois State Geological Survey",link:"https://clearinghouse.isgs.illinois.edu/about/terms",
+    terms:"USDA National Agriculture Imagery Program, flown September 2019 (the newest NAIP served for Illinois by USGS or ISGS). NAIP is a U.S. Government product in the public domain. Hosted by the Illinois State Geological Survey, whose Clearinghouse terms ask apps to cite the Illinois State Geological Survey as the source."},
+  dupage:{label:"DuPage County 2016–17",kind:"xyz",url:"https://gis.dupageco.org/arcgis/rest/services/Imagery_20162017_WGS84/ImageServer/tile/{z}/{y}/{x}",bounds:[-88.27,41.68,-87.91,42.00],minzoom:12,maxzoom:19,
+    attr:"Contains information licensed under the Open Geo-Spatial Data License – DuPage County",link:"https://www.arcgis.com/home/item.html?id=cda159ef2fd6466689ddf02a5f276b0f",
+    terms:"Open Geo-Spatial Data License – DuPage County: worldwide, royalty-free use, including commercial use. You must show the attribution “Contains information licensed under the Open Geo-Spatial Data License – DuPage County” and, where possible, link to the license. This is the county’s newest public imagery service; it is older than NAIP 2019 but much sharper (3 in)."},
+  kane:{label:"Kane County 2023",kind:"export",url:"https://gistech.countyofkane.org/arcgis/rest/services/2023Aerials/MapServer/export",fmt:"jpgpng",extra:"&transparent=true",bounds:[-88.61,41.71,-88.23,42.16],minzoom:12,maxzoom:19,
+    attr:"Kane County GIS-Technologies, 2023 Aerials",link:"https://www.arcgis.com/home/item.html?id=d41776ab262a40f58b1869e67b91c874",
+    terms:"Published as a public service by Kane County GIS-Technologies. Provided “as is” and for informational purposes only, with no warranty; it does not represent a land survey. Kane County states no explicit license for reuse."},
+  lake:{label:"Lake County 2024",kind:"xyz",url:"https://tiles.arcgis.com/tiles/HESxeTbDliKKvec2/arcgis/rest/services/aerial2024/MapServer/tile/{z}/{y}/{x}",bounds:[-88.21,42.15,-87.75,42.50],minzoom:12,maxzoom:19,
+    attr:"Lake County, Illinois 2024 Aerial Photography",link:"https://www.arcgis.com/home/item.html?id=89679671cfa64832ac2399a0ef52e414",
+    terms:"Lake County holds no copyright and grants anyone the right to use the data for personal or business use, free of charge. For general reference only, not for engineering design or regulatory determinations; no warranty."},
+  cook:{label:"Cook County 2025",kind:"export",url:"https://gis.cookcountyil.gov/imagery/rest/services/CookOrtho2025/ImageServer/exportImage",fmt:"jpgpng",bounds:[-88.27,41.46,-87.52,42.16],minzoom:12,maxzoom:19,
+    attr:"Cook County GIS 2025 Imagery",link:"https://www.arcgis.com/home/item.html?id=779996bcf5e24559817e296203acc8aa",
+    terms:"Cook County provides the data “as is”, without warranty, and not as a substitute for professional advice; check suitability with the appropriate agencies. No explicit license is stated. Older Cook County items say “for personal use”; the 2025 imagery item does not."}};
+IMG.usgs.label="USGS imagery (mixed years)";
+const IMG_YEAR={usgs:["USGS","mixed years"],naip:["NAIP","2019"],dupage:["DuPage County","2016–17"],kane:["Kane County","2023"],lake:["Lake County","2024"],cook:["Cook County","2025"]};
+for(const [id,[short,year]] of Object.entries(IMG_YEAR))Object.assign(IMG[id],{short,year});
+// USGS Topo is not an imagery layer, but offline areas download it too so the Topo basemap works without signal.
+IMG.topo={label:"USGS Topo map",short:"USGS Topo",year:"current",kind:"xyz",direct:true,url:"https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}",maxzoom:16,attr:"USGS The National Map: Topo"};
+IMG.usgs.direct=true; // fetched straight from USGS, so the service worker serves downloaded tiles by their real address
+// County layers stop at zoom 19 (~0.22 m/pixel), the deepest level offline areas download; MapLibre enlarges it beyond that.
+const IMG_ORDER=["usgs","naip","dupage","kane","lake","cook"]; // drawing order, bottom to top: newest county imagery on top
+const BASES={county:["usgs","naip","dupage","kane","lake","cook"],naip:["usgs","naip"],usgs:["usgs"],topo:[],none:[]};
+const AREA_IMG={IL031:"cook",IL043:"dupage",IL089:"kane",IL097:"lake"};
+const M3857=20037508.342789244;
+const lon2tx=(lon,z)=>Math.floor((lon+180)/360*2**z);
+const lat2ty=(lat,z)=>{const r=lat*Math.PI/180;return Math.floor((1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*2**z)};
+function tileBox(z,x,y,n=1){const s=2*M3857/2**z;return [-M3857+x*s,M3857-(y+n)*s,-M3857+(x+n)*s,M3857-y*s]}
+function imgURL(src,z,x,y,n=1){
+  if(src.kind==="xyz")return src.url.replace("{z}",z).replace("{x}",x).replace("{y}",y);
+  return `${src.url}?bbox=${tileBox(z,x,y,n).map(v=>v.toFixed(2)).join(",")}&bboxSR=3857&imageSR=3857&size=${256*n},${256*n}&format=${src.fmt}${src.extra||""}&f=image`;
+}
+const tileKey=(id,z,x,y)=>IMG[id].direct?imgURL(IMG[id],z,x,y):`https://tiles.offline/${id}/${z}/${x}/${y}`;
+const EMPTY_TILE=Uint8Array.from(atob("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="),c=>c.charCodeAt(0));
+const emptyTile=()=>({data:EMPTY_TILE.slice().buffer});
+const VIEW_CACHE="wetland-basemap",VIEW_LIMIT=3000;
+let viewPuts=0;
+async function keepViewed(key,buf,type){ // tiles seen online stay available offline (capped, oldest dropped first)
+  try{const c=await caches.open(VIEW_CACHE);await c.put(key,new Response(buf,{headers:{"Content-Type":type||"image/jpeg"}}));
+    if(++viewPuts%50===0){const k=await c.keys();for(const r of k.slice(0,Math.max(0,k.length-VIEW_LIMIT)))await c.delete(r)}}catch(e){}
+}
+let imgProtocolAdded=false;
+function addImgProtocol(ml){ // img://<source>/<z>/<x>/<y>: downloaded area or viewed cache first, then the live service, else transparent
+  if(imgProtocolAdded)return;imgProtocolAdded=true;
+  ml.addProtocol("img",async(params,abort)=>{
+    const m=params.url.match(/^img:\/\/(\w+)\/(\d+)\/(\d+)\/(\d+)/);if(!m)return emptyTile();
+    const [,id,z,x,y]=m,key=tileKey(id,+z,+x,+y);
+    try{const hit=await caches.match(key);if(hit)return hit.headers.get("X-Empty")?emptyTile():{data:await hit.arrayBuffer()}}catch(e){}
+    if(navigator.onLine===false)return emptyTile();
+    const c=new AbortController(),t=setTimeout(()=>c.abort(),20000);abort.signal.addEventListener("abort",()=>c.abort());
+    try{const r=await fetch(imgURL(IMG[id],+z,+x,+y),{signal:c.signal});
+      if(!r.ok||!(r.headers.get("content-type")||"").match(/image|octet/))return emptyTile();
+      const buf=await r.arrayBuffer();keepViewed(key,buf.slice(0),r.headers.get("content-type"));return {data:buf};
+    }catch(e){if(abort.signal.aborted)throw e;return emptyTile()}finally{clearTimeout(t)}
+  });
+}
+function imgSources(){
+  const s={};
+  for(const id of IMG_ORDER){const g=IMG[id];
+    s["img-"+id]={type:"raster",tileSize:256,tiles:[id==="usgs"?g.url:`img://${id}/{z}/{x}/{y}`],maxzoom:g.maxzoom,...(g.minzoom?{minzoom:g.minzoom}:{}),...(g.bounds?{bounds:g.bounds}:{}),
+      attribution:`<a href="${g.link}" target="_blank" rel="noopener">${esc(g.attr)}</a>`}}
+  return s;
+}
+const imgLayers=()=>IMG_ORDER.map(id=>({id:"img-"+id,type:"raster",source:"img-"+id}));
+function imageryIdAt(area,z=99){ // which imagery the basemap shows at a point, from the SSURGO survey area it falls in and the zoom
+  const base=BASES[mapPrefs.base]||[],c=AREA_IMG[area];
+  if(c&&base.includes(c)&&z>=12)return c;if(base.includes("naip")&&z>=13)return "naip";if(base.includes("usgs"))return "usgs";return null;
+}
+function imageryAt(area){const id=imageryIdAt(area);return id?IMG[id].label:""}
+let chipSeq=0;
+async function updateImgChip(){ // label on the map naming the imagery (and its year) at the map centre
+  if(!mapReady)return;const el=mapWrap.querySelector("#mImg"),seq=++chipSeq;
+  if(mapPrefs.base==="topo"){el.hidden=false;el.textContent="USGS Topo map";return}
+  if(!(BASES[mapPrefs.base]||[]).length){el.hidden=true;return}
+  const z=map.getZoom(),c=map.getCenter();let area=null;
+  if(z>=12&&(DS.soils.state==="ready"||DS.soils.data)){try{const r=await lookupSoil(c.lat,c.lng);if(r)area=(DS.soils.data.mu[r.mk]||{}).a}catch(e){}}
+  if(seq!==chipSeq)return;
+  const id=imageryIdAt(area,z);el.hidden=!id;if(id)el.textContent=`Imagery: ${IMG[id].short} ${IMG[id].year}`;
+}
+function imageryReportRow(s){ // export: which imagery covers the point, newest first, with year and credit
+  if(!s.lat||!s.lon)return "";
+  const area=s.ssurgo&&!s.ssurgo.none?s.ssurgo.area:null,ids=[AREA_IMG[area],"naip","usgs"].filter(Boolean);
+  return `<tr><td>Aerial imagery available at point</td><td>${ids.map((id,i)=>`${esc(IMG[id].short)} ${esc(IMG[id].year)}${i===0&&ids.length>2?" (sharpest)":""} – ${esc(IMG[id].attr)}`).join("<br>")}${area?"":"<br><small>County imagery not determined: no soil survey lookup for this point.</small>"}</td></tr>`;
+}
+
+/* ---------- Offline project areas: imagery for a chosen area downloaded ahead of time ---------- */
+const AREA_PREFIX="wetland-area-",AREA_META="https://tiles.offline/meta.json";
+const AREA_Z={usgs:[10,16],topo:[10,16],naip:[14,18],county:[14,19]};
+const AREA_KB={usgs:18,topo:14,naip:16,dupage:22,kane:30,lake:22,cook:25};
+const AREA_MAX_TILES=8000;
+let areaJob=null;
+function areaPlan(b,ids){
+  const plan=[];let tiles=0,kb=0;
+  for(const id of ids){const g=IMG[id];
+    if(g.bounds&&(b[2]<g.bounds[0]||b[0]>g.bounds[2]||b[3]<g.bounds[1]||b[1]>g.bounds[3]))continue;
+    const [z0,z1]=AREA_Z[id]||AREA_Z.county;let n=0;
+    const bb=g.bounds?[Math.max(b[0],g.bounds[0]),Math.max(b[1],g.bounds[1]),Math.min(b[2],g.bounds[2]),Math.min(b[3],g.bounds[3])]:b;
+    for(let z=z0;z<=z1;z++)n+=(lon2tx(bb[2],z)-lon2tx(bb[0],z)+1)*(lat2ty(bb[1],z)-lat2ty(bb[3],z)+1);
+    plan.push({id,z0,z1,bb,n});tiles+=n;kb+=n*(AREA_KB[id]||25);
+  }
+  return {plan,tiles,mb:kb/1024};
+}
+const areaIdsForView=()=>["usgs","topo","naip",...["dupage","kane","lake","cook"]];
+async function listAreas(){
+  const out=[];
+  for(const n of await caches.keys()){if(!n.startsWith(AREA_PREFIX))continue;
+    const r=await (await caches.open(n)).match(AREA_META);
+    if(r)out.push({cache:n,...await r.json()});else if(!areaJob||areaJob.cache!==n)await caches.delete(n); // unfinished download
+  }
+  return out.sort((a,b)=>b.created-a.created);
+}
+async function tileToResponse(bitmap,sx,sy){
+  const cv=typeof OffscreenCanvas!=="undefined"?new OffscreenCanvas(256,256):Object.assign(document.createElement("canvas"),{width:256,height:256});
+  const g=cv.getContext("2d");g.clearRect(0,0,256,256);g.drawImage(bitmap,sx,sy,256,256,0,0,256,256);
+  const d=g.getImageData(0,0,256,256).data;let clear=0,part=false;
+  for(let i=3;i<d.length;i+=4){if(d[i]===0)clear++;else if(d[i]<255)part=true}
+  if(clear===65536)return new Response("",{headers:{"X-Empty":"1"}});
+  const type=clear||part?"image/png":"image/jpeg";
+  const blob=cv.convertToBlob?await cv.convertToBlob({type,quality:.85}):await new Promise(r=>cv.toBlob(r,type,.85));
+  return new Response(blob,{headers:{"Content-Type":type}});
+}
+async function downloadArea(name,b,ids){
+  const {plan,tiles}=areaPlan(b,ids);
+  if(!tiles)return;
+  const id=Date.now().toString(36),cacheName=AREA_PREFIX+id,cache=await caches.open(cacheName);
+  const job=areaJob={cache:cacheName,done:0,total:tiles,bytes:0,failed:0,ctl:new AbortController(),name};
+  const jobs=[];
+  for(const p of plan){const g=IMG[p.id];
+    for(let z=p.z0;z<=p.z1;z++){
+      const x0=lon2tx(p.bb[0],z),x1=lon2tx(p.bb[2],z),y0=lat2ty(p.bb[3],z),y1=lat2ty(p.bb[1],z);
+      if(g.kind==="xyz"){for(let x=x0;x<=x1;x++)for(let y=y0;y<=y1;y++)jobs.push({p,g,z,x,y,n:1})}
+      else{const B=8;for(let bx=Math.floor(x0/B)*B;bx<=x1;bx+=B)for(let by=Math.floor(y0/B)*B;by<=y1;by+=B){
+        const xs=Math.max(bx,x0),ys=Math.max(by,y0),xe=Math.min(bx+B-1,x1),ye=Math.min(by+B-1,y1),n=Math.max(xe-xs,ye-ys)+1;
+        jobs.push({p,g,z,x:xs,y:ys,n,xe,ye})}}
+    }}
+  const one=async j=>{
+    for(let attempt=0;attempt<3;attempt++){
+      try{
+        const r=await fetch(imgURL(j.g,j.z,j.x,j.y,j.n),{signal:job.ctl.signal,cache:"no-store"});
+        if(!r.ok)throw new Error("HTTP "+r.status);
+        if(j.g.kind==="xyz"){const buf=await r.arrayBuffer();job.bytes+=buf.byteLength;
+          await cache.put(tileKey(j.p.id,j.z,j.x,j.y),new Response(buf,{headers:{"Content-Type":r.headers.get("content-type")||"image/jpeg"}}));job.done++;return}
+        const bm=await createImageBitmap(await r.blob());
+        for(let x=j.x;x<=j.xe;x++)for(let y=j.y;y<=j.ye;y++){
+          const res=await tileToResponse(bm,(x-j.x)*256,(y-j.y)*256);const blob=await res.clone().blob();job.bytes+=blob.size;
+          await cache.put(tileKey(j.p.id,j.z,x,y),res);job.done++}
+        bm.close&&bm.close();return;
+      }catch(e){if(job.ctl.signal.aborted)throw e;if(attempt===2){job.failed+=j.g.kind==="xyz"?1:(j.xe-j.x+1)*(j.ye-j.y+1);job.done+=j.g.kind==="xyz"?1:(j.xe-j.x+1)*(j.ye-j.y+1)}
+        else await new Promise(r=>setTimeout(r,1500*(attempt+1)))}
+    }
+  };
+  const tick=setInterval(renderAreas,500);
+  try{
+    let next=0;await Promise.all(Array.from({length:4},async()=>{while(next<jobs.length&&!job.ctl.signal.aborted)await one(jobs[next++])}));
+    if(job.ctl.signal.aborted)throw new Error("cancelled");
+    await cache.put(AREA_META,new Response(JSON.stringify({id,name,bbox:b,created:Date.now(),tiles:job.done-job.failed,failed:job.failed,bytes:job.bytes,
+      sources:plan.map(p=>({id:p.id,label:IMG[p.id].label,z:[p.z0,p.z1],tiles:p.n}))}),{headers:{"Content-Type":"application/json"}}));
+    toast(job.failed?`Area saved; ${job.failed} tiles couldn’t be downloaded`:`Offline area “${name}” saved`);
+  }catch(e){await caches.delete(cacheName);if(e.message!=="cancelled")toast("Area download failed: "+(e.message||e))}
+  finally{clearInterval(tick);areaJob=null;renderAreas();refreshAreaOutlines()}
+}
+const viewBox=()=>{const b=map.getBounds();return [b.getWest(),b.getSouth(),b.getEast(),b.getNorth()].map(v=>+v.toFixed(6))};
+async function renderAreas(){
+  const el=mapWrap.querySelector("#mAreaBody");if(!el||mapWrap.querySelector("#mAreas").hidden)return;
+  if(areaJob){const j=areaJob,pct=Math.round(j.done/j.total*100);
+    el.innerHTML=`<p><b>Downloading “${esc(j.name)}”</b></p><div class="bar"><span style="width:${pct}%"></span></div>
+      <p class="note">${j.done} of ${j.total} tiles · ${(j.bytes/1048576).toFixed(1)} MB${j.failed?` · ${j.failed} failed`:""}. Keep the app open until it finishes.</p>
+      <button class="btn quiet" id="aCancel">Cancel download</button>`;return}
+  let est="";
+  if(mapReady){const z=map.getZoom(),b=viewBox(),pl=areaPlan(b,areaIdsForView());
+    const km2=((b[2]-b[0])*111.32*Math.cos((b[1]+b[3])/2*Math.PI/180)*(b[3]-b[1])*110.57).toFixed(2);
+    est=z<12?'<p class="note warn">Zoom in to your project area (zoom level 12 or closer) to download it.</p>'
+      :pl.tiles>AREA_MAX_TILES?`<p class="note warn">This view is ${km2} km² and needs ${pl.tiles.toLocaleString()} tiles (about ${pl.mb.toFixed(0)} MB). Zoom in to under ${AREA_MAX_TILES.toLocaleString()} tiles.</p>`
+      :`<p class="note">This view: ${km2} km², ${pl.tiles.toLocaleString()} tiles, about ${pl.mb.toFixed(0)} MB. Includes ${pl.plan.map(p=>`${IMG[p.id].label} (zoom ${p.z0}–${p.z1})`).join(", ")}.</p>
+        <label class="f" style="color:var(--ink)">Area name<input type="text" id="aName" value="${esc(P()?.site.project||P()?.site.point||"Project area")}"></label>
+        <button class="btn primary" id="aDownload" style="margin-top:.4rem">Download this view for offline use</button>`;
+  }
+  const areas=await listAreas();
+  let storage="";try{const s=await navigator.storage.estimate();storage=`<p class="note">This device: ${(s.usage/1048576).toFixed(0)} MB used by the app of ${(s.quota/1073741824).toFixed(1)} GB available.</p>`}catch(e){}
+  if(!mapWrap.querySelector("#mAreaBody")||areaJob)return;
+  el.innerHTML=`${est}<h4>Saved areas</h4>${areas.length?`<ul class="areas">${areas.map(a=>`<li><b>${esc(a.name)}</b><br><small>${new Date(a.created).toLocaleDateString()} · ${(a.bytes/1048576).toFixed(1)} MB · ${a.sources.map(s=>esc(s.label)).join(", ")}${a.failed?` · ${a.failed} tiles missing`:""}</small><br>
+    <button class="btn quiet" data-ashow="${a.cache}">Show</button> <button class="btn quiet" data-adel="${a.cache}">Delete</button></li>`).join("")}</ul>`:'<p class="note">None yet. Areas you download show here and load instantly in the field, with or without signal.</p>'}${storage}`;
+}
+async function refreshAreaOutlines(){
+  if(!mapReady)return;const areas=await listAreas();
+  map.getSource("areas").setData({type:"FeatureCollection",features:areas.map(a=>{const [w,s,e,n]=a.bbox;return {type:"Feature",properties:{name:a.name},geometry:{type:"Polygon",coordinates:[[[w,s],[e,s],[e,n],[w,n],[w,s]]]}}})});
+}
+document.addEventListener("click",async e=>{
+  const t=e.target;if(!mapWrap.contains(t))return;
+  if(t.id==="mAreasBtn"){const pn=mapWrap.querySelector("#mAreas");pn.hidden=!pn.hidden;t.setAttribute("aria-expanded",!pn.hidden);mapWrap.querySelector("#mPanel").hidden=true;renderAreas()}
+  if(t.id==="aDownload"){if(!navigator.onLine){toast("Connect to the internet to download an area.");return}
+    const name=(mapWrap.querySelector("#aName").value||"Project area").trim(),b=viewBox(),mb=areaPlan(b,areaIdsForView()).mb;
+    await checkStorage();const free=freeMB(); // leave room for points and photos
+    if(free!=null&&mb>free-200){alert(`Not enough space: this area needs about ${mb.toFixed(0)} MB and only ${Math.max(0,free).toFixed(0)} MB is free for the app. Zoom in to a smaller area or delete another offline area first.`);return}
+    downloadArea(name,b,areaIdsForView()).then(checkStorage);renderAreas()}
+  if(t.id==="aCancel"&&areaJob){areaJob.ctl.abort()}
+  if(t.dataset.ashow){const a=(await listAreas()).find(x=>x.cache===t.dataset.ashow);if(a)map.fitBounds([[a.bbox[0],a.bbox[1]],[a.bbox[2],a.bbox[3]]],{padding:20})}
+  if(t.dataset.adel){const a=(await listAreas()).find(x=>x.cache===t.dataset.adel);
+    if(a&&confirm(`Delete the offline imagery for “${a.name}” (${(a.bytes/1048576).toFixed(1)} MB)? You can download it again later.`)){await caches.delete(a.cache);renderAreas();refreshAreaOutlines()}}
+});
+
+const mapPrefs=Object.assign({base:"county",soils:true,nwi:true,pts:true},(()=>{try{return JSON.parse(localStorage.getItem("mapPrefs"))||{}}catch(e){return {}}})());
+if(!(mapPrefs.base in BASES))mapPrefs.base="county"; // older saved value "aerial"
+const saveMapPrefs=()=>{try{localStorage.setItem("mapPrefs",JSON.stringify(mapPrefs))}catch(e){}};
+const NWI_COLORS=["match",["get","t"],"Freshwater Emergent Wetland","#7fc31c","Freshwater Forested/Shrub Wetland","#008837","Freshwater Pond","#688cc0","Lake","#13007c","Riverine","#0190bf","#b28653"];
+const HYD_COLORS=["step",["get","h"],"rgba(0,0,0,0)",1,"#bfdbfe",33,"#60a5fa",66,"#2563eb",100,"#1e3a8a"];
+let mapCenteredFor=null,map=null,mapReady=false,marker=null,placing=false,mapLibP=null,mapPopup=null;
+const mapWrap=document.createElement("div");mapWrap.className="mapwrap";
+mapWrap.innerHTML=`<div id="map" aria-label="Map of sampling points, soils and wetlands"></div>
+  <div class="mapbar"><button class="mbtn" id="mLayers" aria-expanded="false" aria-controls="mPanel">Layers</button><button class="mbtn" id="mAreasBtn" aria-expanded="false" aria-controls="mAreas">Offline areas</button><button class="mbtn" id="mFull">Full screen</button></div>
+  <div class="mappanel" id="mAreas" hidden><h4 style="margin-top:0">Offline imagery for a project area</h4><p class="note" style="margin:0">Downloads NAIP, county aerials and USGS imagery for the current map view, so the basemap loads instantly in the field without signal.</p><div id="mAreaBody"></div></div>
+  <div class="mappanel" id="mPanel" hidden>
+    <label>Basemap <select id="mBase"><option value="county">Aerial: county + NAIP + USGS (sharpest)</option><option value="naip">Aerial: NAIP 2019 + USGS</option><option value="usgs">Aerial: USGS only</option><option value="topo">Topo / streets (USGS)</option><option value="none">None</option></select></label>
+    <p class="years">Imagery years: ${["cook","lake","kane","dupage","naip","usgs"].map(id=>`${esc(IMG[id].short)} ${esc(IMG[id].year)}`).join(" · ")}. The label at the bottom right of the map shows which one you’re looking at.</p>
+    <label class="ck"><input type="checkbox" id="mSoils"> Mapped soils</label>
+    <div class="lg"><span><i style="background:transparent;border-color:#f6c445"></i>0%</span><span><i style="background:#bfdbfe"></i>1–32</span><span><i style="background:#60a5fa"></i>33–65</span><span><i style="background:#2563eb"></i>66–99</span><span><i style="background:#1e3a8a"></i>100% hydric</span></div>
+    <label class="ck"><input type="checkbox" id="mNwi"> NWI wetlands</label>
+    <div class="lg"><span><i style="background:#7fc31c"></i>Emergent</span><span><i style="background:#008837"></i>Forested/shrub</span><span><i style="background:#688cc0"></i>Pond</span><span><i style="background:#13007c"></i>Lake</span><span><i style="background:#0190bf"></i>Riverine</span></div>
+    <label class="ck"><input type="checkbox" id="mPts"> Sampling points</label>
+    <p class="note" style="margin:.3rem 0 0">Soils and NWI always work offline. Imagery needs a connection unless you download the area (Offline areas) or have already viewed it.</p>
+    <details class="about"><summary>About imagery and terms of use</summary>${IMG_ORDER.slice().reverse().map(id=>`<p><b>${esc(IMG[id].label)}</b>${IMG[id].bounds?"":" (all counties)"}: ${esc(IMG[id].terms)} <a href="${IMG[id].link}" target="_blank" rel="noopener">Source</a></p>`).join("")}<p>County layers show only inside their county; NAIP fills in where a county layer is missing, and USGS fills in beyond that.</p></details>
+  </div>
+  <div class="maphint" id="mHint" hidden></div><div class="mapmsg" id="mMsg" hidden></div><div class="mapimg" id="mImg" hidden></div>`;
+function loadMapLib(){
+  if(!mapLibP)mapLibP=new Promise((res,rej)=>{
+    const l=document.createElement("link");l.rel="stylesheet";l.href="lib/maplibre-gl.css";document.head.appendChild(l);
+    const s=document.createElement("script");s.src="lib/maplibre-gl.js";s.onload=()=>res(window.maplibregl);s.onerror=()=>{mapLibP=null;rej(new Error("The map library couldn’t load."))};document.head.appendChild(s);
+  });
+  return mapLibP;
+}
+async function attachMap(){
+  const slot=document.getElementById("mapSlot");if(!slot)return;
+  slot.appendChild(mapWrap);
+  try{await initMap()}catch(e){const m=mapWrap.querySelector("#mMsg");m.hidden=false;m.textContent=e.message+" Location, soil and NWI lookups still work.";return}
+  map.resize();syncMapPanel();updateMapPoint();refreshMapData();
+  const p=P();if(p&&mapCenteredFor!==p.id&&p.site.lat&&p.site.lon&&mapReady){map.jumpTo({center:[+p.site.lon,+p.site.lat],zoom:Math.max(map.getZoom(),15)});mapCenteredFor=p.id}
+  if(pendingFit&&mapReady){const b=pendingFit;pendingFit=null;map.fitBounds([[b[0],b[1]],[b[2],b[3]]],{padding:20,duration:0})}
+  updateImgChip();
+}
+async function initMap(){
+  if(map)return;
+  const ml=await loadMapLib(),p=P(),empty={type:"FeatureCollection",features:[]};
+  addImgProtocol(ml);
+  const usgs=s=>({type:"raster",tiles:[`https://basemap.nationalmap.gov/arcgis/rest/services/${s}/MapServer/tile/{z}/{y}/{x}`],tileSize:256,maxzoom:16,attribution:'<a href="https://www.usgs.gov/programs/national-geospatial-program/national-map" target="_blank" rel="noopener">USGS The National Map</a>'});
+  const gj=a=>({type:"geojson",data:empty,...(a?{attribution:a}:{})});
+  const hasPt=p&&p.site.lat&&p.site.lon;
+  const bb=(DS.soils.idx&&DS.soils.idx.bbox)||[-88.6,41.47,-87.52,42.5];
+  map=new ml.Map({container:mapWrap.querySelector("#map"),attributionControl:{compact:true},maxZoom:20,
+    ...(hasPt?{center:[+p.site.lon,+p.site.lat],zoom:16}:{bounds:[[bb[0],bb[1]],[bb[2],bb[3]]]}),
+    style:{version:8,sources:{...imgSources(),topo:usgs("USGSTopo"),
+      soils:gj("Soils: USDA-NRCS SSURGO"),nwi:gj("Wetlands: USFWS NWI"),sel:gj(),acc:gj(),pts:gj(),areas:gj()},
+      layers:[{id:"bg",type:"background",paint:{"background-color":"#e4e9e4"}},
+        ...imgLayers(),{id:"topo",type:"raster",source:"topo"},
+        {id:"areas",type:"line",source:"areas",paint:{"line-color":"#f4a261","line-width":2,"line-dasharray":[3,2]}},
+        {id:"soil-fill",type:"fill",source:"soils",paint:{"fill-color":HYD_COLORS,"fill-opacity":.35}},
+        {id:"nwi-fill",type:"fill",source:"nwi",paint:{"fill-color":NWI_COLORS,"fill-opacity":.35}},
+        {id:"soil-line",type:"line",source:"soils",paint:{"line-color":"#f6c445","line-width":["interpolate",["linear"],["zoom"],12,.6,17,1.8]}},
+        {id:"nwi-line",type:"line",source:"nwi",paint:{"line-color":NWI_COLORS,"line-width":["interpolate",["linear"],["zoom"],11,.8,17,2.2]}},
+        {id:"sel",type:"line",source:"sel",paint:{"line-color":"#ffffff","line-width":3.5,"line-dasharray":[2,1.2]}},
+        {id:"acc-fill",type:"fill",source:"acc",paint:{"fill-color":"#2c7da0","fill-opacity":.18}},
+        {id:"acc-line",type:"line",source:"acc",paint:{"line-color":"#2c7da0","line-width":1.5}},
+        {id:"pts",type:"circle",source:"pts",paint:{"circle-radius":7,"circle-color":"#ffffff","circle-stroke-color":"#1c2a26","circle-stroke-width":2.5}}]}});
+  map.addControl(new ml.NavigationControl({showCompass:false}),"top-right");
+  map.addControl(new ml.ScaleControl({unit:"imperial"}),"bottom-left");
+  await new Promise(r=>map.once("load",r));
+  mapReady=true;applyMapPrefs();refreshAreaOutlines();
+  mapWrap.querySelector(".maplibregl-ctrl-attrib")?.classList.remove("maplibregl-compact-show"); // start collapsed; tap (i) to read sources
+  map.on("moveend",refreshMapData);
+  map.on("moveend",updateImgChip);
+  map.on("moveend",()=>{if(!mapWrap.querySelector("#mAreas").hidden&&!areaJob)renderAreas()});
+  map.on("click",onMapClick);
+  map.on("mouseenter","pts",()=>map.getCanvas().style.cursor="pointer");
+  map.on("mouseleave","pts",()=>map.getCanvas().style.cursor=placing?"crosshair":"");
+}
+function applyMapPrefs(){
+  if(!mapReady)return;
+  const vis=(id,on)=>map.setLayoutProperty(id,"visibility",on?"visible":"none");
+  const on=BASES[mapPrefs.base]||[];IMG_ORDER.forEach(id=>vis("img-"+id,on.includes(id)));vis("topo",mapPrefs.base==="topo");
+  ["soil-fill","soil-line"].forEach(id=>vis(id,mapPrefs.soils));["nwi-fill","nwi-line"].forEach(id=>vis(id,mapPrefs.nwi));vis("pts",mapPrefs.pts);
+}
+function syncMapPanel(){
+  mapWrap.querySelector("#mBase").value=mapPrefs.base;
+  mapWrap.querySelector("#mSoils").checked=mapPrefs.soils;mapWrap.querySelector("#mNwi").checked=mapPrefs.nwi;mapWrap.querySelector("#mPts").checked=mapPrefs.pts;
+}
+mapWrap.addEventListener("change",e=>{
+  const t=e.target;
+  if(t.id==="mBase")mapPrefs.base=t.value;if(t.id==="mSoils")mapPrefs.soils=t.checked;if(t.id==="mNwi")mapPrefs.nwi=t.checked;if(t.id==="mPts")mapPrefs.pts=t.checked;
+  saveMapPrefs();applyMapPrefs();refreshMapData();updateImgChip();
+});
+mapWrap.addEventListener("click",e=>{
+  if(e.target.id==="mLayers"){const pn=mapWrap.querySelector("#mPanel");pn.hidden=!pn.hidden;e.target.setAttribute("aria-expanded",!pn.hidden);mapWrap.querySelector("#mAreas").hidden=true}
+  if(e.target.id==="mFull"){const on=!mapWrap.classList.contains("full");mapWrap.classList.toggle("full",on);document.body.classList.toggle("mapfull",on);
+    e.target.textContent=on?"Exit full screen":"Full screen";if(map)setTimeout(()=>map.resize(),50)}
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&mapWrap.classList.contains("full"))mapWrap.querySelector("#mFull").click()});
+function setHint(t){const h=mapWrap.querySelector("#mHint");h.hidden=!t;h.textContent=t||""}
+function setPlacing(on){
+  placing=on;const b=document.getElementById("placePt");if(b){b.setAttribute("aria-pressed",on);b.textContent=on?"Cancel placing":"Tap map to place point"}
+  if(map)map.getCanvas().style.cursor=on?"crosshair":"";
+  if(on&&mapPopup)mapPopup.remove();
+  refreshMapData();
+}
+let refT=null;
+function refreshMapData(){clearTimeout(refT);refT=setTimeout(refreshNow,120)}
+async function refreshNow(){
+  if(!mapReady||!mapWrap.isConnected)return;
+  const z=map.getZoom(),b=map.getBounds(),[w,s,e,n]=[b.getWest(),b.getSouth(),b.getEast(),b.getNorth()];
+  const hints=[];
+  const fill=async(key,src,minZ,props,on)=>{
+    const d=DS[key];let feats=[];
+    if(on&&z>=minZ&&(d.state==="ready"||d.data)){try{const D=await dsLoad(d);feats=dsInView(D,w,s,e,n,6000).map(i=>({type:"Feature",id:i,properties:{i,...props(D,i)},geometry:dsGeometry(D,i)}))}catch(err){}}
+    else if(on&&z<minZ)hints.push(key==="soils"?"soils":"wetlands");
+    map.getSource(src).setData({type:"FeatureCollection",features:feats});
+  };
+  await fill("soils","soils",12.5,(D,i)=>{const k=String(D.keys[dsPolyKey(D,i)]),m=D.mu[k]||{};return {k,s:m.s,h:m.h==null?-1:m.h}},mapPrefs.soils);
+  await fill("nwi","nwi",11,(D,i)=>{const [c,t]=D.codes[D.keys[dsPolyKey(D,i)]];return {c,t}},mapPrefs.nwi);
+  map.getSource("pts").setData({type:"FeatureCollection",features:points.filter(q=>q.id!==cur&&q.site.lat&&q.site.lon).map(q=>({type:"Feature",properties:{id:q.id,name:q.site.point||"Untitled"},geometry:{type:"Point",coordinates:[+q.site.lon,+q.site.lat]}}))});
+  setHint(placing?`Tap the map to place ${P()?.site.point||"the point"}`:hints.length?`Zoom in to see ${hints.join(" and ")}`:"");
+}
+function dsPolyKey(D,i){let pos=D.H[10]+D.polyOff[i],v=0,s=1,c;do{c=D.u8[pos++];v+=(c&127)*s;s*=128}while(c>127);return v}
+function circle(lat,lon,m){const c=[],kx=111320*Math.cos(lat*Math.PI/180),ky=110574;for(let k=0;k<=64;k++){const a=k/64*2*Math.PI;c.push([lon+Math.cos(a)*m/kx,lat+Math.sin(a)*m/ky])}return {type:"Polygon",coordinates:[c]}}
+function updateMapPoint(){
+  if(!mapReady)return;
+  const p=P(),has=p&&p.site.lat&&p.site.lon&&isFinite(+p.site.lat)&&isFinite(+p.site.lon);
+  if(!has){if(marker){marker.remove();marker=null}}
+  else{
+    const ll=[+p.site.lon,+p.site.lat];
+    if(!marker){
+      const el=document.createElement("div");el.className="pin";el.setAttribute("aria-label","Sampling point (drag to adjust)");
+      marker=new maplibregl.Marker({element:el,draggable:true,anchor:"bottom"}).setLngLat(ll).addTo(map);
+      marker.on("dragend",()=>{const l=marker.getLngLat();movePoint(l.lat,l.lng,"dragged on map")});
+    }else marker.setLngLat(ll);
+    marker.getElement().title=`${p.site.point||"Sampling point"}: drag to adjust`;
+  }
+  map.getSource("acc").setData(has&&p.site.locSrc==="GPS"&&p.site.acc?circle(+p.site.lat,+p.site.lon,p.site.acc):{type:"FeatureCollection",features:[]});
+  refreshMapData();
+}
+async function onMapClick(e){
+  const {lng,lat}=e.lngLat;
+  if(placing){setPlacing(false);movePoint(lat,lng,"map tap");return}
+  const ml=window.maplibregl,box=document.createElement("div");box.className="pop";
+  const pt=mapPrefs.pts&&map.queryRenderedFeatures(e.point,{layers:["pts"]})[0];
+  if(pt){box.innerHTML=`<b>${esc(pt.properties.name)}</b><br><button class="btn quiet" data-open="${esc(pt.properties.id)}">Open this point</button>`;}
+  else{
+    const parts=[],sel=[];let imgHere="";
+    if(mapPrefs.soils&&(DS.soils.state==="ready"||DS.soils.data))try{const r=await lookupSoil(lat,lng);
+      if(r){const m=DS.soils.data.mu[r.mk]||{};sel.push(dsGeometry(DS.soils.data,r.i));
+        parts.push(`<div><span class="tag">Soil</span><b>${esc(m.s)}</b> ${esc(m.n)}<br><small>${m.h==null?"Hydric not rated":m.h+"% hydric"} · ${(m.c||[]).filter(c=>c[4]).map(c=>`${esc(c[0])} ${c[1]}% (${esc(c[2]||"–")}, hydric ${esc(c[3]||"–")})`).join("; ")}</small></div>`);
+        imgHere=imageryAt(m.a)}
+      else parts.push('<div><span class="tag">Soil</span>No SSURGO map unit here</div>')}catch(err){}
+    if(mapPrefs.nwi&&(DS.nwi.state==="ready"||DS.nwi.data))try{const r=await lookupNwi(lat,lng);
+      if(!r.none){sel.push(dsGeometry(DS.nwi.data,r.i));parts.push(`<div><span class="tag nwi">NWI</span><b>${esc(r.code)}</b> ${esc(r.desc)}${r.proj?`<br><small>${esc(projText(r.proj))}</small>`:""}</div>`)}
+      else parts.push(`<div><span class="tag nwi">NWI</span>${r.covered?"Not in a mapped wetland":"Outside the offline NWI data"}</div>`)}catch(err){}
+    map.getSource("sel").setData({type:"FeatureCollection",features:sel.map(g=>({type:"Feature",properties:{},geometry:g}))});
+    box.innerHTML=(parts.join("")||'<div class="note">Turn on soils or NWI in Layers to see what is mapped here.</div>')+(imgHere?`<div><small>Basemap imagery here: ${esc(imgHere)}</small></div>`:"")+
+      `<button class="btn quiet" data-place="1">Move ${esc(P()?.site.point||"point")} here</button>`;
+  }
+  box.addEventListener("click",ev=>{const t=ev.target;
+    if(t.dataset.place){mapPopup.remove();movePoint(lat,lng,"map tap")}
+    if(t.dataset.open){mapPopup.remove();cur=t.dataset.open;renderAll();window.scrollTo(0,0)}});
+  if(mapPopup)mapPopup.remove();
+  mapPopup=new ml.Popup({maxWidth:"320px",focusAfterOpen:false}).setLngLat(e.lngLat).setDOMContent(box).addTo(map);
+  mapPopup.on("close",()=>{if(map.getSource("sel"))map.getSource("sel").setData({type:"FeatureCollection",features:[]})});
 }
 
 /* ---------- Photos ---------- */
@@ -542,7 +1296,9 @@ async function addPhotos(files){
   const p=P();let loc=null;
   try{loc=await new Promise(r=>{if(!navigator.geolocation)return r(null);navigator.geolocation.getCurrentPosition(x=>r(x.coords),()=>r(null),{timeout:8000,enableHighAccuracy:true})})}catch(e){}
   for(const f of files){try{const data=await shrink(f);p.photos.push({data,caption:"",bearing:"",time:Date.now(),lat:loc?loc.latitude:(p.site.lat||""),lon:loc?loc.longitude:(p.site.lon||"")})}catch(e){toast("One photo couldn’t be read.")}}
-  save();renderPanel();toast(`${files.length} photo${files.length>1?"s":""} added`);
+  save();const ok=(await flushSave()).every(Boolean);renderPanel(); // photos are written straight away, not after the usual short delay
+  toast(ok?`${files.length} photo${files.length>1?"s":""} added and saved`:"Photo NOT saved: the phone is out of space for this app. Back up now.");
+  checkStorage();
 }
 
 /* ---------- Report ---------- */
@@ -553,6 +1309,20 @@ function reportHTML(p){
     return `<tr><th colspan="4">${st.name} (plot size: ${st.plot})</th></tr>${c.rows.map(r=>`<tr><td><i>${esc(r.sp)}</i></td><td>${r.c}</td><td>${c.dom.has(r.i)?"Y":"N"}</td><td>${esc(r.st)}${r.src==="hand"?" *":r.nl?" †":""}</td></tr>`).join("")}<tr><td style="text-align:right">Total cover</td><td>${c.tot}</td><td colspan="2">50% = ${+c.fifty.toFixed(1)}, 20% = ${+c.twenty.toFixed(1)}</td></tr>`}).join("");
   const lay=p.soil.layers.filter(l=>l.top!==""||l.mc).map(l=>`<tr><td>${esc(l.top)}–${esc(l.bot)}</td><td>${esc(l.mc)}</td><td>${esc(l.mp)}</td><td>${esc(l.rc)}</td><td>${esc(l.rp)}</td><td>${esc(l.rt)}</td><td>${esc(l.rl)}</td><td>${esc(l.tex)}</td><td>${esc(l.rem)}</td></tr>`).join("");
   const list=(arr,obj)=>arr.filter(([k])=>obj[k]).map(([k,n])=>`${esc(n)} (${k==="OTHER"?"other":k})`).join("; ")||"None";
+  /* SSURGO lookup recorded for this point (Site tab), with the survey area version it came from. */
+  /* NWI lookup recorded for this point, with the NWI data version it came from. */
+  const na=s.nwiAt;
+  const nwiRows=!na?"":`<tr><td>NWI at point</td><td>${na.none?(na.covered?"Not in a mapped wetland"+(na.near?`; nearest mapped wetland ${esc(na.near.code)} (${esc(na.near.desc)}) about ${na.near.d} m away`:""):"Outside the offline NWI data")
+      :`${esc(na.code)}: ${esc(nwiDescribe(na.code).short)}`}${na.lat!=+s.lat||na.lon!=+s.lon?` (looked up at ${na.lat}, ${na.lon})`:""}${na.proj?`<br>${esc(projText(na.proj))}`:""}</td></tr>
+    <tr><td>NWI data version</td><td>${esc(nwiVersionText(na.version))}<br><small>USFWS National Wetlands Inventory; offline copy built ${esc(na.version.built||"")}</small></td></tr>`;
+  const so=s.ssurgo;
+  const ssurgoRows=!so?"":so.none?`<tr><td>SSURGO map unit at point</td><td>No map unit at ${so.lat}, ${so.lon} in the offline soil data (${esc(so.areas)})</td></tr>`
+    :`<tr><td>SSURGO map unit at point</td><td>${esc(so.musym)} – ${esc(so.muname)} (map unit key ${esc(so.mukey)}${so.lat!=+s.lat||so.lon!=+s.lon?`; looked up at ${so.lat}, ${so.lon}`:""})<br>
+     Map unit percent hydric: ${so.hydric==null?"not rated":so.hydric+"%"}<br>
+     Major components: ${so.comps.filter(c=>c[4]).map(c=>`${esc(c[0])} ${c[1]??"?"}% (${esc(c[2]||"drainage not rated")}; hydric: ${esc(c[3]||"not rated")})`).join("; ")||"none listed"}
+     ${so.comps.some(c=>!c[4]&&c[3]==="Yes")?`<br>Minor hydric components: ${so.comps.filter(c=>!c[4]&&c[3]==="Yes").map(c=>`${esc(c[0])} ${c[1]??"?"}%`).join(", ")}`:""}
+     ${so.nb&&so.nb.d<=15?`<br>About ${so.nb.d} m from the boundary with ${esc(so.nb.musym)} ${esc(so.nb.muname)}`:""}${so.gap?"<br>Point fell in a hairline gap between polygons; nearest map unit shown":""}</td></tr>
+     <tr><td>Soil survey data version</td><td>${esc(soilVersionText(so))}<br><small>USDA-NRCS SSURGO via Web Soil Survey; offline copy built ${esc(so.built||"")}</small></td></tr>`;
   /* Where each status came from: the NWPL version that filled it, set by hand, or UPL default for unlisted species. */
   const vrows=STRATA.flatMap(st=>vc.per[st.k].rows);
   const lists=[...new Set(vrows.filter(r=>r.list).map(r=>r.list))];
@@ -575,7 +1345,7 @@ function reportHTML(p){
   <table class="kv"><tr><td>Project/site</td><td>${esc(s.project)}</td></tr><tr><td>County, state</td><td>${esc(s.county)} County, Illinois</td></tr><tr><td>Sampling date</td><td>${esc(s.date)}</td></tr>
   <tr><td>Applicant/owner</td><td>${esc(s.owner)}</td></tr><tr><td>Investigator(s)</td><td>${esc(s.investigator)}</td></tr><tr><td>Sampling point</td><td>${esc(s.point)}</td></tr>
   <tr><td>Section, township, range</td><td>${esc(s.str)}</td></tr><tr><td>Landform / local relief / slope</td><td>${esc(s.landform)} / ${esc(s.relief)} / ${esc(s.slope)}${s.slope?"%":""}</td></tr>
-  <tr><td>Lat / long / datum</td><td>${esc(s.lat)} / ${esc(s.lon)} / ${esc(s.datum)}</td></tr><tr><td>Soil map unit name</td><td>${esc(s.mapunit)}</td></tr><tr><td>NWI classification</td><td>${esc(s.nwi)}</td></tr>
+  <tr><td>Lat / long / datum</td><td>${esc(s.lat)} / ${esc(s.lon)} / ${esc(s.datum)}${s.lat&&s.lon&&locNote(p)?`<br><small>${esc(locNote(p))}</small>`:""}</td></tr><tr><td>Soil map unit name</td><td>${esc(s.mapunit)}</td></tr>${ssurgoRows}<tr><td>NWI classification</td><td>${esc(s.nwi)}</td></tr>${nwiRows}${imageryReportRow(s)}
   <tr><td>Conditions typical for time of year?</td><td>${yesno(s.typical)}</td></tr><tr><td>Significantly disturbed?</td><td>${yesno(s.sigDist)}</td></tr><tr><td>Naturally problematic?</td><td>${yesno(s.natProb)}</td></tr><tr><td>Normal circumstances present?</td><td>${yesno(s.normal)}</td></tr></table>
   <h2>Summary of findings</h2><table class="kv"><tr><td>Hydrophytic vegetation present?</td><td>${yesno(d.veg)}</td></tr><tr><td>Hydric soil present?</td><td>${yesno(d.sc.v)}</td></tr><tr><td>Wetland hydrology present?</td><td>${yesno(d.hc.v)}</td></tr><tr><td><b>Is the sampled area within a wetland?</b></td><td><b>${yesno(d.wet)}</b></td></tr><tr><td>Remarks</td><td>${esc(s.remarks)}</td></tr></table>
   <h2>Vegetation (use scientific names of plants)</h2><table><tr><th>Species</th><th>Absolute % cover</th><th>Dominant species?</th><th>Indicator status</th></tr>${strat||'<tr><td colspan="4">No species recorded</td></tr>'}</table>
@@ -601,8 +1371,139 @@ function exportFile(name,data){
     document.body.appendChild(a);a.click();a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),60000);
     toast("Downloading "+name);
-  }catch(e){note.innerHTML=`<span class="warn">Couldn’t save the file (${esc(e&&e.message||"error")}).</span>`}
+    return true;
+  }catch(e){const m=`Couldn’t save the file (${e&&e.message||"error"}).`;if(note)note.innerHTML=`<span class="warn">${esc(m)}</span>`;else toast(m);return false}
 }
+
+/* ---------- Data safety: storage checks, warnings, backup and restore ---------- */
+const RISK={persisted:null,est:null,lastBackup:null,later:false};
+const isIOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+const isInstalled=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+const fmtB=b=>b>=1073741824?(b/1073741824).toFixed(1)+" GB":b>=1048576?(b/1048576).toFixed(1)+" MB":Math.max(1,Math.round(b/1024))+" KB";
+let storT=0;
+async function checkStorage(){
+  try{if(navigator.storage&&navigator.storage.persisted)RISK.persisted=await navigator.storage.persisted()}catch(e){}
+  try{if(navigator.storage&&navigator.storage.estimate)RISK.est=await navigator.storage.estimate()}catch(e){}
+  updateRisk();
+}
+const freeMB=()=>RISK.est&&RISK.est.quota?(RISK.est.quota-RISK.est.usage)/1048576:null;
+const unbacked=()=>points.filter(p=>p.modified&&(!RISK.lastBackup||p.modified>RISK.lastBackup));
+function risks(){
+  const out=[],f=freeMB();
+  if(!idb)out.push(["bad","This browser isn’t saving your points (private browsing?). Back up before closing the app."]);
+  if(saveErr)out.push(["bad",saveErr.quota?"Out of space: your latest changes are NOT saved on this phone. Back up now, then free space (delete offline areas, or free space on the phone).":`Your latest changes couldn’t be saved (${saveErr.msg}). Back up now.`]);
+  if(f!=null&&f<150)out.push(["bad",`Only ${f.toFixed(0)} MB of storage left for this app, so new photos may not save. Back up, then delete offline areas or free space on the phone.`]);
+  else if(RISK.est&&RISK.est.quota&&RISK.est.usage/RISK.est.quota>.85)out.push(["mid","This app has used most of the storage the browser allows it."]);
+  const u=unbacked(),ph=u.reduce((a,p)=>a+p.photos.length,0),age=RISK.lastBackup?(Date.now()-RISK.lastBackup)/864e5:Infinity;
+  if(u.length&&(RISK.persisted!==true||age>7))
+    out.push(["mid",`${u.length} point${u.length>1?"s":""}${ph?` and ${ph} photo${ph>1?"s":""}`:""} not backed up${RISK.persisted!==true?". This browser hasn’t promised to keep them if space runs low":""}.`]);
+  return out;
+}
+function updateRisk(){
+  const el=document.getElementById("risk");if(!el)return;
+  const r=risks().filter(x=>x[0]==="bad"||!RISK.later);
+  if(!r.length){el.hidden=true;el.innerHTML="";return}
+  const bad=r.some(x=>x[0]==="bad");
+  el.hidden=false;el.className="risk "+(bad?"bad":"mid");
+  el.innerHTML=`<span>${r.map(x=>esc(x[1])).join(" ")}</span><button class="btn" data-risk="backup">Back up now</button>${tab!=="device"?'<button class="btn quiet" data-risk="dev">Details</button>':""}${bad?"":'<button class="btn quiet" data-risk="later">Later</button>'}`;
+}
+document.getElementById("risk").addEventListener("click",e=>{const a=e.target.dataset.risk;
+  if(a==="backup")backupNow(canShareFiles());
+  if(a==="dev"){tab="device";renderTabs();renderPanel();window.scrollTo(0,0)}
+  if(a==="later"){RISK.later=true;updateRisk()}});
+const canShareFiles=()=>{try{return !!(navigator.canShare&&navigator.canShare({files:[new File(["{}"],"t.json",{type:"application/json"})]}))}catch(e){return false}};
+const backupName=()=>`wetland_backup_${new Date().toISOString().slice(0,16).replace(/[:T]/g,"-")}.json`;
+function backupJSON(){return JSON.stringify({app:"wetland-form",kind:"backup",format:1,exported:new Date().toISOString(),species_list:LIST?LIST.label:null,points},null,1)}
+function markBackedUp(){RISK.lastBackup=Date.now();RISK.later=false;metaSet("lastBackup",RISK.lastBackup);updateRisk();if(tab==="device")renderDevice()}
+async function backupNow(share){
+  await flushSave();const name=backupName(),data=backupJSON();
+  if(share){
+    try{await navigator.share({files:[new File([data],name,{type:"application/json"})],title:"Wetland form backup"});markBackedUp();toast("Backup sent");return}
+    catch(e){if(e&&e.name==="AbortError")return;toast("Sharing didn’t work, so the backup is downloading instead.")}
+  }
+  if(exportFile(name,data))markBackedUp();
+}
+async function restoreFile(file){
+  let data=null;try{data=JSON.parse(await file.text())}catch(e){}
+  const list=Array.isArray(data)?data:data&&data.points; // also accepts the older “all points” download
+  if(!Array.isArray(list)||!list.length||!list.every(p=>p&&p.id&&p.site&&p.veg&&p.soil&&p.hydro)){alert("That file isn’t a backup from this app.");return}
+  const nPh=list.reduce((a,p)=>a+((p.photos||[]).length),0);
+  if(!confirm(`Restore ${list.length} point${list.length>1?"s":""} and ${nPh} photo${nPh===1?"":"s"} from “${file.name}”?\n\nPoints already on this phone are kept. If a point is in both, the more recently edited copy is kept.`))return;
+  await flushSave();
+  let added=0,updated=0,kept=0,failed=0;
+  for(const q of list){q.photos=q.photos||[];const i=points.findIndex(p=>p.id===q.id);
+    const newer=i>=0&&(q.modified||q.created||0)>(points[i].modified||points[i].created||0);
+    if(i>=0&&!newer){kept++;continue}
+    if(!(await dbPut(q))){failed++;continue}
+    if(i<0){points.push(q);added++}else{points[i]=q;updated++}}
+  // the empty starter point made on first launch isn't needed once real points are back
+  for(const p of points.filter(p=>!p.modified&&!p.site.lat&&!list.some(q=>q.id===p.id)))if(points.length>1){dbDel(p.id);points=points.filter(x=>x!==p)}
+  points.sort((a,b)=>a.created-b.created);if(!points.some(p=>p.id===cur))cur=points[points.length-1].id;
+  renderAll();checkStorage();
+  alert(`Restore finished: ${added} added, ${updated} replaced with the newer backup copy, ${kept} already up to date on this phone.${failed?`\n\n${failed} couldn’t be saved; the phone may be out of space.`:""}`);
+}
+async function cacheSize(name,sample){ // bytes in a Cache Storage cache; large caches are estimated from a sample
+  try{const c=await caches.open(name),ks=await c.keys();let b=0;const n=sample?Math.min(sample,ks.length):ks.length;
+    for(const k of ks.slice(0,n)){const r=await c.match(k);if(r)b+=(await r.blob()).size}
+    return {n:ks.length,bytes:n?b/n*ks.length:0}}catch(e){return {n:0,bytes:0}}
+}
+let pendingFit=null;
+async function renderDevice(){
+  const el=document.getElementById("devBody");if(!el)return;
+  await checkStorage();
+  const hasCaches="caches" in window,names=hasCaches?await caches.keys():[];
+  const appName=names.find(n=>n.startsWith("wetland-app-")),app=appName?await cacheSize(appName):null;
+  let appOk=false,sppOk=false;if(appName){const c=await caches.open(appName);appOk=!!(await c.match("./index.html"));sppOk=!!(await c.match("./species.json"))}
+  const areas=hasCaches?await listAreas():[],viewed=hasCaches?await cacheSize(VIEW_CACHE,40):{n:0,bytes:0};
+  const ptsBytes=new Blob([JSON.stringify(points)]).size,nPh=points.reduce((a,p)=>a+p.photos.length,0),u=unbacked();
+  if(tab!=="device"||!document.getElementById("devBody"))return;
+  const est=RISK.est,used=est&&est.usage,quota=est&&est.quota;
+  const ds=d=>{const mb=d.idx?Object.values(d.idx.files).reduce((a,b)=>a+b,0):0;
+    return [d.state==="ready"?`<span class="good">Ready offline</span> (built ${esc(d.idx.built)})`:d.state==="downloading"?`Downloading… ${d.pct}%`:`<span class="bad">Not on this phone yet</span>. Open the app once with internet to download it.`,mb?fmtB(mb):""]};
+  const areaBytes=areas.reduce((a,x)=>a+(x.bytes||0),0);
+  const rows=[
+    ["The app itself (form, calculations, map)",appOk?`<span class="good">Ready offline</span> (version ${esc(appName.replace("wetland-app-",""))})`:'<span class="bad">Not saved yet</span>. Open the app once with internet.',app?fmtB(app.bytes):""],
+    ["Plant list ("+esc(listLabel())+")",sppOk&&SPP.length?`<span class="good">Ready offline</span> (${SPP.length.toLocaleString()} species)`:'<span class="bad">Not saved yet</span>',""],
+    ["Soils (SSURGO)",...ds(DS.soils)],["NWI wetlands",...ds(DS.nwi)],
+    ["Imagery: downloaded project areas",areas.length?`<span class="good">${areas.length} area${areas.length>1?"s":""} ready offline</span>`:"None yet. Outside downloaded areas, imagery needs signal.",areaBytes?fmtB(areaBytes):""],
+    ["Imagery: tiles you’ve already viewed",`${viewed.n.toLocaleString()} tiles kept (newest ${VIEW_LIMIT.toLocaleString()})${viewed.n?' <button class="btn quiet" id="clrViewed">Clear</button>':""}`,viewed.bytes?"about "+fmtB(viewed.bytes):""],
+    ["Your points and photos",`<span class="good">Saved on this phone</span>: ${points.length} point${points.length>1?"s":""}, ${nPh} photo${nPh===1?"":"s"}`,fmtB(ptsBytes)]];
+  const prot=RISK.persisted===true?'<span class="good">Protected.</span> The browser has agreed not to clear this app’s data when the phone runs low on space.'
+    :RISK.persisted===false?`<span class="bad">Not protected.</span> If the phone runs low on space, the browser may clear this app’s data, including points and photos. ${isInstalled()?"Browsers usually grant protection to installed apps you use regularly; check again after a few days of use.":"Installing the app (Add to Home Screen) usually lets the browser grant protection."} Until then, back up after each field day. <button class="btn quiet" id="askPersist">Ask the browser again</button>`
+    :"This browser doesn’t report whether it will keep the app’s data. Back up after each field day.";
+  el.innerHTML=`${risks().length?`<p class="note warn">${risks().map(x=>esc(x[1])).join(" ")}</p>`:""}
+  <h3>Your points and photos</h3>
+  <p>Last backup: <b>${RISK.lastBackup?new Date(RISK.lastBackup).toLocaleString():"never"}</b>${u.length?` · <span class="bad">${u.length} point${u.length>1?"s":""} changed since</span>`:points.some(p=>p.modified)?' · <span class="good">all points backed up</span>':""}</p>
+  <div class="row"><button class="btn primary" id="bkDown">Back up to a file</button>${canShareFiles()?'<button class="btn" id="bkShare">Send backup (Drive, email, Files…)</button>':""}
+   <label class="btn quiet" style="display:inline-flex;align-items:center">Restore from a backup file<input type="file" id="bkIn" accept=".json,application/json" style="position:absolute;left:-9999px"></label></div>
+  <p class="note">A backup is one file with every point, all form data and all photos. Keep it off the phone (Google Drive, iCloud, email to yourself). Restoring adds the points back without deleting anything already on the phone.</p>
+  <p class="note">${prot}</p>
+  ${isIOS&&!isInstalled()?'<p class="note warn">On iPhone and iPad, Safari deletes a website’s saved data after 7 days without a visit. Add this app to your Home Screen (Share › Add to Home Screen) and open it from there so that doesn’t happen.</p>':""}
+  <h3>What works offline</h3>
+  <table><tr><th>Item</th><th>Status on this phone</th><th class="n">Size</th></tr>${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td class="n">${r[2]}</td></tr>`).join("")}</table>
+  <h3>Downloaded project areas</h3>
+  ${areas.length?`<ul class="dareas">${areas.map(a=>`<li><div><b>${esc(a.name)}</b> <span class="sz">${fmtB(a.bytes||0)}</span></div>
+    <small>Downloaded ${new Date(a.created).toLocaleDateString()} · ${a.sources.map(s=>esc(IMG[s.id]?IMG[s.id].label:s.label)).join(", ")}${a.failed?` · <span class="bad">${a.failed} tiles missing</span>`:""}</small>
+    <div class="row"><button class="btn quiet" data-dshow="${a.cache}">Show on map</button><button class="btn quiet" data-ddel="${a.cache}">Delete</button></div></li>`).join("")}</ul>
+    <p class="note">${areas.length} area${areas.length>1?"s":""}, ${fmtB(areaBytes)} in total.</p>`
+    :'<p class="note">None yet.</p>'}
+  <p class="note">To download an area: Site tab › zoom the map to your project › Offline areas › Download.</p>
+  <h3>Phone storage</h3>
+  ${est&&quota?`<div class="meter" aria-hidden="true"><span style="width:${Math.min(100,used/quota*100).toFixed(1)}%"></span></div>
+    <p class="note">This app uses ${fmtB(used)} of the ${fmtB(quota)} the browser allows it (${fmtB(quota-used)} free).</p>`:'<p class="note">This browser doesn’t report storage use.</p>'}`;
+}
+main.addEventListener("click",async e=>{
+  const t=e.target;if(tab!=="device")return;
+  if(t.id==="bkDown")backupNow(false);
+  if(t.id==="bkShare")backupNow(true);
+  if(t.id==="askPersist"){try{await navigator.storage.persist()}catch(err){}await checkStorage();renderDevice();toast(RISK.persisted?"Storage is now protected":"The browser didn’t grant protection yet")}
+  if(t.id==="clrViewed"&&confirm("Clear imagery you’ve viewed online? Downloaded project areas are kept.")){await caches.delete(VIEW_CACHE);renderDevice()}
+  if(t.dataset.dshow){const a=(await listAreas()).find(x=>x.cache===t.dataset.dshow);if(a){pendingFit=a.bbox;tab="site";renderAll();window.scrollTo(0,0)}}
+  if(t.dataset.ddel){const a=(await listAreas()).find(x=>x.cache===t.dataset.ddel);
+    if(a&&confirm(`Delete the offline imagery for “${a.name}” (${fmtB(a.bytes||0)})? You can download it again later.`)){await caches.delete(a.cache);refreshAreaOutlines();renderDevice();toast("Area deleted")}}
+});
+main.addEventListener("change",e=>{if(e.target.id==="bkIn"&&e.target.files[0]){restoreFile(e.target.files[0]);e.target.value=""}});
+addEventListener("appinstalled",()=>{try{navigator.storage.persist().then(checkStorage)}catch(e){}});
 
 /* ---------- Misc ---------- */
 let tt;function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),2400)}
@@ -610,12 +1511,14 @@ function renderAll(){renderPointSel();renderTabs();renderPanel();renderStatus()}
 (async()=>{
   idb=await openDB();
   await loadSpecies();
+  Object.values(DS).forEach(dsInit); // background: checks for and downloads the offline soil and NWI data
   points=(await dbAll()).sort((a,b)=>a.created-b.created);
   if(!points.length){const p=blank(1);points.push(p);dbPut(p)}
   cur=points[points.length-1].id;renderAll();
-  if(!idb)toast("This browser can’t store data. Export before closing.");
-  /* Ask the browser not to evict stored points and photos under storage pressure. */
-  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+  RISK.lastBackup=await metaGet("lastBackup");
+  /* Ask the browser not to evict stored points and photos under storage pressure, then check and warn. */
+  try{if(navigator.storage&&navigator.storage.persist)await navigator.storage.persist()}catch(e){}
+  checkStorage();setInterval(checkStorage,120000);
 })();
 
 /* ---------- Offline support (service worker) ---------- */
