@@ -1,6 +1,6 @@
 /* Service worker: makes the wetland form work offline.
    Bump VERSION whenever index.html or other app files change so phones pick up the update. */
-const VERSION = "v6";
+const VERSION = "v7";
 const APP_CACHE = "wetland-app-" + VERSION;
 const FONT_CACHE = "wetland-fonts";
 const TILE_CACHE = "wetland-basemap";
@@ -13,6 +13,7 @@ const APP_FILES = [
   "./species.json",
   "./lib/maplibre-gl.js",
   "./lib/maplibre-gl.css",
+  "./lib/proj4.js",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/icon-maskable-512.png",

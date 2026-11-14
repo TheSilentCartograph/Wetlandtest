@@ -105,8 +105,10 @@ td.num{width:6rem}
 .summary{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:1rem}
 .summary dl{display:grid;grid-template-columns:1fr auto;gap:.5rem 1rem;margin:0}
 .summary dt{color:var(--muted)}.summary dd{margin:0;font-weight:700}
-.toast{position:fixed;left:50%;bottom:calc(1rem + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:.6rem 1rem;border-radius:6px;font-size:.9rem;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast{position:fixed;z-index:60;max-width:min(92vw,30rem);text-align:center;left:50%;bottom:calc(1rem + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:.6rem 1rem;border-radius:6px;font-size:.9rem;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.show{opacity:1}
+body.mapfull .toast{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 7.5rem);font-size:1rem}
+.toast.alert{background:#b3261e;color:#fff;font-weight:700}
 img{max-width:100%}
 @media (max-width:640px){.status{grid-template-columns:repeat(2,1fr)}.factor:nth-child(2){border-right:0}.factor:nth-child(-n+2){border-bottom:1px solid var(--line)}}
 @media (prefers-reduced-motion:reduce){.toast{transition:none}}
@@ -174,6 +176,37 @@ body.mapfull{overflow:hidden}
 .dev .meter{height:.75rem;border-radius:4px;background:var(--soft);overflow:hidden;margin:.3rem 0}.dev .meter span{display:block;height:100%;background:var(--gley)}
 .dev .good{color:var(--gley);font-weight:700}.dev .bad{color:var(--no);font-weight:700}
 #devBtn[aria-pressed="true"]{background:var(--gley);color:var(--gley-ink)}
+/* Full-screen map page: banner at the top, large buttons in thumb reach at the bottom */
+.mapwrap.page{position:fixed;inset:0;height:auto;margin:0;border:0;border-radius:0;z-index:40;--pgbar:140px}
+.mapwrap.page .mapbar{display:none}
+.pgtop{position:absolute;top:0;left:0;right:0;z-index:4;padding:calc(env(safe-area-inset-top,0px) + 8px) 8px 0;pointer-events:none}
+.pgtop[hidden],.pgbar[hidden]{display:none}
+.pgban{pointer-events:auto;border-radius:10px;padding:.6rem .85rem;font-size:1.2rem;font-weight:700;line-height:1.25;color:#fff;background:#3d4a46;box-shadow:0 3px 12px rgba(0,0,0,.35)}
+.pgban small{display:block;font-size:.88rem;font-weight:400;margin-top:.15rem}
+.pgban .sub{display:block;font-size:.78rem;font-weight:400;opacity:.85;margin-top:.2rem}
+.pgban[data-s="in"]{background:#1d6b38}.pgban[data-s="out"]{background:#b3261e}.pgban[data-s="near"]{background:#a65f00}
+.pgbar{position:absolute;left:0;right:0;bottom:0;z-index:4;padding:10px 8px calc(env(safe-area-inset-bottom,0px) + 8px);background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.4) 30%);display:flex;flex-direction:column;gap:8px}
+.pgbar button{border-radius:12px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.pgbig{min-height:60px;font-size:1.15rem;background:var(--gley);color:var(--gley-ink);border:0}
+.pgrow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pgrow button{min-height:58px;font-size:.98rem;background:#fff;color:#1c2a26;border:1px solid rgba(0,0,0,.25);padding:0 .2rem}
+.pgrow button[aria-expanded="true"]{background:#1c2a26;color:#fff}
+.mapwrap.page .mappanel{top:auto;left:8px;right:8px;width:auto;bottom:calc(var(--pgbar) + 6px);max-height:min(60vh,calc(100% - var(--pgbar) - 120px));font-size:1rem;gap:.55rem}
+.mapwrap.page .mappanel label.ck{min-height:2.6rem}.mapwrap.page .mappanel input[type=checkbox]{width:1.4rem;height:1.4rem}
+.mapwrap.page .mappanel .btn{min-height:3rem}
+.mapwrap.page .maplibregl-ctrl-top-right{top:auto;bottom:calc(var(--pgbar) + 34px)}
+.mapwrap.page .maplibregl-ctrl-group button{width:46px;height:46px}
+.mapwrap.page .maplibregl-ctrl-bottom-left,.mapwrap.page .maplibregl-ctrl-bottom-right{bottom:var(--pgbar)}
+.mapwrap.page .mapimg{bottom:calc(var(--pgbar) + 6px);right:auto;left:8px;text-align:left}
+.mapwrap.page .maplibregl-ctrl-bottom-left{bottom:calc(var(--pgbar) + 28px)}
+.mapwrap.page .maphint{bottom:calc(var(--pgbar) + 60px)}
+.pgsheet h4{margin:0}.pgsheet .feats{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.3rem;max-height:34vh;overflow:auto}
+.pgsheet .feats label{display:flex;gap:.6rem;align-items:flex-start;padding:.45rem .3rem;border-bottom:1px solid var(--line);min-height:2.8rem}
+.pgsheet .feats small{display:block;color:var(--muted)}
+.pgsheet .crs{display:flex;flex-direction:column;gap:.2rem}.pgsheet .crs label{display:flex;gap:.6rem;align-items:flex-start;padding:.4rem .2rem;border-bottom:1px solid var(--line)}
+.pgsheet .crs small{display:block;color:var(--muted)}.pgsheet textarea{width:100%;min-height:4rem;font:inherit;font-size:.8rem}
+.pgsheet .row{display:flex;gap:.5rem;flex-wrap:wrap}.pgsheet input[type=text]{width:100%;min-height:2.6rem;font:inherit;padding:.3rem .5rem}
+.pgsheet input[type=radio]{width:1.3rem;height:1.3rem;flex:none;margin-top:.15rem}
 </style>
 </head>
 <body>
@@ -183,6 +216,7 @@ body.mapfull{overflow:hidden}
     <label class="sr" for="pointSel" style="position:absolute;left:-9999px">Sampling point</label>
     <select id="pointSel"></select>
     <button class="btn primary" id="newPt">New point</button>
+    <button class="btn" id="mapBtn">Map</button>
     <button class="btn" id="devBtn" aria-pressed="false">Offline &amp; backup</button>
   </div>
   <div class="risk" id="risk" role="alert" hidden></div>
@@ -250,8 +284,8 @@ const TABS=[["site","Site"],["veg","Vegetation"],["soil","Soil"],["hydro","Hydro
 
 /* ---------- Storage (IndexedDB, falls back to memory) ---------- */
 let idb=null;
-function openDB(){return new Promise(res=>{try{const r=indexedDB.open("wetland-form",2);
-  r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains("points"))d.createObjectStore("points",{keyPath:"id"});if(!d.objectStoreNames.contains("meta"))d.createObjectStore("meta")};
+function openDB(){return new Promise(res=>{try{const r=indexedDB.open("wetland-form",3);
+  r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains("points"))d.createObjectStore("points",{keyPath:"id"});if(!d.objectStoreNames.contains("meta"))d.createObjectStore("meta");if(!d.objectStoreNames.contains("boundaries"))d.createObjectStore("boundaries",{keyPath:"key"})};
   r.onsuccess=()=>res(r.result);r.onerror=()=>res(null)}catch(e){res(null)}})}
 function dbAll(){return new Promise(res=>{if(!idb)return res([]);try{const q=idb.transaction("points").objectStore("points").getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([])}catch(e){res([])}})}
 /* Resolves true only once the write is committed to disk. A full disk shows up as an aborted transaction
@@ -370,11 +404,13 @@ function renderTabs(){
 document.getElementById("tabs").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(!b)return;tab=b.dataset.tab;renderTabs();renderPanel();window.scrollTo(0,0)});
 document.getElementById("pointSel").addEventListener("change",e=>{cur=e.target.value;if(tab==="device")tab="site";renderAll()});
 document.getElementById("devBtn").addEventListener("click",()=>{tab=tab==="device"?"site":"device";renderTabs();renderPanel();window.scrollTo(0,0)});
-document.getElementById("newPt").addEventListener("click",()=>{
+function makePoint(){ // new point that carries over the project details of the current one
   const prev=P();const p=blank(points.length+1);
   if(prev){["project","county","owner","investigator","str","datum"].forEach(k=>p.site[k]=prev.site[k])}
-  points.push(p);cur=p.id;dbPut(p);tab="site";renderAll();toast("New sampling point added");
-});
+  points.push(p);cur=p.id;dbPut(p);return p;
+}
+document.getElementById("newPt").addEventListener("click",()=>{makePoint();tab="site";renderAll();toast("New sampling point added")});
+document.getElementById("mapBtn").addEventListener("click",()=>openMapPage());
 
 /* ---------- Field helpers ---------- */
 const inp=(k,label,type="text",extra="")=>`<label class="f">${label}<input type="${type}" data-k="${k}" value="${esc(getPath(P(),k))}" ${extra}></label>`;
@@ -408,6 +444,7 @@ function siteHTML(){
   <h3>Location</h3>
   <div class="row"><button class="btn primary" id="gps">Use my GPS location</button><button class="btn" id="placePt" aria-pressed="${placing}">${placing?"Cancel placing":"Tap map to place point"}</button></div>
   <p class="note" id="gpsNote">${esc(locNote(P()))}</p>
+  <p class="note" id="bndNote">${bndNoteHTML(P())}</p>
   <div id="mapSlot"></div>
   <p class="note">Drag the red pin to adjust the point. Tap a soil or wetland polygon to see what is mapped there.</p>
   <div class="grid">${inp("site.lat","Latitude","number","step=any")}${inp("site.lon","Longitude","number","step=any")}${inp("site.datum","Datum")}</div>
@@ -553,6 +590,7 @@ main.addEventListener("input",e=>{
     }else{r.nl=false;r.src="hand";e.target.closest(".ind").dataset.s=r.st;const o=e.target.closest("td").querySelector(".nl");if(o)o.remove()}
   }
   if(k==="site.point"||k==="site.project")renderPointSel();
+  if(k==="site.project"){scheduleLookups();updateBoundaryLayer()}
   if(k==="site.lat"||k==="site.lon"){p.site.locSrc="typed";p.site.acc=null;const n=document.getElementById("gpsNote");if(n)n.textContent=locNote(p);scheduleLookups()}
   if(k.startsWith("hydro."))document.querySelector("#main .note").textContent=`Wetland hydrology is present with one primary indicator or two secondary indicators. Currently: ${hydroCalc(p).np} primary, ${hydroCalc(p).ns} secondary.`;
   save();renderStatus();
@@ -805,6 +843,7 @@ async function lookupNwi(lat,lon){
 let lookT=null;
 function scheduleLookups(){clearTimeout(lookT);const id=cur;lookT=setTimeout(()=>{const p=points.find(q=>q.id===id);if(p){runLookups(p);updateMapPoint()}},800)}
 async function runLookups(p,manual){
+  runBoundaryCheck(p,false);
   const lat=parseFloat(p.site.lat),lon=parseFloat(p.site.lon);
   if(!isFinite(lat)||!isFinite(lon)||Math.abs(lat)>90||Math.abs(lon)>180)return;
   await Promise.all([runSoilLookup(p,lat,lon,manual),runNwiLookup(p,lat,lon,manual)]);
@@ -912,7 +951,7 @@ function movePoint(lat,lon,src,acc){
   p.site.lat=lat.toFixed(6);p.site.lon=lon.toFixed(6);p.site.locSrc=src;p.site.acc=acc??null;save();
   setField(p,"lat",p.site.lat);setField(p,"lon",p.site.lon);
   const n=document.getElementById("gpsNote");if(n)n.innerHTML=esc(locNote(p))+gpsAreaWarn(lat,lon);
-  updateMapPoint();runLookups(p);
+  runBoundaryCheck(p,true);updateMapPoint();runLookups(p);
 }
 const gpsAreaWarn=(lat,lon)=>lat>41.0&&lat<42.55&&lon>-89.0&&lon<-87.4?"":' <span class="warn">This point is outside Northeastern Illinois.</span>';
 
@@ -1002,6 +1041,11 @@ async function updateImgChip(){ // label on the map naming the imagery (and its 
   if(seq!==chipSeq)return;
   const id=imageryIdAt(area,z);el.hidden=!id;if(id)el.textContent=`Imagery: ${IMG[id].short} ${IMG[id].year}`;
 }
+function bndReportRow(s){ // export: inside/outside the project boundary when the point was placed
+  const r=s.bnd;if(!r)return s.project&&s.lat?`<tr><td>Project boundary</td><td>No boundary loaded for this project</td></tr>`:"";
+  return `<tr><td>Within project boundary?</td><td><b>${r.near?"Near the boundary (within GPS accuracy)":r.inside?"Yes, inside":"No, OUTSIDE"}</b>: ${esc(bndText(r))}${r.lat!=+s.lat||r.lon!=+s.lon?` (checked at ${r.lat}, ${r.lon})`:""}.<br>
+    <small>Boundary file ${esc(r.file)} for project ${esc(r.project)}, loaded ${esc(new Date(r.imported).toLocaleDateString())}; coordinate system ${esc(r.crs)}.</small></td></tr>`;
+}
 function imageryReportRow(s){ // export: which imagery covers the point, newest first, with year and credit
   if(!s.lat||!s.lon)return "";
   const area=s.ssurgo&&!s.ssurgo.none?s.ssurgo.area:null,ids=[AREA_IMG[area],"naip","usgs"].filter(Boolean);
@@ -1044,7 +1088,7 @@ async function tileToResponse(bitmap,sx,sy){
   const blob=cv.convertToBlob?await cv.convertToBlob({type,quality:.85}):await new Promise(r=>cv.toBlob(r,type,.85));
   return new Response(blob,{headers:{"Content-Type":type}});
 }
-async function downloadArea(name,b,ids){
+async function downloadArea(name,b,ids,extra={}){
   const {plan,tiles}=areaPlan(b,ids);
   if(!tiles)return;
   const id=Date.now().toString(36),cacheName=AREA_PREFIX+id,cache=await caches.open(cacheName);
@@ -1079,11 +1123,12 @@ async function downloadArea(name,b,ids){
     let next=0;await Promise.all(Array.from({length:4},async()=>{while(next<jobs.length&&!job.ctl.signal.aborted)await one(jobs[next++])}));
     if(job.ctl.signal.aborted)throw new Error("cancelled");
     await cache.put(AREA_META,new Response(JSON.stringify({id,name,bbox:b,created:Date.now(),tiles:job.done-job.failed,failed:job.failed,bytes:job.bytes,
-      sources:plan.map(p=>({id:p.id,label:IMG[p.id].label,z:[p.z0,p.z1],tiles:p.n}))}),{headers:{"Content-Type":"application/json"}}));
+      sources:plan.map(p=>({id:p.id,label:IMG[p.id].label,z:[p.z0,p.z1],tiles:p.n})),...extra}),{headers:{"Content-Type":"application/json"}}));
     toast(job.failed?`Area saved; ${job.failed} tiles couldn’t be downloaded`:`Offline area “${name}” saved`);
   }catch(e){await caches.delete(cacheName);if(e.message!=="cancelled")toast("Area download failed: "+(e.message||e))}
   finally{clearInterval(tick);areaJob=null;renderAreas();refreshAreaOutlines()}
 }
+function bndAreaBox(b){const bb=bndBBox(b),lat=(bb[1]+bb[3])/2,dx=100/(111320*Math.cos(lat*Math.PI/180)),dy=100/110574;return [bb[0]-dx,bb[1]-dy,bb[2]+dx,bb[3]+dy].map(v=>+v.toFixed(6))}
 const viewBox=()=>{const b=map.getBounds();return [b.getWest(),b.getSouth(),b.getEast(),b.getNorth()].map(v=>+v.toFixed(6))};
 async function renderAreas(){
   const el=mapWrap.querySelector("#mAreaBody");if(!el||mapWrap.querySelector("#mAreas").hidden)return;
@@ -1100,10 +1145,14 @@ async function renderAreas(){
         <label class="f" style="color:var(--ink)">Area name<input type="text" id="aName" value="${esc(P()?.site.project||P()?.site.point||"Project area")}"></label>
         <button class="btn primary" id="aDownload" style="margin-top:.4rem">Download this view for offline use</button>`;
   }
+  const bnd=curBnd();let bhtml="";
+  if(bnd&&mapReady){const bb=bndAreaBox(bnd),pl=areaPlan(bb,areaIdsForView()),has=(await listAreas()).some(a=>a.boundary&&a.boundary.key===bnd.key&&a.boundary.imported===bnd.imported);
+    bhtml=`<h4>Project boundary: ${esc(bnd.project)}</h4>${has?'<p class="note">Imagery for this boundary is downloaded (see the list below).</p>':""}`+(pl.tiles>AREA_MAX_TILES?`<p class="note warn">The boundary (plus 100 m around it) needs ${pl.tiles.toLocaleString()} tiles, over the ${AREA_MAX_TILES.toLocaleString()} limit. Download it in parts using map views instead.</p>`
+      :`<p class="note">Boundary plus 100 m around it: ${pl.tiles.toLocaleString()} tiles, about ${pl.mb.toFixed(0)} MB. The boundary itself is saved with the download.</p><button class="btn primary" id="aBndDl">${has?"Download again":"Download imagery for the whole boundary"}</button>`)+"<h4>Or the current map view</h4>"}
   const areas=await listAreas();
   let storage="";try{const s=await navigator.storage.estimate();storage=`<p class="note">This device: ${(s.usage/1048576).toFixed(0)} MB used by the app of ${(s.quota/1073741824).toFixed(1)} GB available.</p>`}catch(e){}
   if(!mapWrap.querySelector("#mAreaBody")||areaJob)return;
-  el.innerHTML=`${est}<h4>Saved areas</h4>${areas.length?`<ul class="areas">${areas.map(a=>`<li><b>${esc(a.name)}</b><br><small>${new Date(a.created).toLocaleDateString()} · ${(a.bytes/1048576).toFixed(1)} MB · ${a.sources.map(s=>esc(s.label)).join(", ")}${a.failed?` · ${a.failed} tiles missing`:""}</small><br>
+  el.innerHTML=`${bhtml}${est}<h4>Saved areas</h4>${areas.length?`<ul class="areas">${areas.map(a=>`<li><b>${esc(a.name)}</b><br><small>${new Date(a.created).toLocaleDateString()} · ${(a.bytes/1048576).toFixed(1)} MB · ${a.sources.map(s=>esc(s.label)).join(", ")}${a.failed?` · ${a.failed} tiles missing`:""}${a.boundary?" · includes project boundary":""}</small><br>
     <button class="btn quiet" data-ashow="${a.cache}">Show</button> <button class="btn quiet" data-adel="${a.cache}">Delete</button></li>`).join("")}</ul>`:'<p class="note">None yet. Areas you download show here and load instantly in the field, with or without signal.</p>'}${storage}`;
 }
 async function refreshAreaOutlines(){
@@ -1112,19 +1161,25 @@ async function refreshAreaOutlines(){
 }
 document.addEventListener("click",async e=>{
   const t=e.target;if(!mapWrap.contains(t))return;
-  if(t.id==="mAreasBtn"){const pn=mapWrap.querySelector("#mAreas");pn.hidden=!pn.hidden;t.setAttribute("aria-expanded",!pn.hidden);mapWrap.querySelector("#mPanel").hidden=true;renderAreas()}
+  if(t.id==="mAreasBtn"||t.dataset.areas){mapWrap.querySelector("#pgSheet").hidden=true;const pn=mapWrap.querySelector("#mAreas");pn.hidden=!pn.hidden;t.setAttribute("aria-expanded",!pn.hidden);mapWrap.querySelector("#mPanel").hidden=true;renderAreas()}
   if(t.id==="aDownload"){if(!navigator.onLine){toast("Connect to the internet to download an area.");return}
     const name=(mapWrap.querySelector("#aName").value||"Project area").trim(),b=viewBox(),mb=areaPlan(b,areaIdsForView()).mb;
     await checkStorage();const free=freeMB(); // leave room for points and photos
     if(free!=null&&mb>free-200){alert(`Not enough space: this area needs about ${mb.toFixed(0)} MB and only ${Math.max(0,free).toFixed(0)} MB is free for the app. Zoom in to a smaller area or delete another offline area first.`);return}
     downloadArea(name,b,areaIdsForView()).then(checkStorage);renderAreas()}
   if(t.id==="aCancel"&&areaJob){areaJob.ctl.abort()}
+  if(t.id==="aBndDl"){const bnd=curBnd();if(!bnd)return;if(!navigator.onLine){toast("Connect to the internet to download an area.");return}
+    const b=bndAreaBox(bnd),mb=areaPlan(b,areaIdsForView()).mb;await checkStorage();const free=freeMB();
+    if(free!=null&&mb>free-200){alert(`Not enough space: this area needs about ${mb.toFixed(0)} MB and only ${Math.max(0,free).toFixed(0)} MB is free for the app.`);return}
+    const sel=bnd.selected.map(i=>bnd.features[i]).filter(Boolean);
+    downloadArea(bnd.project+" (boundary)",b,areaIdsForView(),{boundary:{key:bnd.key,project:bnd.project,file:bnd.file,imported:bnd.imported,crs:bnd.crs,
+      geojson:{type:"FeatureCollection",features:sel.map(f=>({type:"Feature",properties:{label:f.label},geometry:{type:"MultiPolygon",coordinates:f.polys}}))}}}).then(checkStorage);renderAreas()}
   if(t.dataset.ashow){const a=(await listAreas()).find(x=>x.cache===t.dataset.ashow);if(a)map.fitBounds([[a.bbox[0],a.bbox[1]],[a.bbox[2],a.bbox[3]]],{padding:20})}
   if(t.dataset.adel){const a=(await listAreas()).find(x=>x.cache===t.dataset.adel);
     if(a&&confirm(`Delete the offline imagery for “${a.name}” (${(a.bytes/1048576).toFixed(1)} MB)? You can download it again later.`)){await caches.delete(a.cache);renderAreas();refreshAreaOutlines()}}
 });
 
-const mapPrefs=Object.assign({base:"county",soils:true,nwi:true,pts:true},(()=>{try{return JSON.parse(localStorage.getItem("mapPrefs"))||{}}catch(e){return {}}})());
+const mapPrefs=Object.assign({base:"county",soils:true,nwi:true,pts:true,bnd:true},(()=>{try{return JSON.parse(localStorage.getItem("mapPrefs"))||{}}catch(e){return {}}})());
 if(!(mapPrefs.base in BASES))mapPrefs.base="county"; // older saved value "aerial"
 const saveMapPrefs=()=>{try{localStorage.setItem("mapPrefs",JSON.stringify(mapPrefs))}catch(e){}};
 const NWI_COLORS=["match",["get","t"],"Freshwater Emergent Wetland","#7fc31c","Freshwater Forested/Shrub Wetland","#008837","Freshwater Pond","#688cc0","Lake","#13007c","Riverine","#0190bf","#b28653"];
@@ -1132,20 +1187,29 @@ const HYD_COLORS=["step",["get","h"],"rgba(0,0,0,0)",1,"#bfdbfe",33,"#60a5fa",66
 let mapCenteredFor=null,map=null,mapReady=false,marker=null,placing=false,mapLibP=null,mapPopup=null;
 const mapWrap=document.createElement("div");mapWrap.className="mapwrap";
 mapWrap.innerHTML=`<div id="map" aria-label="Map of sampling points, soils and wetlands"></div>
-  <div class="mapbar"><button class="mbtn" id="mLayers" aria-expanded="false" aria-controls="mPanel">Layers</button><button class="mbtn" id="mAreasBtn" aria-expanded="false" aria-controls="mAreas">Offline areas</button><button class="mbtn" id="mFull">Full screen</button></div>
+  <div class="mapbar"><button class="mbtn" id="mLayers" aria-expanded="false" aria-controls="mPanel">Layers</button><button class="mbtn" id="mAreasBtn" aria-expanded="false" aria-controls="mAreas">Offline areas</button><button class="mbtn" id="mFull">Full map</button></div>
   <div class="mappanel" id="mAreas" hidden><h4 style="margin-top:0">Offline imagery for a project area</h4><p class="note" style="margin:0">Downloads NAIP, county aerials and USGS imagery for the current map view, so the basemap loads instantly in the field without signal.</p><div id="mAreaBody"></div></div>
   <div class="mappanel" id="mPanel" hidden>
     <label>Basemap <select id="mBase"><option value="county">Aerial: county + NAIP + USGS (sharpest)</option><option value="naip">Aerial: NAIP 2019 + USGS</option><option value="usgs">Aerial: USGS only</option><option value="topo">Topo / streets (USGS)</option><option value="none">None</option></select></label>
-    <p class="years">Imagery years: ${["cook","lake","kane","dupage","naip","usgs"].map(id=>`${esc(IMG[id].short)} ${esc(IMG[id].year)}`).join(" · ")}. The label at the bottom right of the map shows which one you’re looking at.</p>
+    <p class="years">Imagery years: ${["cook","lake","kane","dupage","naip","usgs"].map(id=>`${esc(IMG[id].short)} ${esc(IMG[id].year)}`).join(" · ")}. The “Imagery” label on the map shows which one you’re looking at.</p>
     <label class="ck"><input type="checkbox" id="mSoils"> Mapped soils</label>
     <div class="lg"><span><i style="background:transparent;border-color:#f6c445"></i>0%</span><span><i style="background:#bfdbfe"></i>1–32</span><span><i style="background:#60a5fa"></i>33–65</span><span><i style="background:#2563eb"></i>66–99</span><span><i style="background:#1e3a8a"></i>100% hydric</span></div>
     <label class="ck"><input type="checkbox" id="mNwi"> NWI wetlands</label>
     <div class="lg"><span><i style="background:#7fc31c"></i>Emergent</span><span><i style="background:#008837"></i>Forested/shrub</span><span><i style="background:#688cc0"></i>Pond</span><span><i style="background:#13007c"></i>Lake</span><span><i style="background:#0190bf"></i>Riverine</span></div>
     <label class="ck"><input type="checkbox" id="mPts"> Sampling points</label>
+    <label class="ck"><input type="checkbox" id="mBnd"> Project boundary</label>
+    <div class="lg"><span><i style="background:transparent;border-color:#ff3dd2"></i>Boundary of the current point’s project</span></div>
+    <button class="btn quiet" data-areas="1">Offline areas…</button>
     <p class="note" style="margin:.3rem 0 0">Soils and NWI always work offline. Imagery needs a connection unless you download the area (Offline areas) or have already viewed it.</p>
     <details class="about"><summary>About imagery and terms of use</summary>${IMG_ORDER.slice().reverse().map(id=>`<p><b>${esc(IMG[id].label)}</b>${IMG[id].bounds?"":" (all counties)"}: ${esc(IMG[id].terms)} <a href="${IMG[id].link}" target="_blank" rel="noopener">Source</a></p>`).join("")}<p>County layers show only inside their county; NAIP fills in where a county layer is missing, and USGS fills in beyond that.</p></details>
   </div>
-  <div class="maphint" id="mHint" hidden></div><div class="mapmsg" id="mMsg" hidden></div><div class="mapimg" id="mImg" hidden></div>`;
+  <div class="maphint" id="mHint" hidden></div><div class="mapmsg" id="mMsg" hidden></div><div class="mapimg" id="mImg" hidden></div>
+  <div class="pgtop" id="pgTop" hidden><div class="pgban" id="pgBan" role="status" aria-live="polite"></div></div>
+  <div class="mappanel pgsheet" id="pgSheet" hidden></div>
+  <div class="pgbar" id="pgBar" hidden>
+    <button class="pgbig" id="pgDrop">Drop point at my location</button>
+    <div class="pgrow"><button id="pgBack">‹ Form</button><button id="pgLayers" aria-expanded="false">Layers</button><button id="pgBnd" aria-expanded="false">Boundary</button><button id="pgCenter">◎ Center</button></div>
+  </div>`;
 function loadMapLib(){
   if(!mapLibP)mapLibP=new Promise((res,rej)=>{
     const l=document.createElement("link");l.rel="stylesheet";l.href="lib/maplibre-gl.css";document.head.appendChild(l);
@@ -1154,6 +1218,7 @@ function loadMapLib(){
   return mapLibP;
 }
 async function attachMap(){
+  if(mapPage){updateMapPoint();updateBoundaryLayer();updatePageBanner();return} // the full-screen map page holds the map
   const slot=document.getElementById("mapSlot");if(!slot)return;
   slot.appendChild(mapWrap);
   try{await initMap()}catch(e){const m=mapWrap.querySelector("#mMsg");m.hidden=false;m.textContent=e.message+" Location, soil and NWI lookups still work.";return}
@@ -1173,7 +1238,7 @@ async function initMap(){
   map=new ml.Map({container:mapWrap.querySelector("#map"),attributionControl:{compact:true},maxZoom:20,
     ...(hasPt?{center:[+p.site.lon,+p.site.lat],zoom:16}:{bounds:[[bb[0],bb[1]],[bb[2],bb[3]]]}),
     style:{version:8,sources:{...imgSources(),topo:usgs("USGSTopo"),
-      soils:gj("Soils: USDA-NRCS SSURGO"),nwi:gj("Wetlands: USFWS NWI"),sel:gj(),acc:gj(),pts:gj(),areas:gj()},
+      soils:gj("Soils: USDA-NRCS SSURGO"),nwi:gj("Wetlands: USFWS NWI"),sel:gj(),acc:gj(),pts:gj(),areas:gj(),bnd:gj(),bndprev:gj(),me:gj(),meacc:gj()},
       layers:[{id:"bg",type:"background",paint:{"background-color":"#e4e9e4"}},
         ...imgLayers(),{id:"topo",type:"raster",source:"topo"},
         {id:"areas",type:"line",source:"areas",paint:{"line-color":"#f4a261","line-width":2,"line-dasharray":[3,2]}},
@@ -1181,10 +1246,18 @@ async function initMap(){
         {id:"nwi-fill",type:"fill",source:"nwi",paint:{"fill-color":NWI_COLORS,"fill-opacity":.35}},
         {id:"soil-line",type:"line",source:"soils",paint:{"line-color":"#f6c445","line-width":["interpolate",["linear"],["zoom"],12,.6,17,1.8]}},
         {id:"nwi-line",type:"line",source:"nwi",paint:{"line-color":NWI_COLORS,"line-width":["interpolate",["linear"],["zoom"],11,.8,17,2.2]}},
+        {id:"bnd-fill",type:"fill",source:"bnd",paint:{"fill-color":"#ff3dd2","fill-opacity":.06}},
+        {id:"bnd-casing",type:"line",source:"bnd",paint:{"line-color":"#000","line-opacity":.55,"line-width":5.5}},
+        {id:"bnd-line",type:"line",source:"bnd",paint:{"line-color":"#ff3dd2","line-width":2.6}},
+        {id:"bndprev-fill",type:"fill",source:"bndprev",paint:{"fill-color":["case",["get","sel"],"#ff3dd2","#ffffff"],"fill-opacity":["case",["get","sel"],.25,.12]}},
+        {id:"bndprev-line",type:"line",source:"bndprev",paint:{"line-color":["case",["get","sel"],"#ff3dd2","#ffffff"],"line-width":["case",["get","sel"],3,1.5]}},
         {id:"sel",type:"line",source:"sel",paint:{"line-color":"#ffffff","line-width":3.5,"line-dasharray":[2,1.2]}},
         {id:"acc-fill",type:"fill",source:"acc",paint:{"fill-color":"#2c7da0","fill-opacity":.18}},
         {id:"acc-line",type:"line",source:"acc",paint:{"line-color":"#2c7da0","line-width":1.5}},
-        {id:"pts",type:"circle",source:"pts",paint:{"circle-radius":7,"circle-color":"#ffffff","circle-stroke-color":"#1c2a26","circle-stroke-width":2.5}}]}});
+        {id:"pts",type:"circle",source:"pts",paint:{"circle-radius":7,"circle-color":"#ffffff","circle-stroke-color":"#1c2a26","circle-stroke-width":2.5}},
+        {id:"meacc-fill",type:"fill",source:"meacc",paint:{"fill-color":"#1a73e8","fill-opacity":.15}},
+        {id:"meacc-line",type:"line",source:"meacc",paint:{"line-color":"#1a73e8","line-width":1.2,"line-opacity":.7}},
+        {id:"me",type:"circle",source:"me",paint:{"circle-radius":8,"circle-color":"#1a73e8","circle-stroke-color":"#ffffff","circle-stroke-width":3}}]}});
   map.addControl(new ml.NavigationControl({showCompass:false}),"top-right");
   map.addControl(new ml.ScaleControl({unit:"imperial"}),"bottom-left");
   await new Promise(r=>map.once("load",r));
@@ -1194,6 +1267,8 @@ async function initMap(){
   map.on("moveend",updateImgChip);
   map.on("moveend",()=>{if(!mapWrap.querySelector("#mAreas").hidden&&!areaJob)renderAreas()});
   map.on("click",onMapClick);
+  map.on("dragstart",()=>{follow=false});
+  updateBoundaryLayer();
   map.on("mouseenter","pts",()=>map.getCanvas().style.cursor="pointer");
   map.on("mouseleave","pts",()=>map.getCanvas().style.cursor=placing?"crosshair":"");
 }
@@ -1202,22 +1277,22 @@ function applyMapPrefs(){
   const vis=(id,on)=>map.setLayoutProperty(id,"visibility",on?"visible":"none");
   const on=BASES[mapPrefs.base]||[];IMG_ORDER.forEach(id=>vis("img-"+id,on.includes(id)));vis("topo",mapPrefs.base==="topo");
   ["soil-fill","soil-line"].forEach(id=>vis(id,mapPrefs.soils));["nwi-fill","nwi-line"].forEach(id=>vis(id,mapPrefs.nwi));vis("pts",mapPrefs.pts);
+  ["bnd-fill","bnd-casing","bnd-line"].forEach(id=>vis(id,mapPrefs.bnd));
 }
 function syncMapPanel(){
   mapWrap.querySelector("#mBase").value=mapPrefs.base;
-  mapWrap.querySelector("#mSoils").checked=mapPrefs.soils;mapWrap.querySelector("#mNwi").checked=mapPrefs.nwi;mapWrap.querySelector("#mPts").checked=mapPrefs.pts;
+  mapWrap.querySelector("#mSoils").checked=mapPrefs.soils;mapWrap.querySelector("#mNwi").checked=mapPrefs.nwi;mapWrap.querySelector("#mPts").checked=mapPrefs.pts;mapWrap.querySelector("#mBnd").checked=mapPrefs.bnd;
 }
 mapWrap.addEventListener("change",e=>{
   const t=e.target;
-  if(t.id==="mBase")mapPrefs.base=t.value;if(t.id==="mSoils")mapPrefs.soils=t.checked;if(t.id==="mNwi")mapPrefs.nwi=t.checked;if(t.id==="mPts")mapPrefs.pts=t.checked;
+  if(t.id==="mBase")mapPrefs.base=t.value;if(t.id==="mSoils")mapPrefs.soils=t.checked;if(t.id==="mNwi")mapPrefs.nwi=t.checked;if(t.id==="mPts")mapPrefs.pts=t.checked;if(t.id==="mBnd")mapPrefs.bnd=t.checked;
   saveMapPrefs();applyMapPrefs();refreshMapData();updateImgChip();
 });
 mapWrap.addEventListener("click",e=>{
   if(e.target.id==="mLayers"){const pn=mapWrap.querySelector("#mPanel");pn.hidden=!pn.hidden;e.target.setAttribute("aria-expanded",!pn.hidden);mapWrap.querySelector("#mAreas").hidden=true}
-  if(e.target.id==="mFull"){const on=!mapWrap.classList.contains("full");mapWrap.classList.toggle("full",on);document.body.classList.toggle("mapfull",on);
-    e.target.textContent=on?"Exit full screen":"Full screen";if(map)setTimeout(()=>map.resize(),50)}
+  if(e.target.id==="mFull")openMapPage();
 });
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&mapWrap.classList.contains("full"))mapWrap.querySelector("#mFull").click()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&mapPage&&!document.querySelector(".maplibregl-popup"))closeMapPage()});
 function setHint(t){const h=mapWrap.querySelector("#mHint");h.hidden=!t;h.textContent=t||""}
 function setPlacing(on){
   placing=on;const b=document.getElementById("placePt");if(b){b.setAttribute("aria-pressed",on);b.textContent=on?"Cancel placing":"Tap map to place point"}
@@ -1277,6 +1352,7 @@ async function onMapClick(e){
       if(!r.none){sel.push(dsGeometry(DS.nwi.data,r.i));parts.push(`<div><span class="tag nwi">NWI</span><b>${esc(r.code)}</b> ${esc(r.desc)}${r.proj?`<br><small>${esc(projText(r.proj))}</small>`:""}</div>`)}
       else parts.push(`<div><span class="tag nwi">NWI</span>${r.covered?"Not in a mapped wetland":"Outside the offline NWI data"}</div>`)}catch(err){}
     map.getSource("sel").setData({type:"FeatureCollection",features:sel.map(g=>({type:"Feature",properties:{},geometry:g}))});
+    const bb=curBnd();if(bb){const r=bndCheck(bb,lat,lng);parts.unshift(`<div><span class="tag" style="background:#ff3dd2;color:#000">Boundary</span>${r.inside?"Inside":"Outside"} the project boundary, ${esc(fmtDist(r.d))} from the line</div>`)}
     box.innerHTML=(parts.join("")||'<div class="note">Turn on soils or NWI in Layers to see what is mapped here.</div>')+(imgHere?`<div><small>Basemap imagery here: ${esc(imgHere)}</small></div>`:"")+
       `<button class="btn quiet" data-place="1">Move ${esc(P()?.site.point||"point")} here</button>`;
   }
@@ -1287,6 +1363,409 @@ async function onMapClick(e){
   mapPopup=new ml.Popup({maxWidth:"320px",focusAfterOpen:false}).setLngLat(e.lngLat).setDOMContent(box).addTo(map);
   mapPopup.on("close",()=>{if(map.getSource("sel"))map.getSource("sel").setData({type:"FeatureCollection",features:[]})});
 }
+
+/* ---------- Project boundaries ----------
+   Read from a zipped shapefile, loose shapefile files (.shp/.shx/.dbf/.prj), KMZ, KML or GeoJSON. Shapefile coordinates
+   are converted to WGS84 longitude/latitude with proj4 (lib/proj4.js) using the .prj; with no .prj the user picks the
+   coordinate system. Each project (Project/site field) keeps one boundary in IndexedDB, so it works offline. */
+const BND=new Map(); // project key -> boundary record
+const projKey=s=>String(s||"").trim().toLowerCase();
+const curBnd=()=>{const p=P();return p&&p.site.project.trim()?BND.get(projKey(p.site.project))||null:null};
+function bndStore(mode){return idb&&idb.objectStoreNames.contains("boundaries")?idb.transaction("boundaries",mode).objectStore("boundaries"):null}
+function dbBndAll(){return new Promise(res=>{try{const st=bndStore("readonly");if(!st)return res([]);const q=st.getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([])}catch(e){res([])}})}
+function dbBndPut(b){return new Promise(res=>{try{const st=bndStore("readwrite");if(!st)return res(false);st.put(b);st.transaction.oncomplete=()=>res(true);st.transaction.onabort=()=>res(false)}catch(e){res(false)}})}
+function dbBndDel(k){try{const st=bndStore("readwrite");if(st)st.delete(k)}catch(e){}}
+const fmtDist=m=>m<1000?`${Math.round(m)} m (${Math.round(m*3.28084)} ft)`:`${(m/1000).toFixed(2)} km (${(m/1609.344).toFixed(2)} mi)`;
+
+/* Zip reader for .zip and .kmz (the browser's own inflate, no library needed) */
+async function unzip(buf){
+  const u=new Uint8Array(buf),dv=new DataView(buf);let e=-1;
+  for(let i=u.length-22;i>=Math.max(0,u.length-65558);i--)if(dv.getUint32(i,true)===0x06054b50){e=i;break}
+  if(e<0)throw new Error("This doesn’t look like a zip file.");
+  const n=dv.getUint16(e+10,true);let p=dv.getUint32(e+16,true);const out={};
+  for(let k=0;k<n;k++){
+    if(dv.getUint32(p,true)!==0x02014b50)throw new Error("The zip file is damaged.");
+    const method=dv.getUint16(p+10,true),csize=dv.getUint32(p+20,true),nl=dv.getUint16(p+28,true),xl=dv.getUint16(p+30,true),cl=dv.getUint16(p+32,true),off=dv.getUint32(p+42,true);
+    const name=new TextDecoder().decode(u.subarray(p+46,p+46+nl));p+=46+nl+xl+cl;
+    if(name.endsWith("/")||/(^|\/)__MACOSX\//.test(name))continue;
+    const s=off+30+dv.getUint16(off+26,true)+dv.getUint16(off+28,true),data=u.subarray(s,s+csize);
+    if(method===0)out[name]=data.slice();
+    else if(method===8){
+      if(typeof DecompressionStream==="undefined")throw new Error("This browser can’t open zip files. Unzip it and choose the files inside instead.");
+      out[name]=new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer())}
+    else throw new Error(`${name} uses a compression this app can’t read.`);
+  }
+  return out;
+}
+/* Shapefile geometry (.shp): polygons, or closed polylines treated as polygons */
+function readShp(u8){
+  const dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength);
+  if(u8.length<100||dv.getInt32(0,false)!==9994)throw new Error("The .shp file isn’t a valid shapefile.");
+  const type=dv.getInt32(32,true)%10;
+  if(type===1||type===8)throw new Error("This shapefile contains points, not a boundary polygon.");
+  if(type!==3&&type!==5)throw new Error("This shapefile type isn’t supported (polygons only).");
+  const shapes=[];let p=100;
+  while(p+12<=u8.length){
+    const len=dv.getInt32(p+4,false)*2,s=p+8;p=s+len;const t=dv.getInt32(s,true);
+    if(t===0||len<44){shapes.push(null);continue}
+    const np=dv.getInt32(s+36,true),nv=dv.getInt32(s+40,true),parts=[];for(let i=0;i<np;i++)parts.push(dv.getInt32(s+44+4*i,true));
+    const v0=s+44+4*np,rings=[];
+    for(let i=0;i<np;i++){const a=parts[i],b=i+1<np?parts[i+1]:nv,r=[];for(let j=a;j<b;j++)r.push([dv.getFloat64(v0+16*j,true),dv.getFloat64(v0+16*j+8,true)]);rings.push(r)}
+    shapes.push(type===3?rings.filter(closedRing):rings);
+  }
+  return shapes;
+}
+const closedRing=r=>r.length>=4&&Math.abs(r[0][0]-r[r.length-1][0])<1e-9&&Math.abs(r[0][1]-r[r.length-1][1])<1e-9;
+/* Shapefile attributes (.dbf); .cpg says the text encoding */
+function readDbf(u8,enc){
+  const dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength),n=dv.getUint32(4,true),hl=dv.getUint16(8,true),rl=dv.getUint16(10,true);
+  const td=new TextDecoder(enc),f=[];
+  for(let p=32;p<hl-1&&u8[p]!==0x0d;p+=32){let e=p;while(e<p+11&&u8[e])e++;f.push({name:td.decode(u8.subarray(p,e)),type:String.fromCharCode(u8[p+11]),len:u8[p+16]})}
+  const rows=[];
+  for(let i=0;i<n;i++){const s=hl+i*rl;if(s+rl>u8.length)break;if(u8[s]===0x2a){rows.push(null);continue}
+    const r={};let o=s+1;for(const x of f){let v=td.decode(u8.subarray(o,o+x.len)).trim();o+=x.len;if((x.type==="N"||x.type==="F")&&v!=="")v=+v;if(v!=="")r[x.name]=v}rows.push(r)}
+  return rows;
+}
+/* Rings to polygons by nesting: a ring inside an even number of others is an outer edge, inside an odd number a hole.
+   This works whatever ring direction the file used. */
+function ringInside(a,b){let inn=0,k=0;const st=Math.max(1,Math.floor(a.length/5));for(let i=0;i<a.length-1;i+=st){k++;if(ptInRing(a[i],b))inn++}return inn*2>k}
+const ringArea=r=>{let a=0;for(let i=0,j=r.length-1;i<r.length;j=i++)a+=(r[j][0]-r[i][0])*(r[j][1]+r[i][1]);return a/2};
+function ringsToPolys(rings){
+  rings=rings.filter(r=>r.length>=4);
+  const depth=rings.map((r,i)=>rings.reduce((a,o,j)=>a+(j!==i&&ringInside(r,o)?1:0),0)),polys=[],outer=[];
+  rings.forEach((r,i)=>{if(depth[i]%2===0){outer.push(i);polys.push([r])}});
+  rings.forEach((r,i)=>{if(depth[i]%2===1){let best=-1,ba=Infinity;
+    outer.forEach((o,k)=>{if(depth[o]===depth[i]-1&&ringInside(r,rings[o])){const a=Math.abs(ringArea(rings[o]));if(a<ba){ba=a;best=k}}});
+    if(best>=0)polys[best].push(r)}});
+  return polys;
+}
+/* KML (also inside KMZ): Placemarks with Polygons (outer edge plus holes), MultiGeometry, or closed lines */
+function readKml(text){
+  const doc=new DOMParser().parseFromString(text,"application/xml");
+  if(doc.getElementsByTagName("parsererror").length)throw new Error("The KML file couldn’t be read.");
+  const all=(el,tag)=>[...el.getElementsByTagName("*")].filter(e=>e.localName===tag);
+  const child=(el,tag)=>[...el.children].find(e=>e.localName===tag);
+  const coords=el=>(el?el.textContent:"").trim().split(/\s+/).map(t=>t.split(",").map(Number)).filter(c=>c.length>=2&&isFinite(c[0])&&isFinite(c[1])).map(c=>[c[0],c[1]]);
+  const feats=[];
+  for(const pm of all(doc,"Placemark")){
+    const props={},nm=child(pm,"name");if(nm&&nm.textContent.trim())props.name=nm.textContent.trim();
+    for(const d of all(pm,"Data")){const v=child(d,"value");if(v&&v.textContent.trim())props[d.getAttribute("name")]=v.textContent.trim()}
+    for(const d of all(pm,"SimpleData"))if(d.textContent.trim())props[d.getAttribute("name")]=d.textContent.trim();
+    const polys=[];
+    for(const pg of all(pm,"Polygon")){
+      const ob=child(pg,"outerBoundaryIs"),outer=ob&&coords(all(ob,"coordinates")[0]);if(!outer||outer.length<4)continue;
+      const poly=[outer];for(const ib of all(pg,"innerBoundaryIs"))for(const c of all(ib,"coordinates")){const r=coords(c);if(r.length>=4)poly.push(r)}
+      polys.push(poly)}
+    if(!polys.length)for(const ls of all(pm,"LineString")){const r=coords(all(ls,"coordinates")[0]);if(closedRing(r))polys.push([r])}
+    if(polys.length)feats.push({props,polys});
+  }
+  return feats;
+}
+function readGeoJSON(text){
+  let g;try{g=JSON.parse(text)}catch(e){throw new Error("The GeoJSON file couldn’t be read.")}
+  const list=g.type==="FeatureCollection"?g.features:g.type==="Feature"?[g]:[{properties:{},geometry:g}],feats=[];
+  for(const f of list){const t=f&&f.geometry&&f.geometry.type,c=f&&f.geometry&&f.geometry.coordinates;
+    const polys=t==="Polygon"?[c]:t==="MultiPolygon"?c:null;
+    if(polys)feats.push({props:f.properties||{},polys:polys.map(p=>p.map(r=>r.map(v=>[v[0],v[1]])))})}
+  return feats;
+}
+/* Read whatever was chosen into {label, kind, feats:[{props,polys}], prj} (shapefile coordinates still in the file's system) */
+async function readBoundaryFiles(files){
+  files=[...files];const ent={};
+  for(const f of files){const n=f.name.toLowerCase();
+    if(n.endsWith(".zip")||n.endsWith(".kmz"))Object.assign(ent,await unzip(await f.arrayBuffer()));
+    else ent[f.name]=new Uint8Array(await f.arrayBuffer())}
+  const keys=Object.keys(ent),find=ext=>keys.filter(k=>k.toLowerCase().endsWith(ext)),txt=u=>new TextDecoder().decode(u);
+  const label=files.map(f=>f.name).join(", ");
+  const shp=find(".shp");
+  if(shp.length){
+    const base=shp[0].slice(0,-4).toLowerCase(),get=ext=>ent[keys.find(k=>k.toLowerCase()===base+ext)];
+    const shapes=readShp(get(".shp")),dbf=get(".dbf"),cpg=get(".cpg"),prj=get(".prj");
+    const enc=cpg&&/utf-?8|65001/i.test(txt(cpg))?"utf-8":"windows-1252";
+    const rows=dbf?readDbf(dbf,enc):[];
+    const feats=shapes.map((r,i)=>r&&r.length&&rows[i]!==null?{props:rows[i]||{},polys:ringsToPolys(r)}:null).filter(f=>f&&f.polys.length);
+    if(!feats.length)throw new Error("No polygons found in "+shp[0]+".");
+    return {label,kind:"shp",name:shp[0].split("/").pop(),feats,prj:prj?txt(prj).trim():null,others:shp.slice(1).map(s=>s.split("/").pop())};
+  }
+  const kml=find(".kml");
+  if(kml.length){const k=kml.find(x=>/(^|\/)doc\.kml$/i.test(x))||kml[0],feats=readKml(txt(ent[k]));
+    if(!feats.length)throw new Error("No polygons found in the KML.");return {label,kind:"kml",name:files.length===1?files[0].name:k.split("/").pop(),feats}}
+  const gj=[...find(".geojson"),...find(".json")];
+  if(gj.length){const feats=readGeoJSON(txt(ent[gj[0]]));if(!feats.length)throw new Error("No polygons found in the GeoJSON.");return {label,kind:"geojson",name:gj[0],feats}}
+  if(find(".dbf").length||find(".shx").length||find(".prj").length)throw new Error("The .shp file is missing. Choose the .shp together with its .shx, .dbf and .prj files, or a zip of them.");
+  throw new Error("No shapefile, KML, KMZ or GeoJSON found in "+label+".");
+}
+/* Coordinate systems offered when a shapefile has no .prj (no guessing: the user picks) */
+const CRS_CHOICES=[
+  {id:"3435",name:"NAD83 / Illinois State Plane East, US survey feet (EPSG 3435)",def:"+proj=tmerc +lat_0=36.66666666666666 +lon_0=-88.33333333333333 +k=0.999975 +x_0=300000.0000000001 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=us-ft +no_defs"},
+  {id:"3436",name:"NAD83 / Illinois State Plane West, US survey feet (EPSG 3436)",def:"+proj=tmerc +lat_0=36.66666666666666 +lon_0=-90.16666666666667 +k=0.999941177 +x_0=699999.9998983998 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=us-ft +no_defs"},
+  {id:"26971",name:"NAD83 / Illinois State Plane East, metres (EPSG 26971)",def:"+proj=tmerc +lat_0=36.66666666666666 +lon_0=-88.33333333333333 +k=0.999975 +x_0=300000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"},
+  {id:"26916",name:"NAD83 / UTM zone 16N, metres (EPSG 26916)",def:"+proj=utm +zone=16 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"},
+  {id:"26771",name:"NAD27 / Illinois State Plane East, US survey feet (EPSG 26771). Older surveys; converted to about ±5 m",def:"+proj=tmerc +lat_0=36.66666666666666 +lon_0=-88.33333333333333 +k=0.999975 +x_0=152400.3048006096 +y_0=0 +ellps=clrk66 +towgs84=-8,160,176,0,0,0,0 +units=us-ft +no_defs"},
+  {id:"4326",name:"Latitude/longitude in degrees (WGS84 or NAD83)",def:"+proj=longlat +datum=WGS84 +no_defs"},
+  {id:"3857",name:"Web Mercator, metres (from web maps; EPSG 3857)",def:"+proj=merc +a=6378137 +b=6378137 +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 +units=m +nadgrids=@null +no_defs"}];
+let proj4P=null;
+const loadProj4=()=>proj4P||(proj4P=new Promise((res,rej)=>{if(window.proj4)return res(window.proj4);
+  const s=document.createElement("script");s.src="lib/proj4.js";s.onload=()=>res(window.proj4);s.onerror=()=>{proj4P=null;rej(new Error("The coordinate conversion library couldn’t load."))};document.head.appendChild(s)}));
+const wktName=w=>((w||"").match(/^\s*(?:PROJCS|PROJCRS|GEOGCS|GEOGCRS)\s*\[\s*"([^"]+)"/i)||[])[1]||"";
+async function makeConverter(def){const p4=await loadProj4();const c=p4(def,"EPSG:4326");c.forward([0,0]);return xy=>c.forward([xy[0],xy[1]])}
+function convertFeats(feats,fn){
+  const r7=v=>Math.round(v*1e7)/1e7;
+  return feats.map(f=>({props:f.props,polys:f.polys.map(p=>p.map(r=>r.map(xy=>{const [x,y]=fn?fn(xy):xy;return [r7(x),r7(y)]})))}));
+}
+const featsBBox=feats=>{let b=[Infinity,Infinity,-Infinity,-Infinity];for(const f of feats)for(const p of f.polys)for(const [x,y] of p[0]){if(x<b[0])b[0]=x;if(y<b[1])b[1]=y;if(x>b[2])b[2]=x;if(y>b[3])b[3]=y}return b};
+const validLL=b=>b.every(isFinite)&&b[0]>=-180&&b[2]<=180&&b[1]>=-90&&b[3]<=90;
+async function placeName(lon,lat){ // where a converted boundary lands, to help pick the right coordinate system
+  if(!isFinite(lon)||!isFinite(lat)||Math.abs(lat)>90||Math.abs(lon)>180)return {ok:false,text:"nowhere real (coordinates out of range)"};
+  const bb=(DS.soils.idx&&DS.soils.idx.bbox)||[-88.6,41.47,-87.52,42.5];
+  if(lon<bb[0]-.05||lon>bb[2]+.05||lat<bb[1]-.05||lat>bb[3]+.05)return {ok:false,text:`outside Northeastern Illinois (${lat.toFixed(3)}, ${lon.toFixed(3)})`};
+  try{const r=await lookupSoil(lat,lon);if(r){const a=(DS.soils.data.mu[r.mk]||{}).a,sv=(DS.soils.idx.surveys||[]).find(s=>s.areasymbol===a);if(sv)return {ok:true,text:sv.areaname}}}catch(e){}
+  return {ok:true,text:"Northeastern Illinois"};
+}
+/* Polygon maths in local metres (accurate to well under a metre across a project site) */
+const mPerDeg=lat=>{const f=lat*Math.PI/180;return [111412.84*Math.cos(f)-93.5*Math.cos(3*f),111132.954-559.822*Math.cos(2*f)+1.175*Math.cos(4*f)]}; // metres per degree of lon, lat
+const llPolyArea=(poly,kx,ky)=>poly.reduce((a,r,i)=>{const s=Math.abs(ringArea(r.map(([x,y])=>[x*kx,y*ky])));return i?a-s:a+s},0);
+const featAcres=f=>{const [kx,ky]=mPerDeg(f.polys[0][0][0][1]);return f.polys.reduce((a,p)=>a+llPolyArea(p,kx,ky),0)/4046.856};
+function featLabel(props,i){
+  const ks=Object.keys(props||{}),has=k=>props[k]!==""&&props[k]!=null;
+  const k=ks.find(k=>/^(name|label|title|parcel|parcel_?id|pin|site|project|tract)$/i.test(k)&&has(k))||ks.find(k=>/name|label|parcel|pin|tract/i.test(k)&&has(k));
+  return k?String(props[k]):`Feature ${i+1}`;
+}
+let bndCache={sig:null};
+function bndGeom(b){ // selected polygons, plus the boundary edges in metres (edges shared by two selected features are inside the area, so dropped)
+  const sig=b.key+"|"+b.imported+"|"+b.selected.join(",");if(bndCache.sig===sig)return bndCache;
+  const polys=b.selected.flatMap(i=>b.features[i]?b.features[i].polys:[]),bb=featsBBox([{polys}]);
+  const lat0=(bb[1]+bb[3])/2,lon0=(bb[0]+bb[2])/2,[kx,ky]=mPerDeg(lat0);
+  const inside=(lon,lat)=>polys.some(p=>ptInRing([lon,lat],p[0])&&!p.slice(1).some(h=>ptInRing([lon,lat],h)));
+  const segs=[];for(const p of polys)for(const r of p)for(let i=0;i<r.length-1;i++)segs.push((r[i][0]-lon0)*kx,(r[i][1]-lat0)*ky,(r[i+1][0]-lon0)*kx,(r[i+1][1]-lat0)*ky);
+  const nv=segs.length/4,edges=[];
+  for(let i=0;i<segs.length;i+=4){const [ax,ay,bx,by]=segs.slice(i,i+4),L=Math.hypot(bx-ax,by-ay);
+    if(b.selected.length>1&&L>0&&nv*nv<4e7){const mx=(ax+bx)/2,my=(ay+by)/2,nx=-(by-ay)/L*.3,ny=(bx-ax)/L*.3;
+      if(inside(lon0+(mx+nx)/kx,lat0+(my+ny)/ky)&&inside(lon0+(mx-nx)/kx,lat0+(my-ny)/ky))continue}
+    edges.push(ax,ay,bx,by)}
+  bndCache={sig,polys,bb,lat0,lon0,kx,ky,inside,edges:Float64Array.from(edges)};return bndCache;
+}
+function bndCheck(b,lat,lon){
+  const g=bndGeom(b),x=(lon-g.lon0)*g.kx,y=(lat-g.lat0)*g.ky,e=g.edges;let d2=Infinity;
+  for(let i=0;i<e.length;i+=4){const ax=e[i],ay=e[i+1],dx=e[i+2]-ax,dy=e[i+3]-ay,l=dx*dx+dy*dy;
+    let t=l?((x-ax)*dx+(y-ay)*dy)/l:0;t=t<0?0:t>1?1:t;const ex=ax+t*dx-x,ey=ay+t*dy-y,q=ex*ex+ey*ey;if(q<d2)d2=q}
+  return {inside:g.inside(lon,lat),d:Math.sqrt(d2)};
+}
+/* Sampling points: record inside/outside the project boundary, and warn when a point is dropped outside */
+function runBoundaryCheck(p,warn){
+  const b=p.site.project.trim()?BND.get(projKey(p.site.project)):null,lat=parseFloat(p.site.lat),lon=parseFloat(p.site.lon);
+  const before=JSON.stringify(p.site.bnd||null);
+  if(!b||!isFinite(lat)||!isFinite(lon))delete p.site.bnd;
+  else{const r=bndCheck(b,lat,lon),acc=p.site.locSrc==="GPS"&&p.site.acc!=null?+p.site.acc:null;
+    p.site.bnd={project:b.project,file:b.file,crs:b.crs.name,imported:b.imported,inside:r.inside,d:Math.round(r.d*10)/10,acc,near:acc!=null&&r.d<acc,lat,lon}}
+  if(JSON.stringify(p.site.bnd||null)!==before){p.modified=Date.now();dirty.add(p.id);clearTimeout(saveT);saveT=setTimeout(flushSave,350)}
+  if(p.id===cur){const n=document.getElementById("bndNote");if(n)n.innerHTML=bndNoteHTML(p)}
+  const r=p.site.bnd,nm=p.site.point||"Point";
+  if(warn&&r){if(r.near)toast(`${nm} is near the project boundary: ${fmtDist(r.d)} from the line, within the GPS accuracy (±${Math.round(r.acc)} m). Check on the ground.`,6000,true);
+    else if(!r.inside)toast(`⚠ ${nm} is OUTSIDE the project boundary, ${fmtDist(r.d)} from it.`,7000,true);
+    else toast(`${nm} placed inside the project boundary (${fmtDist(r.d)} from the line).`,3500)}
+  if(mapPage)updatePageBanner();
+  return r;
+}
+function bndText(r){return r.near?`Near the project boundary: ${fmtDist(r.d)} from the line, which is within the GPS accuracy (±${Math.round(r.acc)} m), so it may be on either side`
+  :r.inside?`Inside the project boundary, ${fmtDist(r.d)} from the line`:`OUTSIDE the project boundary, ${fmtDist(r.d)} from it`}
+function bndNoteHTML(p){
+  if(!p)return "";const r=p.site.bnd;
+  if(r)return `${r.inside&&!r.near?"":'<span class="warn">'}${esc(bndText(r))}.${r.inside&&!r.near?"":"</span>"}`;
+  if(p.site.project.trim()&&!BND.has(projKey(p.site.project)))return `No boundary loaded for project “${esc(p.site.project.trim())}”. <button class="btn quiet" id="openMapPg">Add one on the map page</button>`;
+  return "";
+}
+function recheckProject(key){for(const q of points)if(projKey(q.site.project)===key)runBoundaryCheck(q,false)}
+function updateBoundaryLayer(){
+  if(!mapReady)return;const b=curBnd();
+  map.getSource("bnd").setData({type:"FeatureCollection",features:b?b.selected.filter(i=>b.features[i]).map(i=>({type:"Feature",properties:{},geometry:{type:"MultiPolygon",coordinates:b.features[i].polys}})):[]});
+  if(mapPage)updatePageBanner();
+}
+const bndBBox=b=>featsBBox(b.selected.map(i=>b.features[i]).filter(Boolean));
+function fitBnd(b){if(!mapReady||!b)return;const bb=bndBBox(b);map.fitBounds([[bb[0],bb[1]],[bb[2],bb[3]]],{padding:pagePad(),duration:0,maxZoom:18})}
+function pagePad(){if(!mapPage)return 30;const t=mapWrap.querySelector("#pgTop").offsetHeight,bt=mapWrap.querySelector("#pgBar").offsetHeight;return {top:t+20,bottom:bt+20,left:24,right:60}}
+async function loadBoundaries(){for(const b of await dbBndAll())BND.set(b.key,b)}
+
+/* ---------- Full-screen map page ---------- */
+let mapPage=false,watchId=null,me=null,meErr="",follow=false,banT=null;
+async function openMapPage(){
+  if(mapPage)return;mapPage=true;closeSugg();
+  document.body.appendChild(mapWrap);mapWrap.classList.add("page");document.body.classList.add("mapfull");
+  ["pgTop","pgBar"].forEach(id=>mapWrap.querySelector("#"+id).hidden=false);
+  try{history.pushState({mapPage:1},"")}catch(e){}
+  updatePageBanner();
+  try{await initMap()}catch(e){const m=mapWrap.querySelector("#mMsg");m.hidden=false;m.textContent=e.message;return}
+  mapWrap.style.setProperty("--pgbar",mapWrap.querySelector("#pgBar").offsetHeight+"px");
+  map.resize();syncMapPanel();updateMapPoint();updateBoundaryLayer();refreshMapData();updateImgChip();
+  const b=curBnd(),p=P();if(b)fitBnd(b);else if(p&&p.site.lat&&p.site.lon)map.jumpTo({center:[+p.site.lon,+p.site.lat],zoom:Math.max(map.getZoom(),16)});
+  startWatch();banT=setInterval(updatePageBanner,5000);
+}
+function closeMapPage(fromHistory){
+  if(!mapPage)return;mapPage=false;stopWatch();clearInterval(banT);imp=null;
+  if(mapReady)map.getSource("bndprev").setData({type:"FeatureCollection",features:[]});
+  ["pgTop","pgBar","pgSheet","mPanel","mAreas"].forEach(id=>mapWrap.querySelector("#"+id).hidden=true);
+  mapWrap.querySelectorAll(".pgrow [aria-expanded]").forEach(x=>x.setAttribute("aria-expanded","false"));
+  mapWrap.classList.remove("page");document.body.classList.remove("mapfull");
+  if(!fromHistory&&history.state&&history.state.mapPage)history.back();
+  const slot=document.getElementById("mapSlot");if(slot){slot.appendChild(mapWrap);setTimeout(()=>{if(map)map.resize()},50)}else mapWrap.remove();
+  renderPanel();renderPointSel();
+}
+addEventListener("popstate",()=>{if(mapPage)closeMapPage(true)});
+function startWatch(){
+  if(!navigator.geolocation){meErr="Location isn’t available in this browser.";updatePageBanner();return}
+  meErr="";watchId=navigator.geolocation.watchPosition(pos=>{const c=pos.coords;const first=!me;
+      me={lat:c.latitude,lon:c.longitude,acc:c.accuracy,t:Date.now()};meErr="";drawMe();updatePageBanner();
+      if(follow||(first&&!curBnd()&&!(P()&&P().site.lat)))map.easeTo({center:[me.lon,me.lat],zoom:Math.max(map.getZoom(),17),duration:600})},
+    err=>{meErr=err.code===1?"Location permission is off. Allow location for this app to see where you are.":"Can’t get a GPS fix. Move into the open and wait.";updatePageBanner()},
+    {enableHighAccuracy:true,maximumAge:2000,timeout:30000});
+}
+function stopWatch(){if(watchId!=null)navigator.geolocation.clearWatch(watchId);watchId=null}
+function drawMe(){if(!mapReady||!me)return;
+  map.getSource("me").setData({type:"Feature",properties:{},geometry:{type:"Point",coordinates:[me.lon,me.lat]}});
+  map.getSource("meacc").setData(circle(me.lat,me.lon,Math.max(1,me.acc)))}
+function updatePageBanner(){
+  if(!mapPage)return;const el=mapWrap.querySelector("#pgBan"),p=P(),b=curBnd();
+  const sub=`<span class="sub">${esc(p&&p.site.project.trim()||"No project name")} · ${esc(p&&p.site.point||"")}${b?` · ${esc(b.file)}`:""}</span>`;
+  let s="none",h;
+  if(!b)h=`${p&&p.site.project.trim()?`No boundary for “${esc(p.site.project.trim())}”`:"No project boundary"}<small>Tap Boundary to load a shapefile, KMZ or KML.${me&&me.lat!=null?` GPS ±${esc(fmtDist(me.acc))}.`:""}</small>`;
+  else if(!me||me.lat==null)h=`${meErr?esc(meErr):"Waiting for GPS…"}`;
+  else{const r=bndCheck(b,me.lat,me.lon),near=r.d<me.acc,age=(Date.now()-me.t)/1000;
+    s=near?"near":r.inside?"in":"out";
+    h=`${near?"Near boundary":r.inside?"Inside project area":"Outside project area"}<small>${esc(fmtDist(r.d))} to the boundary line · GPS ±${esc(fmtDist(me.acc))}${age>20?` · last fix ${Math.round(age)} s ago`:""}${meErr&&age>20?` · ${esc(meErr)}`:""}</small>`}
+  el.dataset.s=s;el.innerHTML=h+sub;
+}
+function dropPoint(){
+  if(!me||me.lat==null){toast(meErr||"No GPS fix yet. Wait for your location to appear, or tap the map and choose “Move … here”.",5000);return}
+  let p=P();const fresh=!p||p.site.lat||p.site.lon;
+  if(fresh){p=makePoint();renderPointSel()}
+  movePoint(me.lat,me.lon,"GPS",me.acc);
+  if(!p.site.bnd)toast(`${p.site.point} placed (±${Math.round(me.acc)} m)${fresh?". It’s a new sampling point; fill in the form under ‹ Form.":""}`,4000);
+  renderPanel();
+}
+function togglePanel(id,btn){
+  const ids=["mPanel","pgSheet","mAreas"];ids.forEach(x=>{if(x!==id)mapWrap.querySelector("#"+x).hidden=true});
+  const pn=mapWrap.querySelector("#"+id);pn.hidden=!pn.hidden;
+  mapWrap.querySelectorAll(".pgrow [aria-expanded]").forEach(x=>x.setAttribute("aria-expanded",String(x===btn&&!pn.hidden)));
+  return !pn.hidden;
+}
+mapWrap.addEventListener("click",e=>{
+  const t=e.target.closest("button");if(!t)return;
+  if(t.id==="pgBack")closeMapPage();
+  if(t.id==="pgDrop")dropPoint();
+  if(t.id==="pgCenter"){if(me&&me.lat!=null){follow=true;map.easeTo({center:[me.lon,me.lat],zoom:Math.max(map.getZoom(),17),duration:500})}else toast(meErr||"Waiting for a GPS fix…")}
+  if(t.id==="pgLayers")togglePanel("mPanel",t);
+  if(t.id==="pgBnd"){if(togglePanel("pgSheet",t))renderBndSheet()}
+});
+main.addEventListener("click",e=>{if(e.target.id==="openMapPg")openMapPage()});
+
+/* Boundary sheet: view, import (pick coordinate system if needed, then choose features), replace, delete */
+let imp=null; // import in progress
+const BND_ACCEPT=".zip,.kmz,.kml,.shp,.shx,.dbf,.prj,.cpg,.geojson,.json";
+function renderBndSheet(){
+  const sh=mapWrap.querySelector("#pgSheet"),p=P(),b=curBnd();
+  if(imp&&imp.step==="crs")return renderCrsSheet(sh);
+  if(imp&&imp.step==="feats")return renderFeatSheet(sh);
+  const fileBtn=label=>`<label class="btn ${b?"quiet":"primary"}" style="display:flex;align-items:center;justify-content:center;min-height:3rem">${label}<input type="file" id="bndIn" multiple accept="${BND_ACCEPT}" style="position:absolute;left:-9999px"></label>`;
+  if(!b){sh.innerHTML=`<h4>Project boundary</h4>
+    <p class="note" style="margin:0">${p.site.project.trim()?`Project “${esc(p.site.project.trim())}” has no boundary yet.`:"This point has no project name yet; you’ll name the project when you save the boundary."}</p>
+    ${fileBtn("Load boundary file")}
+    <p class="note" style="margin:0">A zipped shapefile, the shapefile’s files chosen together (.shp, .shx, .dbf and .prj), a KMZ or a KML. Shapefile coordinates are converted using the .prj; Illinois State Plane East (feet) and other systems work.</p>`;return}
+  const sel=b.selected.map(i=>b.features[i]).filter(Boolean),ac=sel.reduce((a,f)=>a+featAcres(f),0);
+  sh.innerHTML=`<h4>Boundary: ${esc(b.project)}</h4>
+    <p class="note" style="margin:0">${esc(b.file)} · ${sel.length} of ${b.features.length} feature${b.features.length>1?"s":""} · ${ac.toFixed(2)} acres<br>Coordinate system: ${esc(b.crs.name)} (${esc(b.crs.how)})<br>Loaded ${new Date(b.imported).toLocaleString()}. Saved on this phone; works offline.</p>
+    <div class="row"><button class="btn" id="bndFit">Zoom to boundary</button>${b.features.length>1?'<button class="btn" id="bndPick">Change features</button>':""}<button class="btn" data-areas="1">Download imagery for offline use</button></div>
+    ${fileBtn("Replace with another file")}
+    <button class="btn quiet" id="bndDel">Delete this boundary</button>`;
+}
+async function startImport(files){
+  const sh=mapWrap.querySelector("#pgSheet");sh.innerHTML='<p class="note">Reading the file…</p>';
+  try{
+    const r=await readBoundaryFiles(files);imp={...r,step:"feats",filter:""};
+    if(r.kind==="shp"){
+      if(r.prj){try{const fn=await makeConverter(r.prj);imp.feats=convertFeats(r.feats,fn);imp.crs={name:wktName(r.prj)||"from .prj",how:"read from the .prj file"}}
+        catch(e){imp.raw=r.feats;imp.step="crs";imp.prjBad=e.message||"unreadable"}}
+      else{imp.raw=r.feats;imp.step="crs"}
+    }else{imp.feats=convertFeats(r.feats,null);imp.crs={name:"WGS84 longitude/latitude",how:r.kind==="kml"?"KML is always WGS84":"GeoJSON is always WGS84"}}
+    if(imp.step==="feats")await afterConvert();
+    renderBndSheet();
+  }catch(e){imp=null;renderBndSheet();toast(e.message||String(e),6000,true)}
+}
+async function afterConvert(){
+  const bb=featsBBox(imp.feats);
+  if(!validLL(bb)){imp.raw=imp.raw||imp.feats;imp.step="crs";imp.prjBad="the converted coordinates aren’t a real location";return}
+  imp.where=await placeName((bb[0]+bb[2])/2,(bb[1]+bb[3])/2);
+  imp.sel=new Set(imp.feats.map((f,i)=>i));showPreview();
+  if(mapReady)map.fitBounds([[bb[0],bb[1]],[bb[2],bb[3]]],{padding:pagePad(),duration:0,maxZoom:18});
+}
+async function renderCrsSheet(sh){
+  if(!imp.hints){imp.hints={};const p4=await loadProj4().catch(()=>null);const rb=featsBBox(imp.raw),c=[(rb[0]+rb[2])/2,(rb[1]+rb[3])/2];
+    for(const o of CRS_CHOICES){try{const [lon,lat]=p4(o.def,"EPSG:4326",c);imp.hints[o.id]=await placeName(lon,lat)}catch(e){imp.hints[o.id]={ok:false,text:"can’t convert"}}}}
+  sh.innerHTML=`<h4>Which coordinate system is this file in?</h4>
+    <p class="note warn" style="margin:0">${imp.prjBad?`The file’s .prj couldn’t be used (${esc(imp.prjBad)}).`:`${esc(imp.name)} has no .prj file, so the app can’t tell how to place it.`} Check with whoever made the file, then pick one. Each choice shows where the boundary would land.</p>
+    <div class="crs">${CRS_CHOICES.map(o=>{const h=imp.hints[o.id]||{};return `<label><input type="radio" name="crs" value="${o.id}"><span>${esc(o.name)}<small>${h.ok?"Lands in ":"Would land "}${esc(h.text||"")}</small></span></label>`}).join("")}
+    <label><input type="radio" name="crs" value="wkt"><span>Paste the text of a .prj file<textarea id="crsWkt" placeholder='PROJCS["NAD_1983_StatePlane_Illinois_East_FIPS_1201_Feet",…'></textarea></span></label></div>
+    <div class="row"><button class="btn primary" id="crsUse">Use this coordinate system</button><button class="btn quiet" id="impCancel">Cancel</button></div>`;
+}
+function showPreview(){
+  if(!mapReady||!imp||!imp.feats)return;
+  map.getSource("bndprev").setData({type:"FeatureCollection",features:imp.feats.map((f,i)=>({type:"Feature",properties:{sel:imp.sel.has(i)},geometry:{type:"MultiPolygon",coordinates:f.polys}}))});
+}
+function renderFeatSheet(sh){
+  const p=P(),n=imp.feats.length,q=imp.filter.toLowerCase();
+  const rows=imp.feats.map((f,i)=>({f,i,label:featLabel(f.props,i)})).filter(x=>!q||x.label.toLowerCase().includes(q)||JSON.stringify(x.f.props).toLowerCase().includes(q));
+  const ac=[...imp.sel].reduce((a,i)=>a+featAcres(imp.feats[i]),0),holes=imp.feats.reduce((a,f)=>a+f.polys.reduce((c,pl)=>c+pl.length-1,0),0);
+  const parts=imp.feats.reduce((a,f)=>a+f.polys.length,0);
+  sh.innerHTML=`<h4>${n>1?"Which features are the project area?":"Check the boundary"}</h4>
+    <p class="note" style="margin:0">${esc(imp.name)}: ${n} feature${n>1?"s":""}, ${parts} polygon${parts>1?"s":""}${holes?`, ${holes} hole${holes>1?"s":""}`:""}. Coordinate system: ${esc(imp.crs.name)} (${esc(imp.crs.how)}).<br>
+    ${imp.where.ok?`Lands in ${esc(imp.where.text)}.`:`<span class="warn">Lands ${esc(imp.where.text)}. Check the coordinate system before using it.</span>`}${imp.others&&imp.others.length?`<br>Also in the zip, not used: ${esc(imp.others.join(", "))}.`:""}</p>
+    ${n>1?`${n>8?`<input type="text" id="featFilter" placeholder="Filter by name or attribute" value="${esc(imp.filter)}">`:""}
+    <div class="row"><button class="btn quiet" id="featAll">Select all</button><button class="btn quiet" id="featNone">Select none</button></div>
+    <ul class="feats">${rows.slice(0,400).map(x=>{const extra=Object.entries(x.f.props).filter(([k,v])=>String(v)!==x.label&&v!=="").slice(0,3).map(([k,v])=>`${k}: ${v}`).join(" · ");
+      return `<li><label><input type="checkbox" data-feat="${x.i}" ${imp.sel.has(x.i)?"checked":""} style="width:1.4rem;height:1.4rem;flex:none"><span><b>${esc(x.label)}</b> · ${featAcres(x.f).toFixed(2)} ac${x.f.polys.length>1?` · ${x.f.polys.length} parts`:""}<small>${esc(extra)}</small></span></label></li>`}).join("")}</ul>
+    ${rows.length>400?`<p class="note">Showing 400 of ${rows.length}; use the filter.</p>`:""}`:""}
+    <p style="margin:0"><b>Project area: ${imp.sel.size} feature${imp.sel.size===1?"":"s"}, ${ac.toFixed(2)} acres</b></p>
+    <label class="f" style="color:var(--ink)">Project name (the Project/site field)<input type="text" id="impProj" value="${esc(p.site.project.trim())}" placeholder="Project name"></label>
+    <div class="row"><button class="btn primary" id="impSave" ${imp.sel.size?"":"disabled"}>Save boundary for this project</button><button class="btn quiet" id="impCancel">Cancel</button></div>`;
+}
+async function saveImport(){
+  const name=(mapWrap.querySelector("#impProj").value||"").trim();
+  if(!name){toast("Enter a project name first.",4000,true);return}
+  const key=projKey(name),old=BND.get(key);
+  if(old&&old.imported!==imp.replacing&&!confirm(`Project “${old.project}” already has a boundary (${old.file}). Replace it?`))return;
+  const rec={key,project:name,file:imp.name,crs:imp.crs,imported:Date.now(),
+    features:imp.feats.map((f,i)=>({label:featLabel(f.props,i),props:Object.fromEntries(Object.entries(f.props).slice(0,15).map(([k,v])=>[k,typeof v==="string"?v.slice(0,120):v])),polys:f.polys})),
+    selected:[...imp.sel].sort((a,b)=>a-b)};
+  if(!(await dbBndPut(rec))){toast("Couldn’t save the boundary; the phone may be out of space.",6000,true);return}
+  BND.set(key,rec);imp=null;map.getSource("bndprev").setData({type:"FeatureCollection",features:[]});
+  const p=P();if(projKey(p.site.project)!==key){p.site.project=name;save();renderPointSel()}
+  recheckProject(key);updateBoundaryLayer();fitBnd(rec);togglePanel("pgSheet",null);
+  toast(`Boundary saved for “${name}”. It’s stored on this phone and works offline.`,4000);
+}
+mapWrap.addEventListener("click",async e=>{
+  const t=e.target;if(!mapWrap.querySelector("#pgSheet").contains(t))return;
+  const b=curBnd();
+  if(t.id==="bndFit")fitBnd(b);
+  if(t.id==="bndPick"&&b){imp={step:"feats",name:b.file,crs:b.crs,feats:b.features.map(f=>({props:f.props,polys:f.polys})),sel:new Set(b.selected),filter:"",replacing:b.imported,where:{ok:true,text:b.project}};showPreview();renderBndSheet()}
+  if(t.id==="bndDel"&&b&&confirm(`Delete the boundary for “${b.project}”? Points keep their location; their inside/outside record is removed.`)){
+    BND.delete(b.key);dbBndDel(b.key);bndCache={sig:null};recheckProject(b.key);updateBoundaryLayer();renderBndSheet();toast("Boundary deleted")}
+  if(t.id==="impCancel"){imp=null;if(mapReady)map.getSource("bndprev").setData({type:"FeatureCollection",features:[]});renderBndSheet()}
+  if(t.id==="featAll"||t.id==="featNone"){imp.sel=new Set(t.id==="featAll"?imp.feats.map((f,i)=>i):[]);showPreview();renderBndSheet()}
+  if(t.id==="impSave")saveImport();
+  if(t.id==="crsUse"){
+    const v=(mapWrap.querySelector('input[name="crs"]:checked')||{}).value;if(!v){toast("Pick a coordinate system first.",3000,true);return}
+    const o=CRS_CHOICES.find(c=>c.id===v),def=o?o.def:mapWrap.querySelector("#crsWkt").value.trim();
+    if(!def){toast("Paste the .prj text first.",3000,true);return}
+    try{const fn=await makeConverter(def);imp.feats=convertFeats(imp.raw,fn);imp.crs={name:o?o.name:(wktName(def)||"pasted .prj"),how:o?"chosen by you; the file had no usable .prj":"from pasted .prj text"};
+      imp.step="feats";imp.prjBad=null;await afterConvert();renderBndSheet()}
+    catch(err){toast("That coordinate system couldn’t be used: "+(err.message||err),6000,true)}}
+});
+mapWrap.addEventListener("change",e=>{
+  const t=e.target;
+  if(t.id==="bndIn"&&t.files.length){startImport(t.files);t.value=""}
+  if(t.dataset.feat!=null&&imp){const i=+t.dataset.feat;t.checked?imp.sel.add(i):imp.sel.delete(i);showPreview();
+    const ul=mapWrap.querySelector(".feats"),st=ul?ul.scrollTop:0;renderBndSheet();const u2=mapWrap.querySelector(".feats");if(u2)u2.scrollTop=st}
+});
+mapWrap.addEventListener("input",e=>{if(e.target.id==="featFilter"&&imp){imp.filter=e.target.value;renderBndSheet();const f=mapWrap.querySelector("#featFilter");f.focus();f.setSelectionRange(f.value.length,f.value.length)}});
 
 /* ---------- Photos ---------- */
 function shrink(file){return new Promise((res,rej)=>{const img=new Image();const url=URL.createObjectURL(file);
@@ -1345,7 +1824,7 @@ function reportHTML(p){
   <table class="kv"><tr><td>Project/site</td><td>${esc(s.project)}</td></tr><tr><td>County, state</td><td>${esc(s.county)} County, Illinois</td></tr><tr><td>Sampling date</td><td>${esc(s.date)}</td></tr>
   <tr><td>Applicant/owner</td><td>${esc(s.owner)}</td></tr><tr><td>Investigator(s)</td><td>${esc(s.investigator)}</td></tr><tr><td>Sampling point</td><td>${esc(s.point)}</td></tr>
   <tr><td>Section, township, range</td><td>${esc(s.str)}</td></tr><tr><td>Landform / local relief / slope</td><td>${esc(s.landform)} / ${esc(s.relief)} / ${esc(s.slope)}${s.slope?"%":""}</td></tr>
-  <tr><td>Lat / long / datum</td><td>${esc(s.lat)} / ${esc(s.lon)} / ${esc(s.datum)}${s.lat&&s.lon&&locNote(p)?`<br><small>${esc(locNote(p))}</small>`:""}</td></tr><tr><td>Soil map unit name</td><td>${esc(s.mapunit)}</td></tr>${ssurgoRows}<tr><td>NWI classification</td><td>${esc(s.nwi)}</td></tr>${nwiRows}${imageryReportRow(s)}
+  <tr><td>Lat / long / datum</td><td>${esc(s.lat)} / ${esc(s.lon)} / ${esc(s.datum)}${s.lat&&s.lon&&locNote(p)?`<br><small>${esc(locNote(p))}</small>`:""}</td></tr><tr><td>Soil map unit name</td><td>${esc(s.mapunit)}</td></tr>${ssurgoRows}<tr><td>NWI classification</td><td>${esc(s.nwi)}</td></tr>${nwiRows}${bndReportRow(s)}${imageryReportRow(s)}
   <tr><td>Conditions typical for time of year?</td><td>${yesno(s.typical)}</td></tr><tr><td>Significantly disturbed?</td><td>${yesno(s.sigDist)}</td></tr><tr><td>Naturally problematic?</td><td>${yesno(s.natProb)}</td></tr><tr><td>Normal circumstances present?</td><td>${yesno(s.normal)}</td></tr></table>
   <h2>Summary of findings</h2><table class="kv"><tr><td>Hydrophytic vegetation present?</td><td>${yesno(d.veg)}</td></tr><tr><td>Hydric soil present?</td><td>${yesno(d.sc.v)}</td></tr><tr><td>Wetland hydrology present?</td><td>${yesno(d.hc.v)}</td></tr><tr><td><b>Is the sampled area within a wetland?</b></td><td><b>${yesno(d.wet)}</b></td></tr><tr><td>Remarks</td><td>${esc(s.remarks)}</td></tr></table>
   <h2>Vegetation (use scientific names of plants)</h2><table><tr><th>Species</th><th>Absolute % cover</th><th>Dominant species?</th><th>Indicator status</th></tr>${strat||'<tr><td colspan="4">No species recorded</td></tr>'}</table>
@@ -1413,7 +1892,7 @@ document.getElementById("risk").addEventListener("click",e=>{const a=e.target.da
   if(a==="later"){RISK.later=true;updateRisk()}});
 const canShareFiles=()=>{try{return !!(navigator.canShare&&navigator.canShare({files:[new File(["{}"],"t.json",{type:"application/json"})]}))}catch(e){return false}};
 const backupName=()=>`wetland_backup_${new Date().toISOString().slice(0,16).replace(/[:T]/g,"-")}.json`;
-function backupJSON(){return JSON.stringify({app:"wetland-form",kind:"backup",format:1,exported:new Date().toISOString(),species_list:LIST?LIST.label:null,points},null,1)}
+function backupJSON(){return JSON.stringify({app:"wetland-form",kind:"backup",format:1,exported:new Date().toISOString(),species_list:LIST?LIST.label:null,points,boundaries:[...BND.values()]},null,1)}
 function markBackedUp(){RISK.lastBackup=Date.now();RISK.later=false;metaSet("lastBackup",RISK.lastBackup);updateRisk();if(tab==="device")renderDevice()}
 async function backupNow(share){
   await flushSave();const name=backupName(),data=backupJSON();
@@ -1436,11 +1915,13 @@ async function restoreFile(file){
     if(i>=0&&!newer){kept++;continue}
     if(!(await dbPut(q))){failed++;continue}
     if(i<0){points.push(q);added++}else{points[i]=q;updated++}}
+  let nb=0;for(const b of (data&&Array.isArray(data.boundaries)?data.boundaries:[]))if(b&&b.key&&b.features&&(!BND.has(b.key)||BND.get(b.key).imported<b.imported)){if(await dbBndPut(b)){BND.set(b.key,b);nb++}}
+  if(nb){bndCache={sig:null};updateBoundaryLayer()}
   // the empty starter point made on first launch isn't needed once real points are back
   for(const p of points.filter(p=>!p.modified&&!p.site.lat&&!list.some(q=>q.id===p.id)))if(points.length>1){dbDel(p.id);points=points.filter(x=>x!==p)}
   points.sort((a,b)=>a.created-b.created);if(!points.some(p=>p.id===cur))cur=points[points.length-1].id;
   renderAll();checkStorage();
-  alert(`Restore finished: ${added} added, ${updated} replaced with the newer backup copy, ${kept} already up to date on this phone.${failed?`\n\n${failed} couldn’t be saved; the phone may be out of space.`:""}`);
+  alert(`Restore finished: ${added} added, ${updated} replaced with the newer backup copy, ${kept} already up to date on this phone.${nb?` ${nb} project boundar${nb>1?"ies":"y"} restored.`:""}${failed?`\n\n${failed} couldn’t be saved; the phone may be out of space.`:""}`);
 }
 async function cacheSize(name,sample){ // bytes in a Cache Storage cache; large caches are estimated from a sample
   try{const c=await caches.open(name),ks=await c.keys();let b=0;const n=sample?Math.min(sample,ks.length):ks.length;
@@ -1483,11 +1964,16 @@ async function renderDevice(){
   <table><tr><th>Item</th><th>Status on this phone</th><th class="n">Size</th></tr>${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td class="n">${r[2]}</td></tr>`).join("")}</table>
   <h3>Downloaded project areas</h3>
   ${areas.length?`<ul class="dareas">${areas.map(a=>`<li><div><b>${esc(a.name)}</b> <span class="sz">${fmtB(a.bytes||0)}</span></div>
-    <small>Downloaded ${new Date(a.created).toLocaleDateString()} · ${a.sources.map(s=>esc(IMG[s.id]?IMG[s.id].label:s.label)).join(", ")}${a.failed?` · <span class="bad">${a.failed} tiles missing</span>`:""}</small>
+    <small>Downloaded ${new Date(a.created).toLocaleDateString()} · ${a.sources.map(s=>esc(IMG[s.id]?IMG[s.id].label:s.label)).join(", ")}${a.failed?` · <span class="bad">${a.failed} tiles missing</span>`:""}${a.boundary?" · includes the project boundary":""}</small>
     <div class="row"><button class="btn quiet" data-dshow="${a.cache}">Show on map</button><button class="btn quiet" data-ddel="${a.cache}">Delete</button></div></li>`).join("")}</ul>
     <p class="note">${areas.length} area${areas.length>1?"s":""}, ${fmtB(areaBytes)} in total.</p>`
     :'<p class="note">None yet.</p>'}
-  <p class="note">To download an area: Site tab › zoom the map to your project › Offline areas › Download.</p>
+  <p class="note">To download an area: Map › Boundary › Download imagery for offline use, or zoom the map to your project › Offline areas › Download.</p>
+  <h3>Project boundaries</h3>
+  ${BND.size?`<ul class="dareas">${[...BND.values()].map(b=>{const sel=b.selected.map(i=>b.features[i]).filter(Boolean);return `<li><div><b>${esc(b.project)}</b> <span class="sz">${fmtB(JSON.stringify(b).length)}</span></div>
+    <small>${esc(b.file)} · ${sel.length} of ${b.features.length} features · ${sel.reduce((a,f)=>a+featAcres(f),0).toFixed(2)} acres · ${esc(b.crs.name)} · loaded ${new Date(b.imported).toLocaleDateString()} · ${(n=>`${n} point${n===1?"":"s"}`)(points.filter(q=>projKey(q.site.project)===b.key).length)}</small>
+    <div class="row"><button class="btn quiet" data-bdel="${esc(b.key)}">Delete</button></div></li>`}).join("")}</ul><p class="note">Boundaries are saved on this phone and included in backups.</p>`
+    :'<p class="note">None yet. Load one from Map › Boundary.</p>'}
   <h3>Phone storage</h3>
   ${est&&quota?`<div class="meter" aria-hidden="true"><span style="width:${Math.min(100,used/quota*100).toFixed(1)}%"></span></div>
     <p class="note">This app uses ${fmtB(used)} of the ${fmtB(quota)} the browser allows it (${fmtB(quota-used)} free).</p>`:'<p class="note">This browser doesn’t report storage use.</p>'}`;
@@ -1499,6 +1985,7 @@ main.addEventListener("click",async e=>{
   if(t.id==="askPersist"){try{await navigator.storage.persist()}catch(err){}await checkStorage();renderDevice();toast(RISK.persisted?"Storage is now protected":"The browser didn’t grant protection yet")}
   if(t.id==="clrViewed"&&confirm("Clear imagery you’ve viewed online? Downloaded project areas are kept.")){await caches.delete(VIEW_CACHE);renderDevice()}
   if(t.dataset.dshow){const a=(await listAreas()).find(x=>x.cache===t.dataset.dshow);if(a){pendingFit=a.bbox;tab="site";renderAll();window.scrollTo(0,0)}}
+  if(t.dataset.bdel){const b=BND.get(t.dataset.bdel);if(b&&confirm(`Delete the boundary for “${b.project}”?`)){BND.delete(b.key);dbBndDel(b.key);bndCache={sig:null};recheckProject(b.key);updateBoundaryLayer();renderDevice()}}
   if(t.dataset.ddel){const a=(await listAreas()).find(x=>x.cache===t.dataset.ddel);
     if(a&&confirm(`Delete the offline imagery for “${a.name}” (${fmtB(a.bytes||0)})? You can download it again later.`)){await caches.delete(a.cache);refreshAreaOutlines();renderDevice();toast("Area deleted")}}
 });
@@ -1506,12 +1993,13 @@ main.addEventListener("change",e=>{if(e.target.id==="bkIn"&&e.target.files[0]){r
 addEventListener("appinstalled",()=>{try{navigator.storage.persist().then(checkStorage)}catch(e){}});
 
 /* ---------- Misc ---------- */
-let tt;function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),2400)}
+let tt;function toast(m,ms=2400,alert=false){const t=document.getElementById("toast");t.textContent=m;t.classList.toggle("alert",alert);t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),ms)}
 function renderAll(){renderPointSel();renderTabs();renderPanel();renderStatus()}
 (async()=>{
   idb=await openDB();
   await loadSpecies();
   Object.values(DS).forEach(dsInit); // background: checks for and downloads the offline soil and NWI data
+  await loadBoundaries();
   points=(await dbAll()).sort((a,b)=>a.created-b.created);
   if(!points.length){const p=blank(1);points.push(p);dbPut(p)}
   cur=points[points.length-1].id;renderAll();
