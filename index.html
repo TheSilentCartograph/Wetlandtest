@@ -188,8 +188,8 @@ body.mapfull{overflow:hidden}
 .pgbar{position:absolute;left:0;right:0;bottom:0;z-index:4;padding:10px 8px calc(env(safe-area-inset-bottom,0px) + 8px);background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.4) 30%);display:flex;flex-direction:column;gap:8px}
 .pgbar button{border-radius:12px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 6px rgba(0,0,0,.3)}
 .pgbig{min-height:60px;font-size:1.15rem;background:var(--gley);color:var(--gley-ink);border:0}
-.pgrow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.pgrow button{min-height:58px;font-size:.98rem;background:#fff;color:#1c2a26;border:1px solid rgba(0,0,0,.25);padding:0 .2rem}
+.pgrow{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.pgrow button{min-height:58px;font-size:.9rem;line-height:1.1;background:#fff;color:#1c2a26;border:1px solid rgba(0,0,0,.25);padding:0 .2rem}
 .pgrow button[aria-expanded="true"]{background:#1c2a26;color:#fff}
 .mapwrap.page .mappanel{top:auto;left:8px;right:8px;width:auto;bottom:calc(var(--pgbar) + 6px);max-height:min(60vh,calc(100% - var(--pgbar) - 120px));font-size:1rem;gap:.55rem}
 .mapwrap.page .mappanel label.ck{min-height:2.6rem}.mapwrap.page .mappanel input[type=checkbox]{width:1.4rem;height:1.4rem}
@@ -200,7 +200,32 @@ body.mapfull{overflow:hidden}
 .mapwrap.page .mapimg{bottom:calc(var(--pgbar) + 6px);right:auto;left:8px;text-align:left}
 .mapwrap.page .maplibregl-ctrl-bottom-left{bottom:calc(var(--pgbar) + 28px)}
 .mapwrap.page .maphint{bottom:calc(var(--pgbar) + 60px)}
-.pgsheet h4{margin:0}.pgsheet .feats{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.3rem;max-height:34vh;overflow:auto}
+.pgsheet h4{margin:0}.mapwrap.page .site-only,.mapwrap:not(.page) .page-only{display:none!important}
+.pastpt{width:36px;height:36px;padding:0;border:0;background:none;cursor:pointer;display:grid;place-items:center}
+.pastpt i{width:16px;height:16px;border-radius:50%;border:2.5px solid #fff;box-shadow:0 0 0 1.5px rgba(0,0,0,.65);background:#8a8f8c}
+.pastpt[data-s="yes"] i{background:#2b6cb0}.pastpt[data-s="no"] i{background:#dd6b20}.pastpt.sel i{box-shadow:0 0 0 4px #ff3dd2}
+.pastpt span{display:none;position:absolute;left:30px;top:50%;transform:translateY(-50%);font-weight:700;font-size:12.5px;color:#fff;text-shadow:0 0 3px #000,0 0 3px #000,0 0 2px #000;white-space:nowrap;pointer-events:none}
+.mapwrap.lbl .pastpt span{display:block}
+.pgsheet .shut{position:sticky;top:0;align-self:flex-end;margin:-.3rem -.3rem -2.6rem 0;min-width:2.6rem;min-height:2.6rem;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:1.2rem;cursor:pointer;z-index:1}
+.pp h4{font-size:1.05rem;padding-right:2.8rem}.pp .meta{color:var(--muted);font-size:.85rem;margin:0}
+.pp .fac{display:grid;grid-template-columns:1fr 1fr;gap:.3rem;margin:.2rem 0}.pp .fac div{background:var(--soft);border-radius:6px;padding:.3rem .45rem;font-size:.82rem}
+.pp .fac b{display:block;font-size:.95rem}.pp .fac b.yes{color:#2b6cb0}.pp .fac b.no{color:#c05621}
+.pp h5{margin:.5rem 0 .15rem;font-size:.9rem}
+.pp table{width:100%;min-width:0;border-collapse:collapse;font-size:.85rem}.pp td,.pp th{padding:.3rem .25rem;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+.pp td.n,.pp th.n{text-align:right;white-space:nowrap}
+.sprow{display:flex;align-items:center;gap:.45rem}.sprow img{width:44px;height:44px;object-fit:cover;border-radius:5px;flex:none;cursor:pointer}
+.sprow button.spn{all:unset;cursor:pointer;line-height:1.2}.sprow button.spn i{text-decoration:underline;text-decoration-color:var(--line)}.sprow small{display:block;color:var(--muted);font-size:.75rem}
+.dom{display:inline-block;font-size:.7rem;font-weight:700;background:var(--gley);color:var(--gley-ink);border-radius:4px;padding:0 .3rem}
+.ovl{position:fixed;inset:0;z-index:55;background:var(--bg);color:var(--ink);overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 10px) 12px calc(env(safe-area-inset-bottom,0px) + 90px)}
+.ovl[hidden]{display:none}.ovl h2{margin:.2rem 3.4rem .4rem 0;font-size:1.2rem}
+.ovl .x{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);right:10px;min-width:3rem;min-height:3rem;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:1.4rem;cursor:pointer;z-index:2}
+.ovl .bigph{width:100%;max-height:62vh;object-fit:contain;background:#000;border-radius:8px;display:block}
+.ovl .strip{display:flex;gap:6px;overflow-x:auto;margin:.5rem 0}.ovl .strip img{width:64px;height:64px;object-fit:cover;border-radius:6px;cursor:pointer;opacity:.7}.ovl .strip img.on{opacity:1;outline:3px solid var(--gley)}
+.ovl .bot{position:fixed;left:0;right:0;bottom:0;display:flex;gap:8px;padding:8px 12px calc(env(safe-area-inset-bottom,0px) + 8px);background:var(--surface);border-top:1px solid var(--line)}
+.ovl .bot .btn{flex:1;min-height:3.4rem;font-size:1rem}
+.ovl ol.sum{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}.ovl ol.sum li{border-bottom:1px solid var(--line);padding:.55rem 0}
+.ovl ol.sum .sprow img{width:64px;height:64px}.ovl .rank{color:var(--muted);font-weight:700;min-width:1.6rem}
+.pgsheet .feats{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.3rem;max-height:34vh;overflow:auto}
 .pgsheet .feats label{display:flex;gap:.6rem;align-items:flex-start;padding:.45rem .3rem;border-bottom:1px solid var(--line);min-height:2.8rem}
 .pgsheet .feats small{display:block;color:var(--muted)}
 .pgsheet .crs{display:flex;flex-direction:column;gap:.2rem}.pgsheet .crs label{display:flex;gap:.6rem;align-items:flex-start;padding:.4rem .2rem;border-bottom:1px solid var(--line)}
@@ -284,8 +309,9 @@ const TABS=[["site","Site"],["veg","Vegetation"],["soil","Soil"],["hydro","Hydro
 
 /* ---------- Storage (IndexedDB, falls back to memory) ---------- */
 let idb=null;
-function openDB(){return new Promise(res=>{try{const r=indexedDB.open("wetland-form",3);
-  r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains("points"))d.createObjectStore("points",{keyPath:"id"});if(!d.objectStoreNames.contains("meta"))d.createObjectStore("meta");if(!d.objectStoreNames.contains("boundaries"))d.createObjectStore("boundaries",{keyPath:"key"})};
+function openDB(){return new Promise(res=>{try{const r=indexedDB.open("wetland-form",4);
+  r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains("points"))d.createObjectStore("points",{keyPath:"id"});if(!d.objectStoreNames.contains("meta"))d.createObjectStore("meta");if(!d.objectStoreNames.contains("boundaries"))d.createObjectStore("boundaries",{keyPath:"key"});
+  if(!d.objectStoreNames.contains("past"))d.createObjectStore("past",{keyPath:"id"});if(!d.objectStoreNames.contains("photos"))d.createObjectStore("photos",{keyPath:"id"}).createIndex("sp","sp")};
   r.onsuccess=()=>res(r.result);r.onerror=()=>res(null)}catch(e){res(null)}})}
 function dbAll(){return new Promise(res=>{if(!idb)return res([]);try{const q=idb.transaction("points").objectStore("points").getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([])}catch(e){res([])}})}
 /* Resolves true only once the write is committed to disk. A full disk shows up as an aborted transaction
@@ -1128,7 +1154,14 @@ async function downloadArea(name,b,ids,extra={}){
   }catch(e){await caches.delete(cacheName);if(e.message!=="cancelled")toast("Area download failed: "+(e.message||e))}
   finally{clearInterval(tick);areaJob=null;renderAreas();refreshAreaOutlines()}
 }
-function bndAreaBox(b){const bb=bndBBox(b),lat=(bb[1]+bb[3])/2,dx=100/(111320*Math.cos(lat*Math.PI/180)),dy=100/110574;return [bb[0]-dx,bb[1]-dy,bb[2]+dx,bb[3]+dy].map(v=>+v.toFixed(6))}
+function areaPast(b){ // past data points that belong with a project area: within 1 km of its boundary box, or all of them with no boundary
+  if(!b)return allPast();const bb=bndBBox(b),[kx,ky]=mPerDeg((bb[1]+bb[3])/2),dx=1000/kx,dy=1000/ky;
+  return allPast().filter(p=>p.lon>bb[0]-dx&&p.lon<bb[2]+dx&&p.lat>bb[1]-dy&&p.lat<bb[3]+dy);
+}
+function bndAreaBox(b){ // project area to download: boundary plus its past points, with 100 m around
+  let bb=b?bndBBox(b):null;for(const p of areaPast(b))bb=bb?[Math.min(bb[0],p.lon),Math.min(bb[1],p.lat),Math.max(bb[2],p.lon),Math.max(bb[3],p.lat)]:[p.lon,p.lat,p.lon,p.lat];
+  if(!bb)return null;const [kx,ky]=mPerDeg((bb[1]+bb[3])/2),dx=100/kx,dy=100/ky;return [bb[0]-dx,bb[1]-dy,bb[2]+dx,bb[3]+dy].map(v=>+v.toFixed(6));
+}
 const viewBox=()=>{const b=map.getBounds();return [b.getWest(),b.getSouth(),b.getEast(),b.getNorth()].map(v=>+v.toFixed(6))};
 async function renderAreas(){
   const el=mapWrap.querySelector("#mAreaBody");if(!el||mapWrap.querySelector("#mAreas").hidden)return;
@@ -1145,14 +1178,15 @@ async function renderAreas(){
         <label class="f" style="color:var(--ink)">Area name<input type="text" id="aName" value="${esc(P()?.site.project||P()?.site.point||"Project area")}"></label>
         <button class="btn primary" id="aDownload" style="margin-top:.4rem">Download this view for offline use</button>`;
   }
-  const bnd=curBnd();let bhtml="";
-  if(bnd&&mapReady){const bb=bndAreaBox(bnd),pl=areaPlan(bb,areaIdsForView()),has=(await listAreas()).some(a=>a.boundary&&a.boundary.key===bnd.key&&a.boundary.imported===bnd.imported);
-    bhtml=`<h4>Project boundary: ${esc(bnd.project)}</h4>${has?'<p class="note">Imagery for this boundary is downloaded (see the list below).</p>':""}`+(pl.tiles>AREA_MAX_TILES?`<p class="note warn">The boundary (plus 100 m around it) needs ${pl.tiles.toLocaleString()} tiles, over the ${AREA_MAX_TILES.toLocaleString()} limit. Download it in parts using map views instead.</p>`
-      :`<p class="note">Boundary plus 100 m around it: ${pl.tiles.toLocaleString()} tiles, about ${pl.mb.toFixed(0)} MB. The boundary itself is saved with the download.</p><button class="btn primary" id="aBndDl">${has?"Download again":"Download imagery for the whole boundary"}</button>`)+"<h4>Or the current map view</h4>"}
+  const bnd=curBnd(),np=areaPast(bnd).length;let bhtml="";
+  if((bnd||np)&&mapReady){const bb=bndAreaBox(bnd),pl=areaPlan(bb,areaIdsForView()),has=bnd&&(await listAreas()).some(a=>a.boundary&&a.boundary.key===bnd.key&&a.boundary.imported===bnd.imported);
+    const what=bnd?`The boundary${np?` and ${np} past data point${np>1?"s":""} near it`:""}`:`The ${np} past data points`;
+    bhtml=`<h4>${bnd?`Project: ${esc(bnd.project)}`:"Past data points"}</h4>${has?'<p class="note">Imagery for this boundary is downloaded (see the list below).</p>':""}`+(pl.tiles>AREA_MAX_TILES?`<p class="note warn">${what}, plus 100 m around, need ${pl.tiles.toLocaleString()} tiles, over the ${AREA_MAX_TILES.toLocaleString()} limit. Download it in parts using map views instead.</p>`
+      :`<p class="note">${what}, plus 100 m around: ${pl.tiles.toLocaleString()} tiles, about ${pl.mb.toFixed(0)} MB. ${bnd?"The boundary is saved with the download. ":""}Past data and species photos are already stored on this phone and work offline.</p><button class="btn primary" id="aBndDl">${has?"Download again":bnd?"Download imagery for the project":"Download imagery around past points"}</button>`)+"<h4>Or the current map view</h4>"}
   const areas=await listAreas();
   let storage="";try{const s=await navigator.storage.estimate();storage=`<p class="note">This device: ${(s.usage/1048576).toFixed(0)} MB used by the app of ${(s.quota/1073741824).toFixed(1)} GB available.</p>`}catch(e){}
   if(!mapWrap.querySelector("#mAreaBody")||areaJob)return;
-  el.innerHTML=`${bhtml}${est}<h4>Saved areas</h4>${areas.length?`<ul class="areas">${areas.map(a=>`<li><b>${esc(a.name)}</b><br><small>${new Date(a.created).toLocaleDateString()} · ${(a.bytes/1048576).toFixed(1)} MB · ${a.sources.map(s=>esc(s.label)).join(", ")}${a.failed?` · ${a.failed} tiles missing`:""}${a.boundary?" · includes project boundary":""}</small><br>
+  el.innerHTML=`${bhtml}${est}<h4>Saved areas</h4>${areas.length?`<ul class="areas">${areas.map(a=>`<li><b>${esc(a.name)}</b><br><small>${new Date(a.created).toLocaleDateString()} · ${(a.bytes/1048576).toFixed(1)} MB · ${a.sources.map(s=>esc(s.label)).join(", ")}${a.failed?` · ${a.failed} tiles missing`:""}${a.boundary?" · includes project boundary":""}${a.past&&a.past.points?` · ${a.past.points} past points`:""}</small><br>
     <button class="btn quiet" data-ashow="${a.cache}">Show</button> <button class="btn quiet" data-adel="${a.cache}">Delete</button></li>`).join("")}</ul>`:'<p class="note">None yet. Areas you download show here and load instantly in the field, with or without signal.</p>'}${storage}`;
 }
 async function refreshAreaOutlines(){
@@ -1168,18 +1202,20 @@ document.addEventListener("click",async e=>{
     if(free!=null&&mb>free-200){alert(`Not enough space: this area needs about ${mb.toFixed(0)} MB and only ${Math.max(0,free).toFixed(0)} MB is free for the app. Zoom in to a smaller area or delete another offline area first.`);return}
     downloadArea(name,b,areaIdsForView()).then(checkStorage);renderAreas()}
   if(t.id==="aCancel"&&areaJob){areaJob.ctl.abort()}
-  if(t.id==="aBndDl"){const bnd=curBnd();if(!bnd)return;if(!navigator.onLine){toast("Connect to the internet to download an area.");return}
+  if(t.id==="aBndDl"){const bnd=curBnd();if(!navigator.onLine){toast("Connect to the internet to download an area.");return}
     const b=bndAreaBox(bnd),mb=areaPlan(b,areaIdsForView()).mb;await checkStorage();const free=freeMB();
     if(free!=null&&mb>free-200){alert(`Not enough space: this area needs about ${mb.toFixed(0)} MB and only ${Math.max(0,free).toFixed(0)} MB is free for the app.`);return}
-    const sel=bnd.selected.map(i=>bnd.features[i]).filter(Boolean);
-    downloadArea(bnd.project+" (boundary)",b,areaIdsForView(),{boundary:{key:bnd.key,project:bnd.project,file:bnd.file,imported:bnd.imported,crs:bnd.crs,
-      geojson:{type:"FeatureCollection",features:sel.map(f=>({type:"Feature",properties:{label:f.label},geometry:{type:"MultiPolygon",coordinates:f.polys}}))}}}).then(checkStorage);renderAreas()}
+    const sel=bnd?bnd.selected.map(i=>bnd.features[i]).filter(Boolean):[],pp=areaPast(bnd);
+    const extra={past:{points:pp.length,files:[...new Set(pp.map(p=>p.ds.file))],species:new Set(pp.flatMap(p=>p.veg.map(v=>v.spk))).size,photos:[...new Set(pp.flatMap(p=>p.veg.map(v=>v.spk)))].reduce((a,k)=>a+(PHOTOS.get(k)||[]).length,0)}};
+    if(bnd)extra.boundary={key:bnd.key,project:bnd.project,file:bnd.file,imported:bnd.imported,crs:bnd.crs,
+      geojson:{type:"FeatureCollection",features:sel.map(f=>({type:"Feature",properties:{label:f.label},geometry:{type:"MultiPolygon",coordinates:f.polys}}))}};
+    downloadArea(bnd?bnd.project+" (project area)":"Past data points",b,areaIdsForView(),extra).then(checkStorage);renderAreas()}
   if(t.dataset.ashow){const a=(await listAreas()).find(x=>x.cache===t.dataset.ashow);if(a)map.fitBounds([[a.bbox[0],a.bbox[1]],[a.bbox[2],a.bbox[3]]],{padding:20})}
   if(t.dataset.adel){const a=(await listAreas()).find(x=>x.cache===t.dataset.adel);
     if(a&&confirm(`Delete the offline imagery for “${a.name}” (${(a.bytes/1048576).toFixed(1)} MB)? You can download it again later.`)){await caches.delete(a.cache);renderAreas();refreshAreaOutlines()}}
 });
 
-const mapPrefs=Object.assign({base:"county",soils:true,nwi:true,pts:true,bnd:true},(()=>{try{return JSON.parse(localStorage.getItem("mapPrefs"))||{}}catch(e){return {}}})());
+const mapPrefs=Object.assign({base:"county",soils:true,nwi:true,pts:true,bnd:true,past:true},(()=>{try{return JSON.parse(localStorage.getItem("mapPrefs"))||{}}catch(e){return {}}})());
 if(!(mapPrefs.base in BASES))mapPrefs.base="county"; // older saved value "aerial"
 const saveMapPrefs=()=>{try{localStorage.setItem("mapPrefs",JSON.stringify(mapPrefs))}catch(e){}};
 const NWI_COLORS=["match",["get","t"],"Freshwater Emergent Wetland","#7fc31c","Freshwater Forested/Shrub Wetland","#008837","Freshwater Pond","#688cc0","Lake","#13007c","Riverine","#0190bf","#b28653"];
@@ -1192,15 +1228,17 @@ mapWrap.innerHTML=`<div id="map" aria-label="Map of sampling points, soils and w
   <div class="mappanel" id="mPanel" hidden>
     <label>Basemap <select id="mBase"><option value="county">Aerial: county + NAIP + USGS (sharpest)</option><option value="naip">Aerial: NAIP 2019 + USGS</option><option value="usgs">Aerial: USGS only</option><option value="topo">Topo / streets (USGS)</option><option value="none">None</option></select></label>
     <p class="years">Imagery years: ${["cook","lake","kane","dupage","naip","usgs"].map(id=>`${esc(IMG[id].short)} ${esc(IMG[id].year)}`).join(" · ")}. The “Imagery” label on the map shows which one you’re looking at.</p>
-    <label class="ck"><input type="checkbox" id="mSoils"> Mapped soils</label>
-    <div class="lg"><span><i style="background:transparent;border-color:#f6c445"></i>0%</span><span><i style="background:#bfdbfe"></i>1–32</span><span><i style="background:#60a5fa"></i>33–65</span><span><i style="background:#2563eb"></i>66–99</span><span><i style="background:#1e3a8a"></i>100% hydric</span></div>
-    <label class="ck"><input type="checkbox" id="mNwi"> NWI wetlands</label>
-    <div class="lg"><span><i style="background:#7fc31c"></i>Emergent</span><span><i style="background:#008837"></i>Forested/shrub</span><span><i style="background:#688cc0"></i>Pond</span><span><i style="background:#13007c"></i>Lake</span><span><i style="background:#0190bf"></i>Riverine</span></div>
-    <label class="ck"><input type="checkbox" id="mPts"> Sampling points</label>
+    <label class="ck site-only"><input type="checkbox" id="mSoils"> Mapped soils</label>
+    <div class="lg site-only"><span><i style="background:transparent;border-color:#f6c445"></i>0%</span><span><i style="background:#bfdbfe"></i>1–32</span><span><i style="background:#60a5fa"></i>33–65</span><span><i style="background:#2563eb"></i>66–99</span><span><i style="background:#1e3a8a"></i>100% hydric</span></div>
+    <label class="ck site-only"><input type="checkbox" id="mNwi"> NWI wetlands</label>
+    <div class="lg site-only"><span><i style="background:#7fc31c"></i>Emergent</span><span><i style="background:#008837"></i>Forested/shrub</span><span><i style="background:#688cc0"></i>Pond</span><span><i style="background:#13007c"></i>Lake</span><span><i style="background:#0190bf"></i>Riverine</span></div>
+    <label class="ck site-only"><input type="checkbox" id="mPts"> Sampling points</label>
+    <label class="ck page-only"><input type="checkbox" id="mPast"> Past data points</label>
+    <div class="lg page-only"><span><i style="background:#2b6cb0;border-radius:50%"></i>Wetland</span><span><i style="background:#dd6b20;border-radius:50%"></i>Not wetland</span><span><i style="background:#8a8f8c;border-radius:50%"></i>Not determined</span></div>
     <label class="ck"><input type="checkbox" id="mBnd"> Project boundary</label>
     <div class="lg"><span><i style="background:transparent;border-color:#ff3dd2"></i>Boundary of the current point’s project</span></div>
     <button class="btn quiet" data-areas="1">Offline areas…</button>
-    <p class="note" style="margin:.3rem 0 0">Soils and NWI always work offline. Imagery needs a connection unless you download the area (Offline areas) or have already viewed it.</p>
+    <p class="note site-only" style="margin:.3rem 0 0">Soils and NWI always work offline. Imagery needs a connection unless you download the area (Offline areas) or have already viewed it.</p>
     <details class="about"><summary>About imagery and terms of use</summary>${IMG_ORDER.slice().reverse().map(id=>`<p><b>${esc(IMG[id].label)}</b>${IMG[id].bounds?"":" (all counties)"}: ${esc(IMG[id].terms)} <a href="${IMG[id].link}" target="_blank" rel="noopener">Source</a></p>`).join("")}<p>County layers show only inside their county; NAIP fills in where a county layer is missing, and USGS fills in beyond that.</p></details>
   </div>
   <div class="maphint" id="mHint" hidden></div><div class="mapmsg" id="mMsg" hidden></div><div class="mapimg" id="mImg" hidden></div>
@@ -1208,7 +1246,7 @@ mapWrap.innerHTML=`<div id="map" aria-label="Map of sampling points, soils and w
   <div class="mappanel pgsheet" id="pgSheet" hidden></div>
   <div class="pgbar" id="pgBar" hidden>
     <button class="pgbig" id="pgDrop">Drop point at my location</button>
-    <div class="pgrow"><button id="pgBack">‹ Form</button><button id="pgLayers" aria-expanded="false">Layers</button><button id="pgBnd" aria-expanded="false">Boundary</button><button id="pgCenter">◎ Center</button></div>
+    <div class="pgrow"><button id="pgBack">‹ Form</button><button id="pgLayers" aria-expanded="false">Layers</button><button id="pgBnd" aria-expanded="false">Boundary</button><button id="pgPast" aria-expanded="false">Past data</button><button id="pgCenter">◎ Center</button></div>
   </div>`;
 function loadMapLib(){
   if(!mapLibP)mapLibP=new Promise((res,rej)=>{
@@ -1267,7 +1305,7 @@ async function initMap(){
   map.on("moveend",updateImgChip);
   map.on("moveend",()=>{if(!mapWrap.querySelector("#mAreas").hidden&&!areaJob)renderAreas()});
   map.on("click",onMapClick);
-  map.on("dragstart",()=>{follow=false});
+  map.on("dragstart",()=>{follow=false});map.on("zoomend",pastLabels);
   updateBoundaryLayer();
   map.on("mouseenter","pts",()=>map.getCanvas().style.cursor="pointer");
   map.on("mouseleave","pts",()=>map.getCanvas().style.cursor=placing?"crosshair":"");
@@ -1276,16 +1314,19 @@ function applyMapPrefs(){
   if(!mapReady)return;
   const vis=(id,on)=>map.setLayoutProperty(id,"visibility",on?"visible":"none");
   const on=BASES[mapPrefs.base]||[];IMG_ORDER.forEach(id=>vis("img-"+id,on.includes(id)));vis("topo",mapPrefs.base==="topo");
-  ["soil-fill","soil-line"].forEach(id=>vis(id,mapPrefs.soils));["nwi-fill","nwi-line"].forEach(id=>vis(id,mapPrefs.nwi));vis("pts",mapPrefs.pts);
+  const pg=mapPage; // the full-screen map page shows only imagery, the boundary, past data points and GPS
+  ["soil-fill","soil-line"].forEach(id=>vis(id,mapPrefs.soils&&!pg));["nwi-fill","nwi-line"].forEach(id=>vis(id,mapPrefs.nwi&&!pg));vis("pts",mapPrefs.pts&&!pg);
+  ["sel","acc-fill","acc-line","areas"].forEach(id=>vis(id,!pg));["me","meacc-fill","meacc-line"].forEach(id=>vis(id,pg));
+  if(marker)marker.getElement().style.display=pg?"none":"";
   ["bnd-fill","bnd-casing","bnd-line"].forEach(id=>vis(id,mapPrefs.bnd));
 }
 function syncMapPanel(){
   mapWrap.querySelector("#mBase").value=mapPrefs.base;
-  mapWrap.querySelector("#mSoils").checked=mapPrefs.soils;mapWrap.querySelector("#mNwi").checked=mapPrefs.nwi;mapWrap.querySelector("#mPts").checked=mapPrefs.pts;mapWrap.querySelector("#mBnd").checked=mapPrefs.bnd;
+  mapWrap.querySelector("#mSoils").checked=mapPrefs.soils;mapWrap.querySelector("#mNwi").checked=mapPrefs.nwi;mapWrap.querySelector("#mPts").checked=mapPrefs.pts;mapWrap.querySelector("#mBnd").checked=mapPrefs.bnd;mapWrap.querySelector("#mPast").checked=mapPrefs.past;
 }
 mapWrap.addEventListener("change",e=>{
   const t=e.target;
-  if(t.id==="mBase")mapPrefs.base=t.value;if(t.id==="mSoils")mapPrefs.soils=t.checked;if(t.id==="mNwi")mapPrefs.nwi=t.checked;if(t.id==="mPts")mapPrefs.pts=t.checked;if(t.id==="mBnd")mapPrefs.bnd=t.checked;
+  if(t.id==="mBase")mapPrefs.base=t.value;if(t.id==="mSoils")mapPrefs.soils=t.checked;if(t.id==="mNwi")mapPrefs.nwi=t.checked;if(t.id==="mPts")mapPrefs.pts=t.checked;if(t.id==="mBnd")mapPrefs.bnd=t.checked;if(t.id==="mPast"){mapPrefs.past=t.checked;drawPastMarkers()}
   saveMapPrefs();applyMapPrefs();refreshMapData();updateImgChip();
 });
 mapWrap.addEventListener("click",e=>{
@@ -1312,8 +1353,8 @@ async function refreshNow(){
     else if(on&&z<minZ)hints.push(key==="soils"?"soils":"wetlands");
     map.getSource(src).setData({type:"FeatureCollection",features:feats});
   };
-  await fill("soils","soils",12.5,(D,i)=>{const k=String(D.keys[dsPolyKey(D,i)]),m=D.mu[k]||{};return {k,s:m.s,h:m.h==null?-1:m.h}},mapPrefs.soils);
-  await fill("nwi","nwi",11,(D,i)=>{const [c,t]=D.codes[D.keys[dsPolyKey(D,i)]];return {c,t}},mapPrefs.nwi);
+  await fill("soils","soils",12.5,(D,i)=>{const k=String(D.keys[dsPolyKey(D,i)]),m=D.mu[k]||{};return {k,s:m.s,h:m.h==null?-1:m.h}},mapPrefs.soils&&!mapPage);
+  await fill("nwi","nwi",11,(D,i)=>{const [c,t]=D.codes[D.keys[dsPolyKey(D,i)]];return {c,t}},mapPrefs.nwi&&!mapPage);
   map.getSource("pts").setData({type:"FeatureCollection",features:points.filter(q=>q.id!==cur&&q.site.lat&&q.site.lon).map(q=>({type:"Feature",properties:{id:q.id,name:q.site.point||"Untitled"},geometry:{type:"Point",coordinates:[+q.site.lon,+q.site.lat]}}))});
   setHint(placing?`Tap the map to place ${P()?.site.point||"the point"}`:hints.length?`Zoom in to see ${hints.join(" and ")}`:"");
 }
@@ -1330,13 +1371,14 @@ function updateMapPoint(){
       marker=new maplibregl.Marker({element:el,draggable:true,anchor:"bottom"}).setLngLat(ll).addTo(map);
       marker.on("dragend",()=>{const l=marker.getLngLat();movePoint(l.lat,l.lng,"dragged on map")});
     }else marker.setLngLat(ll);
-    marker.getElement().title=`${p.site.point||"Sampling point"}: drag to adjust`;
+    marker.getElement().title=`${p.site.point||"Sampling point"}: drag to adjust`;marker.getElement().style.display=mapPage?"none":"";
   }
   map.getSource("acc").setData(has&&p.site.locSrc==="GPS"&&p.site.acc?circle(+p.site.lat,+p.site.lon,p.site.acc):{type:"FeatureCollection",features:[]});
   refreshMapData();
 }
 async function onMapClick(e){
   const {lng,lat}=e.lngLat;
+  if(mapPage){if(sheetMode==="pastpt")closeSheet();return} // map page: only past points open popups
   if(placing){setPlacing(false);movePoint(lat,lng,"map tap");return}
   const ml=window.maplibregl,box=document.createElement("div");box.className="pop";
   const pt=mapPrefs.pts&&map.queryRenderedFeatures(e.point,{layers:["pts"]})[0];
@@ -1518,7 +1560,7 @@ const validLL=b=>b.every(isFinite)&&b[0]>=-180&&b[2]<=180&&b[1]>=-90&&b[3]<=90;
 async function placeName(lon,lat){ // where a converted boundary lands, to help pick the right coordinate system
   if(!isFinite(lon)||!isFinite(lat)||Math.abs(lat)>90||Math.abs(lon)>180)return {ok:false,text:"nowhere real (coordinates out of range)"};
   const bb=(DS.soils.idx&&DS.soils.idx.bbox)||[-88.6,41.47,-87.52,42.5];
-  if(lon<bb[0]-.05||lon>bb[2]+.05||lat<bb[1]-.05||lat>bb[3]+.05)return {ok:false,text:`outside Northeastern Illinois (${lat.toFixed(3)}, ${lon.toFixed(3)})`};
+  if(lon<bb[0]-.05||lon>bb[2]+.05||lat<bb[1]-.05||lat>bb[3]+.05)return lon>-91.6&&lon<-87.0&&lat>36.9&&lat<42.6?{ok:true,text:`Illinois, outside the four counties with offline soil data (${lat.toFixed(3)}, ${lon.toFixed(3)})`}:{ok:false,text:`outside Illinois (${lat.toFixed(3)}, ${lon.toFixed(3)})`};
   try{const r=await lookupSoil(lat,lon);if(r){const a=(DS.soils.data.mu[r.mk]||{}).a,sv=(DS.soils.idx.surveys||[]).find(s=>s.areasymbol===a);if(sv)return {ok:true,text:sv.areaname}}}catch(e){}
   return {ok:true,text:"Northeastern Illinois"};
 }
@@ -1596,7 +1638,7 @@ async function openMapPage(){
   updatePageBanner();
   try{await initMap()}catch(e){const m=mapWrap.querySelector("#mMsg");m.hidden=false;m.textContent=e.message;return}
   mapWrap.style.setProperty("--pgbar",mapWrap.querySelector("#pgBar").offsetHeight+"px");
-  map.resize();syncMapPanel();updateMapPoint();updateBoundaryLayer();refreshMapData();updateImgChip();
+  map.resize();syncMapPanel();applyMapPrefs();updateMapPoint();updateBoundaryLayer();refreshMapData();updateImgChip();drawPastMarkers();
   const b=curBnd(),p=P();if(b)fitBnd(b);else if(p&&p.site.lat&&p.site.lon)map.jumpTo({center:[+p.site.lon,+p.site.lat],zoom:Math.max(map.getZoom(),16)});
   startWatch();banT=setInterval(updatePageBanner,5000);
 }
@@ -1605,7 +1647,7 @@ function closeMapPage(fromHistory){
   if(mapReady)map.getSource("bndprev").setData({type:"FeatureCollection",features:[]});
   ["pgTop","pgBar","pgSheet","mPanel","mAreas"].forEach(id=>mapWrap.querySelector("#"+id).hidden=true);
   mapWrap.querySelectorAll(".pgrow [aria-expanded]").forEach(x=>x.setAttribute("aria-expanded","false"));
-  mapWrap.classList.remove("page");document.body.classList.remove("mapfull");
+  mapWrap.classList.remove("page");document.body.classList.remove("mapfull");clearPastMarkers();closeOvl();applyMapPrefs();
   if(!fromHistory&&history.state&&history.state.mapPage)history.back();
   const slot=document.getElementById("mapSlot");if(slot){slot.appendChild(mapWrap);setTimeout(()=>{if(map)map.resize()},50)}else mapWrap.remove();
   renderPanel();renderPointSel();
@@ -1654,7 +1696,8 @@ mapWrap.addEventListener("click",e=>{
   if(t.id==="pgDrop")dropPoint();
   if(t.id==="pgCenter"){if(me&&me.lat!=null){follow=true;map.easeTo({center:[me.lon,me.lat],zoom:Math.max(map.getZoom(),17),duration:500})}else toast(meErr||"Waiting for a GPS fix…")}
   if(t.id==="pgLayers")togglePanel("mPanel",t);
-  if(t.id==="pgBnd"){if(togglePanel("pgSheet",t))renderBndSheet()}
+  if(t.id==="pgBnd"){sheetMode="bnd";if(togglePanel("pgSheet",t))renderBndSheet()}
+  if(t.id==="pgPast"){sheetMode="past";if(togglePanel("pgSheet",t))renderPastSheet()}
 });
 main.addEventListener("click",e=>{if(e.target.id==="openMapPg")openMapPage()});
 
@@ -1662,7 +1705,7 @@ main.addEventListener("click",e=>{if(e.target.id==="openMapPg")openMapPage()});
 let imp=null; // import in progress
 const BND_ACCEPT=".zip,.kmz,.kml,.shp,.shx,.dbf,.prj,.cpg,.geojson,.json";
 function renderBndSheet(){
-  const sh=mapWrap.querySelector("#pgSheet"),p=P(),b=curBnd();
+  sheetMode="bnd";const sh=mapWrap.querySelector("#pgSheet"),p=P(),b=curBnd();
   if(imp&&imp.step==="crs")return renderCrsSheet(sh);
   if(imp&&imp.step==="feats")return renderFeatSheet(sh);
   const fileBtn=label=>`<label class="btn ${b?"quiet":"primary"}" style="display:flex;align-items:center;justify-content:center;min-height:3rem">${label}<input type="file" id="bndIn" multiple accept="${BND_ACCEPT}" style="position:absolute;left:-9999px"></label>`;
@@ -1766,6 +1809,279 @@ mapWrap.addEventListener("change",e=>{
     const ul=mapWrap.querySelector(".feats"),st=ul?ul.scrollTop:0;renderBndSheet();const u2=mapWrap.querySelector(".feats");if(u2)u2.scrollTop=st}
 });
 mapWrap.addEventListener("input",e=>{if(e.target.id==="featFilter"&&imp){imp.filter=e.target.value;renderBndSheet();const f=mapWrap.querySelector("#featFilter");f.focus();f.setSelectionRange(f.value.length,f.value.length)}});
+
+/* ---------- Past delineation data ----------
+   Imported on the device from an Excel workbook (Points, Vegetation and Soils sheets linked by point ID) and kept only
+   in this browser's storage (IndexedDB). Nothing about a project is built into the app or sent anywhere. */
+let PAST=[],sheetMode=null;const PHOTOS=new Map(); // species key -> my photos of it
+function stAll(name){return new Promise(res=>{try{if(!idb||!idb.objectStoreNames.contains(name))return res([]);const q=idb.transaction(name).objectStore(name).getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([])}catch(e){res([])}})}
+function stPut(name,v){return new Promise(res=>{try{const tx=idb.transaction(name,"readwrite");tx.objectStore(name).put(v);tx.oncomplete=()=>res(true);tx.onabort=()=>res(false)}catch(e){res(false)}})}
+function stDel(name,k){return new Promise(res=>{try{const tx=idb.transaction(name,"readwrite");tx.objectStore(name).delete(k);tx.oncomplete=()=>res(true);tx.onabort=()=>res(false)}catch(e){res(false)}})}
+async function loadPast(){
+  PAST=(await stAll("past")).sort((a,b)=>a.imported-b.imported);PAST.forEach(prepPast);
+  PHOTOS.clear();for(const ph of (await stAll("photos")).sort((a,b)=>a.added-b.added))addPhotoIdx(ph);
+}
+function addPhotoIdx(ph){if(!PHOTOS.has(ph.sp))PHOTOS.set(ph.sp,[]);PHOTOS.get(ph.sp).push(ph)}
+
+/* Species names: matched to the NWPL list by scientific name or synonym (common names alone don't count) */
+function matchSp(name){
+  const raw=String(name||"").replace(/[()]/g," ").replace(/\s+/g," ").trim();if(!raw)return null;
+  const tryK=t=>{const k=key(t),x=SPP_IDX.get(k);if(!x)return null;if(x.k===k)return {x,how:"name"};const o=x.syn.find(o=>key(o)===k);return o?{x,how:"synonym",via:o}:null};
+  let m=tryK(raw);if(m)return m;
+  const w=raw.split(" ");if(w.length>2&&!/^(sp|spp)\.?$/i.test(w[1])){m=tryK(w.slice(0,2).join(" "));if(m)return {...m,how:"species only",via:raw}} // drops authors, var. or ssp.
+  return null;
+}
+const spKey=(name,m)=>key(m?m.x.sci:name);
+function lev(a,b){const d=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){let p=d[0];d[0]=i;for(let j=1;j<=b.length;j++){const t=d[j];d[j]=Math.min(d[j]+1,d[j-1]+1,p+(a[i-1]===b[j-1]?0:1));p=t}}return d[b.length]}
+function suggestSp(name,common){ // closest plant-list name, for the unmatched list
+  const n=String(name).toLowerCase().trim();let best=null,bd=4;
+  for(const x of SPP){const s=x.sci.toLowerCase();if(Math.abs(s.length-n.length)>=bd)continue;const d=lev(n,s);if(d<bd){bd=d;best=x}}
+  if(best)return best.sci;
+  const c=common&&SPP_IDX.get(key(common));return c&&c.kc===key(common)?c.sci+" (from the common name)":"";
+}
+function prepPast(ds){ // match names against the current plant list; list the ones that didn't match
+  const un=new Map();
+  for(const p of ds.points)for(const v of p.veg){v.m=matchSp(v.sp);v.spk=spKey(v.sp,v.m);
+    if(!v.m){const u=un.get(v.sp)||{name:v.sp,com:v.com,rows:0,points:new Set()};u.rows++;u.points.add(p.id);un.set(v.sp,u)}}
+  ds.unmatched=[...un.values()].map(u=>({...u,points:[...u.points],sugg:suggestSp(u.name,u.com)})).sort((a,b)=>a.name.localeCompare(b.name));
+  ds.loose=[...new Map(ds.points.flatMap(p=>p.veg).filter(v=>v.m&&v.m.how!=="name").map(v=>[v.sp,v])).values()].map(v=>({name:v.sp,to:v.m.x.sci,how:v.m.how}));
+}
+
+/* Excel (.xlsx) reader: the workbook is a zip of XML files */
+async function readXlsx(buf){
+  const z=await unzip(buf),txt=n=>z[n]?new TextDecoder().decode(z[n]):null,xml=s=>new DOMParser().parseFromString(s,"application/xml");
+  const el=(d,tag)=>[...d.getElementsByTagName("*")].filter(e=>e.localName===tag);
+  if(!z["xl/workbook.xml"])throw new Error("This isn’t an Excel workbook. Save it as .xlsx (Excel Workbook) and try again.");
+  const wb=xml(txt("xl/workbook.xml")),rels=xml(txt("xl/_rels/workbook.xml.rels")||"<x/>");
+  const d1904=el(wb,"workbookPr").some(e=>/^(1|true)$/.test(e.getAttribute("date1904")||""));
+  const rmap={};for(const r of el(rels,"Relationship"))rmap[r.getAttribute("Id")]=r.getAttribute("Target");
+  const ss=z["xl/sharedStrings.xml"]?el(xml(txt("xl/sharedStrings.xml")),"si").map(si=>el(si,"t").map(t=>t.textContent).join("")):[];
+  const colIdx=ref=>{let n=0;for(const ch of ref.replace(/\d+/g,""))n=n*26+ch.charCodeAt(0)-64;return n-1};
+  const sheets={};
+  for(const sh of el(wb,"sheet")){
+    let t=rmap[sh.getAttribute("r:id")||sh.getAttributeNS("http://schemas.openxmlformats.org/officeDocument/2006/relationships","id")];if(!t)continue;
+    t=t.startsWith("/")?t.slice(1):"xl/"+t.replace(/^\.\//,"");if(!z[t])continue;
+    const rows=[];
+    for(const r of el(xml(txt(t)),"row")){const row=[];
+      for(const c of el(r,"c")){const ty=c.getAttribute("t"),v=el(c,"v")[0];let val=null;
+        if(ty==="s"&&v)val=ss[+v.textContent];else if(ty==="inlineStr")val=el(c,"t").map(x=>x.textContent).join("");
+        else if(ty==="b"&&v)val=v.textContent==="1"?"Yes":"No";else if(v)val=ty==="str"||ty==="e"?v.textContent:+v.textContent;
+        if(val!==null&&val!=="")row[colIdx(c.getAttribute("r"))]=typeof val==="string"?val.trim():val}
+      if(row.some(x=>x!==undefined&&x!==""))rows.push(row)}
+    sheets[sh.getAttribute("name")]=rows}
+  return {sheets,d1904};
+}
+const hn=s=>String(s??"").toLowerCase().replace(/[^a-z0-9]/g,"");
+const PAST_COLS={
+  points:{id:["pointid","point","samplingpoint","plotid","plot","id"],name:["wetlandname","wetland","sitename","site"],lat:["latitude","lat"],lon:["longitude","lon","long","lng"],
+    date:["date","samplingdate"],landform:["landform"],relief:["localrelief","relief"],hv:["hydrophyticvegetation","hydrophyticvegetationpresent"],hs:["hydricsoil","hydricsoilpresent"],
+    wh:["wetlandhydrology","wetlandhydrologypresent"],wet:["withinawetland","withinwetland","issampledareawithinawetland","wetland"],study:["studyarea"],remarks:["remarks","notes"]},
+  veg:{id:["pointid","point","samplingpoint","plotid","plot","id"],stratum:["stratum"],sp:["scientificname","species","speciesname","scientific"],com:["commonname","common"],
+    cover:["percentcover","absolutecover","absolutepercentcover","cover"],status:["indicatorstatus","indicator","status"],dom:["dominant","dominantspecies","dominance"]},
+  soil:{id:["pointid","point","samplingpoint","plotid","plot","id"],top:["depthfromin","depthfrom","from","top"],bot:["depthtoin","depthto","to","bottom"],mc:["matrixcolormoist","matrixcolor"],
+    mp:["matrix","matrixpercent"],rc:["redoxcolormoist","redoxcolor"],rp:["redox","redoxpercent"],rt:["redoxtype","type"],rl:["redoxlocation","location","loc"],tex:["texture"],
+    ind:["hydricsoilindicators","hydricsoilindicator","indicators"],hp:["hydrologyindicatorsprimary","primaryhydrologyindicators","primaryindicators"],hs:["hydrologyindicatorssecondary","secondaryhydrologyindicators","secondaryindicators"]}};
+function findTable(sheets,names,cols){ // the sheet (by name, else by its columns) and its header row
+  const ents=Object.entries(sheets);
+  const tryS=([n,rows])=>{for(let h=0;h<Math.min(6,rows.length);h++){const hdr=(rows[h]||[]).map(hn),map={};
+    for(const [k,al] of Object.entries(cols)){const i=al.map(a=>hdr.indexOf(a)).find(i=>i>=0);if(i!=null)map[k]=i}
+    if(map.id!=null&&Object.keys(map).length>=3)return {sheet:n,map,rows:rows.slice(h+1)}}return null};
+  for(const e of ents)if(names.test(e[0])){const r=tryS(e);if(r)return r}
+  for(const e of ents){const r=tryS(e);if(r&&Object.keys(r.map).length>=4)return r}
+  return null;
+}
+function xlDate(v,d1904){if(typeof v!=="number")return String(v||"");const d=new Date(Date.UTC(d1904?1904:1899,d1904?0:11,d1904?1:30)+Math.round(v*864e5));return d.toISOString().slice(0,10)}
+const yesNo=v=>{const s=String(v??"").trim().toLowerCase();return /^(y|yes|true|1|x)$/.test(s)?"yes":/^(n|no|false|0)$/.test(s)?"no":""};
+async function importPastFile(f){
+  const {sheets,d1904}=await readXlsx(await f.arrayBuffer());
+  const pt=findTable(sheets,/point|site|location|plot/i,PAST_COLS.points);
+  if(!pt||pt.map.lat==null||pt.map.lon==null)throw new Error(`Couldn’t find a Points sheet with Point ID, Latitude and Longitude columns. Sheets in the file: ${Object.keys(sheets).join(", ")}.`);
+  const vg=findTable(sheets,/veg|species|plant/i,PAST_COLS.veg),so=findTable(sheets,/soil/i,PAST_COLS.soil);
+  const get=(t,row,k)=>t.map[k]==null?"":row[t.map[k]]??"",str=v=>String(v??"").trim(),num=v=>v===""||v==null||!isFinite(+v)?null:+v;
+  const pts=new Map(),skipped=[];
+  for(const r of pt.rows){const id=str(get(pt,r,"id"));if(!id)continue;const lat=num(get(pt,r,"lat")),lon=num(get(pt,r,"lon"));
+    if(lat==null||lon==null||Math.abs(lat)>90||Math.abs(lon)>180){skipped.push(`${id}: no usable latitude/longitude`);continue}
+    pts.set(id,{id,name:str(get(pt,r,"name")),lat,lon,date:xlDate(get(pt,r,"date"),d1904),landform:str(get(pt,r,"landform")),relief:str(get(pt,r,"relief")),
+      hv:yesNo(get(pt,r,"hv")),hs:yesNo(get(pt,r,"hs")),wh:yesNo(get(pt,r,"wh")),wet:yesNo(get(pt,r,"wet")),study:str(get(pt,r,"study")),remarks:str(get(pt,r,"remarks")),veg:[],soil:{layers:[],ind:"",hp:"",hs:""}})}
+  const orphan=new Set();
+  if(vg)for(const r of vg.rows){const p=pts.get(str(get(vg,r,"id")));const sp=str(get(vg,r,"sp"));if(!sp)continue;if(!p){orphan.add(str(get(vg,r,"id")));continue}
+    p.veg.push({stratum:str(get(vg,r,"stratum"))||"Herb",sp,com:str(get(vg,r,"com")),cover:num(get(vg,r,"cover")),status:str(get(vg,r,"status")),dom:yesNo(get(vg,r,"dom"))==="yes"})}
+  if(so)for(const r of so.rows){const p=pts.get(str(get(so,r,"id")));if(!p){if(str(get(so,r,"id")))orphan.add(str(get(so,r,"id")));continue}
+    const L={};for(const k of ["top","bot","mc","mp","rc","rp","rt","rl","tex"])L[k]=str(get(so,r,k));
+    if(L.top!==""||L.mc)p.soil.layers.push(L);
+    for(const k of ["ind","hp","hs"])if(!p.soil[k]&&str(get(so,r,k)))p.soil[k]=str(get(so,r,k))}
+  if(!pts.size)throw new Error("No points with coordinates were found.");
+  const ds={id:"ds"+Date.now().toString(36),file:f.name,imported:Date.now(),sheets:{points:pt.sheet,veg:vg&&vg.sheet,soil:so&&so.sheet},points:[...pts.values()],skipped,orphans:[...orphan]};
+  return ds;
+}
+async function savePast(ds){
+  const same=PAST.find(d=>d.file===ds.file);
+  if(same&&!confirm(`Replace the earlier import of ${ds.file} (${same.points.length} points)?`))return false;
+  const rec={...ds};delete rec.unmatched;delete rec.loose;rec.points=ds.points.map(p=>({...p,veg:p.veg.map(({m,spk,...v})=>v)}));
+  if(!(await stPut("past",rec))){toast("Couldn’t save the past data; the phone may be out of space.",6000,true);return false}
+  if(same){await stDel("past",same.id);PAST=PAST.filter(d=>d!==same)}
+  PAST.push(ds);return true;
+}
+const allPast=()=>PAST.flatMap(ds=>ds.points.map(p=>({...p,ds})));
+
+/* Past points on the full-screen map (HTML markers: big tap targets, labels without map fonts) */
+let pastMarkers=[],pastSel=null;
+function clearPastMarkers(){pastMarkers.forEach(m=>m.remove());pastMarkers=[]}
+function drawPastMarkers(){
+  clearPastMarkers();if(!mapPage||!mapReady||!mapPrefs.past)return;
+  for(const p of allPast()){const el=document.createElement("button");el.className="pastpt"+(pastSel===p.ds.id+"|"+p.id?" sel":"");el.dataset.s=p.wet||"na";
+    el.setAttribute("aria-label",`Past point ${p.id}`);el.innerHTML=`<i></i><span>${esc(p.id)}</span>`;
+    el.addEventListener("click",ev=>{ev.stopPropagation();openPastPoint(p)});
+    pastMarkers.push(new maplibregl.Marker({element:el,anchor:"center"}).setLngLat([p.lon,p.lat]).addTo(map))}
+  pastLabels();
+}
+function pastLabels(){if(mapReady)mapWrap.classList.toggle("lbl",map.getZoom()>=15.5)}
+function closeSheet(){const sh=mapWrap.querySelector("#pgSheet");if(!sh.hidden)togglePanel("pgSheet",null);if(pastSel){pastSel=null;drawPastMarkers()}}
+const STRATUM_ORDER=["tree","sapling/shrub","shrub","sapling","herb","woody vine","vine"];
+const strOrder=s=>{const i=STRATUM_ORDER.indexOf(s.toLowerCase());return i<0?99:i};
+const thumbFor=k=>{const a=PHOTOS.get(k);return a&&a.length?a[0]:null};
+function spCell(v){const ph=thumbFor(v.spk),nm=v.m?v.m.x.sci:v.sp;
+  return `<div class="sprow">${ph?`<img src="${ph.thumb}" alt="Photo of ${esc(nm)}" data-spv="${esc(v.spk)}">`:""}<button class="spn" data-spv="${esc(v.spk)}"><i>${esc(v.sp)}</i>${v.dom?' <span class="dom">Dom</span>':""}<small>${esc(v.com||(v.m&&v.m.x.com)||"")}${v.m&&v.m.how!=="name"?` · listed as ${esc(v.m.x.sci)}`:""}${!v.m?" · not on the plant list":""}</small></button></div>`}
+function openPastPoint(p){
+  pastSel=p.ds.id+"|"+p.id;drawPastMarkers();sheetMode="pastpt";
+  const sh=mapWrap.querySelector("#pgSheet"),b=curBnd(),yn=v=>v==="yes"?'<b class="yes">Yes</b>':v==="no"?'<b class="no">No</b>':"<b>—</b>";
+  const strata=[...new Set(p.veg.map(v=>v.stratum))].sort((a,b)=>strOrder(a)-strOrder(b));
+  let where="";if(b){const r=bndCheck(b,p.lat,p.lon);where=`${r.inside?"Inside":"Outside"} the current project boundary, ${fmtDist(r.d)} from the line.`}
+  const nw=s=>{const x=SPP_IDX.get(key(s));return x?x.s:""};
+  const L=p.soil.layers;
+  sh.innerHTML=`<button class="shut" aria-label="Close" data-shut="1">✕</button><div class="pp">
+    <h4>Point ${esc(p.id)}${p.name?` · ${esc(p.name)}`:""}</h4>
+    <p class="meta">${esc(p.date||"No date")} · Landform: ${esc(p.landform||"—")} · Local relief: ${esc(p.relief||"—")}</p>
+    ${where||p.study?`<p class="meta">${esc(where)}${p.study?` File: ${esc(p.study)}.`:""}</p>`:""}
+    <div class="fac"><div>Hydrophytic vegetation${yn(p.hv)}</div><div>Hydric soil${yn(p.hs)}</div><div>Wetland hydrology${yn(p.wh)}</div><div>Within a wetland${yn(p.wet)}</div></div>
+    <h5>Vegetation</h5>
+    ${strata.length?strata.map(st=>{const rows=p.veg.filter(v=>v.stratum===st),tot=rows.reduce((a,v)=>a+(v.cover||0),0);
+      return `<table><tr><th>${esc(st)} stratum</th><th class="n">Cover</th><th class="n">Status</th></tr>${rows.map(v=>{const now=v.m?v.m.x.s:"";
+        return `<tr><td>${spCell(v)}</td><td class="n">${v.cover!=null?v.cover+"%":"—"}</td><td class="n">${esc(v.status||"—")}${now&&v.status&&now!==v.status&&/^(OBL|FACW|FAC|FACU|UPL)$/.test(v.status)?`<br><small style="color:var(--muted)">2022: ${esc(now)}</small>`:""}</td></tr>`}).join("")}
+        <tr><td style="color:var(--muted)">Total cover</td><td class="n">${tot}%</td><td></td></tr></table>`}).join(""):'<p class="meta">No vegetation recorded.</p>'}
+    <h5>Soil profile</h5>
+    ${L.length?`<table><tr><th>Depth (in)</th><th>Matrix</th><th>Redox</th><th>Texture</th></tr>${L.map(l=>`<tr><td>${esc(l.top)}–${esc(l.bot)}</td><td>${esc(l.mc)}${l.mp?` ${esc(l.mp)}%`:""}</td><td>${l.rc?`${esc(l.rc)} ${esc(l.rp)}%${l.rt?` ${esc(l.rt)}`:""}${l.rl?`/${esc(l.rl)}`:""}`:"—"}</td><td>${esc(l.tex)}</td></tr>`).join("")}</table>`:'<p class="meta">No profile recorded.</p>'}
+    <p class="meta" style="margin-top:.3rem">Hydric soil indicators: ${esc(p.soil.ind||"none")}</p>
+    ${p.soil.hp||p.soil.hs?`<p class="meta">Hydrology indicators: ${esc([p.soil.hp,p.soil.hs].filter(Boolean).join("; "))}</p>`:""}
+    <p class="meta">From ${esc(p.ds.file)}. Status is as recorded on the form; “2022” shows the current Midwest list where it differs. Tap a species for photos.</p></div>`;
+  sh.scrollTop=0;if(sh.hidden)togglePanel("pgSheet",mapWrap.querySelector("#pgPast"));
+}
+
+/* Past data sheet: import, unmatched names, species summary, photo import, delete */
+function renderPastSheet(){
+  sheetMode="past";const sh=mapWrap.querySelector("#pgSheet"),nPh=[...PHOTOS.values()].reduce((a,x)=>a+x.length,0);
+  sh.innerHTML=`<button class="shut" aria-label="Close" data-shut="1">✕</button><h4>Past delineation data</h4>
+    ${PAST.length?PAST.map(ds=>`<div style="border:1px solid var(--line);border-radius:8px;padding:.5rem .6rem">
+      <b>${esc(ds.file)}</b><p class="note" style="margin:.1rem 0">${ds.points.length} points · ${ds.points.reduce((a,p)=>a+p.veg.length,0)} species records · imported ${new Date(ds.imported).toLocaleDateString()}${ds.skipped&&ds.skipped.length?` · <span class="warn">${ds.skipped.length} rows skipped</span>`:""}</p>
+      ${ds.unmatched.length?`<details><summary class="warn" style="cursor:pointer">${ds.unmatched.length} species name${ds.unmatched.length>1?"s":""} didn’t match the plant list</summary>
+        <ul style="margin:.3rem 0;padding-left:1.1rem;font-size:.85rem">${ds.unmatched.map(u=>`<li><i>${esc(u.name)}</i> (${u.rows} row${u.rows>1?"s":""}: ${esc(u.points.join(", "))})${u.sugg?` – did you mean <i>${esc(u.sugg)}</i>?`:""}</li>`).join("")}</ul>
+        <button class="btn quiet" data-copyun="${ds.id}">Copy this list</button></details>`:'<p class="note" style="margin:0">Every species name matched the plant list.</p>'}
+      ${ds.loose.length?`<details><summary style="cursor:pointer">${ds.loose.length} matched by synonym or species only</summary><ul style="margin:.3rem 0;padding-left:1.1rem;font-size:.85rem">${ds.loose.map(l=>`<li><i>${esc(l.name)}</i> → <i>${esc(l.to)}</i> (${esc(l.how)})</li>`).join("")}</ul></details>`:""}
+      ${ds.skipped&&ds.skipped.length?`<details><summary style="cursor:pointer">Skipped rows</summary><p class="note">${esc(ds.skipped.join("; "))}</p></details>`:""}
+      <div class="row" style="margin-top:.3rem"><button class="btn quiet" data-pfit="${ds.id}">Zoom to points</button><button class="btn quiet" data-pdelds="${ds.id}">Delete</button></div></div>`).join("")
+      :'<p class="note" style="margin:0">None yet. Import an Excel workbook with Points, Vegetation and Soils sheets linked by point ID.</p>'}
+    <label class="btn ${PAST.length?"quiet":"primary"}" style="display:flex;align-items:center;justify-content:center;min-height:3rem">Import Excel file (.xlsx)<input type="file" id="pastIn" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="position:absolute;left:-9999px"></label>
+    ${PAST.length?`<button class="btn" id="spSum">Site species summary</button>`:""}
+    <h4>My species photos (${nPh})</h4>
+    <div class="row"><label class="btn quiet" style="display:inline-flex;align-items:center">Import a folder<input type="file" id="phDir" webkitdirectory multiple style="position:absolute;left:-9999px"></label>
+      <label class="btn quiet" style="display:inline-flex;align-items:center">Choose photo files<input type="file" id="phFiles" accept="image/*" multiple style="position:absolute;left:-9999px"></label></div>
+    <p class="note" style="margin:0">Name photos by scientific name, like Phalaris_arundinacea_1.jpg. Or tap any species in a point’s popup to take or add a photo.</p>
+    <p class="note" style="margin:0">Past data and photos are stored only on this phone, never uploaded. They work offline and are included in backups and in the boundary’s offline download.</p>`;
+}
+async function importPhotos(files){
+  files=[...files].filter(f=>/^image\//.test(f.type)||/\.(jpe?g|png|webp|heic|heif)$/i.test(f.name));
+  if(!files.length){toast("No photos found in that selection.",4000,true);return}
+  const known=new Map();for(const p of allPast())for(const v of p.veg)known.set(key(v.sp),v);
+  let added=0,dup=0;const bad=[];toast(`Importing ${files.length} photos…`,60000);
+  for(const f of files){
+    const base=f.name.replace(/\.[^.]+$/,"").replace(/[\s_-]*\(?\d+\)?$/,"").replace(/[_-]+/g," ").trim();
+    const m=matchSp(base),v=known.get(key(base)),sp=m?key(m.x.sci):v?v.spk:null;
+    if(!sp){bad.push(f.name);continue}
+    if((PHOTOS.get(sp)||[]).some(x=>x.file===f.name&&x.size===f.size)){dup++;continue}
+    if(await savePhoto(f,sp,m?m.x.sci:v.sp,"import"))added++;else{bad.push(f.name+" (couldn’t be saved)");break}
+  }
+  toast(`${added} photo${added===1?"":"s"} added${dup?`, ${dup} already there`:""}${bad.length?`. ${bad.length} not matched to a species: ${bad.slice(0,6).join(", ")}${bad.length>6?"…":""}`:""}.`,bad.length?9000:4000,!!bad.length);
+  checkStorage();
+}
+async function savePhoto(f,sp,name,src){
+  try{const full=await resizeImg(f,1600,.82),thumb=await resizeImg(f,200,.7);
+    const rec={id:"ph"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),sp,name,file:f.name,size:f.size,src,added:Date.now(),blob:await (await fetch(full)).blob(),thumb};
+    if(!(await stPut("photos",rec)))return false;addPhotoIdx(rec);return true}catch(e){return false}
+}
+function resizeImg(file,max,q){return new Promise((res,rej)=>{const img=new Image(),url=URL.createObjectURL(file);
+  img.onload=()=>{const s=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);
+    c.getContext("2d").drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);res(c.toDataURL("image/jpeg",q))};
+  img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error("unreadable image"))};img.src=url})}
+
+/* Full-screen overlays: species photo viewer and site species summary */
+let ovlUrls=[];
+function ovlEl(){let o=document.getElementById("ovl");if(!o){o=document.createElement("div");o.id="ovl";o.className="ovl";o.hidden=true;document.body.appendChild(o);o.addEventListener("click",ovlClick);o.addEventListener("change",ovlChange)}return o}
+function closeOvl(){const o=document.getElementById("ovl");if(o){o.hidden=true;o.innerHTML=""}ovlUrls.forEach(u=>URL.revokeObjectURL(u));ovlUrls=[];ovlBack=null}
+let ovlBack=null,ovlSp=null,ovlAt=0;
+const spInfo=k=>{for(const p of allPast())for(const v of p.veg)if(v.spk===k)return {name:v.m?v.m.x.sci:v.sp,com:v.com||(v.m&&v.m.x.com)||"",s:v.m?v.m.x.s:"",m:v.m};
+  const x=[...SPP_IDX.values()].find(x=>key(x.sci)===k);return x?{name:x.sci,com:x.com,s:x.s,m:{x}}:{name:k,com:"",s:""}};
+function openSpecies(k,at=0,back=null){
+  const o=ovlEl(),ph=PHOTOS.get(k)||[],inf=spInfo(k);ovlSp=k;ovlAt=Math.min(at,Math.max(0,ph.length-1));if(back!==undefined&&back!==null)ovlBack=back;
+  ovlUrls.forEach(u=>URL.revokeObjectURL(u));ovlUrls=ph.map(x=>URL.createObjectURL(x.blob));
+  o.innerHTML=`<button class="x" data-ov="close" aria-label="Close">✕</button><h2><i>${esc(inf.name)}</i></h2>
+    <p class="note" style="margin:0 0 .5rem">${esc(inf.com)}${inf.s?` · ${esc(inf.s)} (2022 Midwest list)`:" · not on the plant list"} · ${ph.length} photo${ph.length===1?"":"s"}</p>
+    ${ph.length?`<img class="bigph" src="${ovlUrls[ovlAt]}" alt="Photo ${ovlAt+1} of ${esc(inf.name)}">
+      <p class="note" style="margin:.3rem 0">${ovlAt+1} of ${ph.length} · ${esc(ph[ovlAt].file||"")} · added ${new Date(ph[ovlAt].added).toLocaleDateString()}</p>
+      ${ph.length>1?`<div class="strip">${ph.map((x,i)=>`<img src="${x.thumb}" class="${i===ovlAt?"on":""}" data-ovi="${i}" alt="Photo ${i+1}">`).join("")}</div>`:""}
+      <button class="btn quiet" data-ov="del">Delete this photo</button>`:'<p class="note">No photos of this species yet.</p>'}
+    <div class="bot">${ovlBack?'<button class="btn" data-ov="back">‹ Back</button>':""}<label class="btn primary" style="display:flex;align-items:center;justify-content:center;flex:1">Take or add photo<input type="file" id="ovPh" accept="image/*" multiple style="position:absolute;left:-9999px"></label></div>`;
+  o.hidden=false;o.scrollTop=0;
+}
+async function ovlClick(e){
+  const t=e.target.closest("[data-ov],[data-ovi],[data-spv],[data-sumf]");if(!t)return;
+  if(t.dataset.ov==="close")closeOvl();
+  if(t.dataset.ov==="back"){const b=ovlBack;ovlBack=null;b()}
+  if(t.dataset.ovi!=null)openSpecies(ovlSp,+t.dataset.ovi);
+  if(t.dataset.ov==="del"){const ph=PHOTOS.get(ovlSp)||[],x=ph[ovlAt];if(x&&confirm("Delete this photo from this phone?")){await stDel("photos",x.id);ph.splice(ovlAt,1);if(!ph.length)PHOTOS.delete(ovlSp);openSpecies(ovlSp,ovlAt);refreshPastViews()}}
+  if(t.dataset.spv){openSpecies(t.dataset.spv,0,()=>openSummary())}
+  if(t.dataset.sumf!=null){sumInside=!sumInside;openSummary()}
+}
+async function ovlChange(e){
+  if(e.target.id==="ovPh"&&e.target.files.length){const inf=spInfo(ovlSp);let n=0;for(const f of e.target.files)if(await savePhoto(f,ovlSp,inf.name,"app"))n++;
+    e.target.value="";toast(n?`${n} photo${n>1?"s":""} saved on this phone`:"Photo couldn’t be saved; the phone may be out of space.",3500,!n);openSpecies(ovlSp,(PHOTOS.get(ovlSp)||[]).length-1);refreshPastViews();checkStorage()}
+}
+function refreshPastViews(){if(sheetMode==="pastpt"&&pastSel){const [d,id]=pastSel.split("|"),p=allPast().find(q=>q.ds.id===d&&q.id===id);if(p)openPastPoint(p)}else if(sheetMode==="past"&&!mapWrap.querySelector("#pgSheet").hidden)renderPastSheet()}
+let sumInside=false;
+function openSummary(){
+  const o=ovlEl(),b=curBnd();let pts=allPast();if(sumInside&&b)pts=pts.filter(p=>bndCheck(b,p.lat,p.lon).inside);
+  const st=new Map();
+  for(const p of pts)for(const v of p.veg){const s=st.get(v.spk)||{k:v.spk,name:v.m?v.m.x.sci:v.sp,com:v.com||(v.m&&v.m.x.com)||"",s:v.m?v.m.x.s:"",pts:new Set(),dom:new Set(),cov:[]};
+    s.pts.add(p.ds.id+p.id);if(v.dom)s.dom.add(p.ds.id+p.id);if(v.cover!=null)s.cov.push(v.cover);st.set(v.spk,s)}
+  const list=[...st.values()].sort((a,b)=>b.pts.size-a.pts.size||b.dom.size-a.dom.size||a.name.localeCompare(b.name));
+  ovlBack=null;
+  o.innerHTML=`<button class="x" data-ov="close" aria-label="Close">✕</button><h2>Site species summary</h2>
+    <p class="note" style="margin:0 0 .4rem">${list.length} species across ${pts.length} past point${pts.length===1?"":"s"}, most often recorded first. Tap a species for photos.</p>
+    ${b?`<label class="ck" style="display:flex;gap:.5rem;align-items:center;min-height:2.6rem"><input type="checkbox" data-sumf="1" ${sumInside?"checked":""} style="width:1.3rem;height:1.3rem"> Only points inside the “${esc(b.project)}” boundary</label>`:""}
+    <ol class="sum">${list.map((s,i)=>{const ph=thumbFor(s.k),mc=s.cov.length?Math.round(s.cov.reduce((a,c)=>a+c,0)/s.cov.length):null;
+      return `<li><div class="sprow"><span class="rank">${i+1}</span>${ph?`<img src="${ph.thumb}" alt="" data-spv="${esc(s.k)}">`:""}<button class="spn" data-spv="${esc(s.k)}"><i>${esc(s.name)}</i> ${s.s?`<span class="dom" style="background:var(--soft);color:var(--ink)">${esc(s.s)}</span>`:""}
+        <small>${esc(s.com)}${s.com?" · ":""}${s.pts.size} of ${pts.length} points (${Math.round(s.pts.size/Math.max(1,pts.length)*100)}%) · dominant at ${s.dom.size}${mc!=null?` · mean cover ${mc}%`:""}${PHOTOS.get(s.k)?` · ${PHOTOS.get(s.k).length} photo${PHOTOS.get(s.k).length>1?"s":""}`:""}</small></button></div></li>`}).join("")}</ol>`;
+  o.hidden=false;
+}
+mapWrap.addEventListener("click",async e=>{
+  const t=e.target.closest("[data-shut],[data-spv],[data-copyun],[data-pfit],[data-pdelds],#spSum");if(!t||!mapWrap.querySelector("#pgSheet").contains(t))return;
+  if(t.dataset.shut)closeSheet();
+  if(t.dataset.spv)openSpecies(t.dataset.spv,0,null);
+  if(t.id==="spSum")openSummary();
+  if(t.dataset.copyun){const ds=PAST.find(d=>d.id===t.dataset.copyun);const txt=ds.unmatched.map(u=>`${u.name}\t${u.rows} rows\t${u.points.join(", ")}\t${u.sugg?"suggestion: "+u.sugg:""}`).join("\n");
+    try{await navigator.clipboard.writeText(txt);toast("List copied")}catch(err){toast("Couldn’t copy; select the list and copy it instead.",4000)}}
+  if(t.dataset.pfit){const ds=PAST.find(d=>d.id===t.dataset.pfit),bb=featsBBox([{polys:[[ds.points.map(p=>[p.lon,p.lat])]]}]);map.fitBounds([[bb[0],bb[1]],[bb[2],bb[3]]],{padding:pagePad(),duration:0,maxZoom:17})}
+  if(t.dataset.pdelds){const ds=PAST.find(d=>d.id===t.dataset.pdelds);if(ds&&confirm(`Delete ${ds.file} (${ds.points.length} past points) from this phone? Species photos are kept.`)){await stDel("past",ds.id);PAST=PAST.filter(d=>d!==ds);drawPastMarkers();renderPastSheet()}}
+});
+mapWrap.addEventListener("change",async e=>{
+  const t=e.target;
+  if(t.id==="pastIn"&&t.files[0]){const f=t.files[0];t.value="";
+    try{const ds=await importPastFile(f);prepPast(ds);if(await savePast(ds)){drawPastMarkers();renderPastSheet();
+      const bb=featsBBox([{polys:[[ds.points.map(p=>[p.lon,p.lat])]]}]);map.fitBounds([[bb[0],bb[1]],[bb[2],bb[3]]],{padding:pagePad(),duration:0,maxZoom:17});
+      toast(`${ds.points.length} past points imported${ds.unmatched.length?`; ${ds.unmatched.length} species names didn’t match the plant list (listed here)`:""}.`,6000)}}
+    catch(err){toast(err.message||String(err),8000,true)}}
+  if((t.id==="phDir"||t.id==="phFiles")&&t.files.length){const fs=[...t.files];t.value="";await importPhotos(fs);refreshPastViews()}
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.getElementById("ovl")&&!document.getElementById("ovl").hidden){e.stopPropagation();closeOvl()}},true);
 
 /* ---------- Photos ---------- */
 function shrink(file){return new Promise((res,rej)=>{const img=new Image();const url=URL.createObjectURL(file);
@@ -1892,10 +2208,12 @@ document.getElementById("risk").addEventListener("click",e=>{const a=e.target.da
   if(a==="later"){RISK.later=true;updateRisk()}});
 const canShareFiles=()=>{try{return !!(navigator.canShare&&navigator.canShare({files:[new File(["{}"],"t.json",{type:"application/json"})]}))}catch(e){return false}};
 const backupName=()=>`wetland_backup_${new Date().toISOString().slice(0,16).replace(/[:T]/g,"-")}.json`;
-function backupJSON(){return JSON.stringify({app:"wetland-form",kind:"backup",format:1,exported:new Date().toISOString(),species_list:LIST?LIST.label:null,points,boundaries:[...BND.values()]},null,1)}
+async function backupJSON(){return JSON.stringify({app:"wetland-form",kind:"backup",format:1,exported:new Date().toISOString(),species_list:LIST?LIST.label:null,points,boundaries:[...BND.values()],past:PAST.map(d=>({...d,unmatched:undefined,loose:undefined,points:d.points.map(p=>({...p,veg:p.veg.map(({m,spk,...v})=>v)}))})),
+  speciesPhotos:await Promise.all([...PHOTOS.values()].flat().map(async ph=>({...ph,blob:undefined,data:await blobToDataURL(ph.blob)})))},null,1)}
+const blobToDataURL=b=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.onerror=()=>r(null);fr.readAsDataURL(b)});
 function markBackedUp(){RISK.lastBackup=Date.now();RISK.later=false;metaSet("lastBackup",RISK.lastBackup);updateRisk();if(tab==="device")renderDevice()}
 async function backupNow(share){
-  await flushSave();const name=backupName(),data=backupJSON();
+  await flushSave();const name=backupName(),data=await backupJSON();
   if(share){
     try{await navigator.share({files:[new File([data],name,{type:"application/json"})],title:"Wetland form backup"});markBackedUp();toast("Backup sent");return}
     catch(e){if(e&&e.name==="AbortError")return;toast("Sharing didn’t work, so the backup is downloading instead.")}
@@ -1917,11 +2235,15 @@ async function restoreFile(file){
     if(i<0){points.push(q);added++}else{points[i]=q;updated++}}
   let nb=0;for(const b of (data&&Array.isArray(data.boundaries)?data.boundaries:[]))if(b&&b.key&&b.features&&(!BND.has(b.key)||BND.get(b.key).imported<b.imported)){if(await dbBndPut(b)){BND.set(b.key,b);nb++}}
   if(nb){bndCache={sig:null};updateBoundaryLayer()}
+  let npd=0,nph=0;
+  for(const d of (data&&Array.isArray(data.past)?data.past:[]))if(d&&d.id&&Array.isArray(d.points)&&!PAST.some(x=>x.id===d.id)){if(await stPut("past",d)){prepPast(d);PAST.push(d);npd++}}
+  for(const ph of (data&&Array.isArray(data.speciesPhotos)?data.speciesPhotos:[]))if(ph&&ph.id&&ph.data&&![...PHOTOS.values()].flat().some(x=>x.id===ph.id)){
+    const rec={...ph,blob:await (await fetch(ph.data)).blob()};delete rec.data;if(await stPut("photos",rec)){addPhotoIdx(rec);nph++}}
   // the empty starter point made on first launch isn't needed once real points are back
   for(const p of points.filter(p=>!p.modified&&!p.site.lat&&!list.some(q=>q.id===p.id)))if(points.length>1){dbDel(p.id);points=points.filter(x=>x!==p)}
   points.sort((a,b)=>a.created-b.created);if(!points.some(p=>p.id===cur))cur=points[points.length-1].id;
   renderAll();checkStorage();
-  alert(`Restore finished: ${added} added, ${updated} replaced with the newer backup copy, ${kept} already up to date on this phone.${nb?` ${nb} project boundar${nb>1?"ies":"y"} restored.`:""}${failed?`\n\n${failed} couldn’t be saved; the phone may be out of space.`:""}`);
+  alert(`Restore finished: ${added} added, ${updated} replaced with the newer backup copy, ${kept} already up to date on this phone.${nb?` ${nb} project boundar${nb>1?"ies":"y"} restored.`:""}${npd?` ${npd} past data file${npd>1?"s":""} restored.`:""}${nph?` ${nph} species photo${nph>1?"s":""} restored.`:""}${failed?`\n\n${failed} couldn’t be saved; the phone may be out of space.`:""}`);
 }
 async function cacheSize(name,sample){ // bytes in a Cache Storage cache; large caches are estimated from a sample
   try{const c=await caches.open(name),ks=await c.keys();let b=0;const n=sample?Math.min(sample,ks.length):ks.length;
@@ -1964,11 +2286,15 @@ async function renderDevice(){
   <table><tr><th>Item</th><th>Status on this phone</th><th class="n">Size</th></tr>${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td class="n">${r[2]}</td></tr>`).join("")}</table>
   <h3>Downloaded project areas</h3>
   ${areas.length?`<ul class="dareas">${areas.map(a=>`<li><div><b>${esc(a.name)}</b> <span class="sz">${fmtB(a.bytes||0)}</span></div>
-    <small>Downloaded ${new Date(a.created).toLocaleDateString()} · ${a.sources.map(s=>esc(IMG[s.id]?IMG[s.id].label:s.label)).join(", ")}${a.failed?` · <span class="bad">${a.failed} tiles missing</span>`:""}${a.boundary?" · includes the project boundary":""}</small>
+    <small>Downloaded ${new Date(a.created).toLocaleDateString()} · ${a.sources.map(s=>esc(IMG[s.id]?IMG[s.id].label:s.label)).join(", ")}${a.failed?` · <span class="bad">${a.failed} tiles missing</span>`:""}${a.boundary?" · includes the project boundary":""}${a.past&&a.past.points?` · covers ${a.past.points} past data points (${a.past.photos} species photos on this phone)`:""}</small>
     <div class="row"><button class="btn quiet" data-dshow="${a.cache}">Show on map</button><button class="btn quiet" data-ddel="${a.cache}">Delete</button></div></li>`).join("")}</ul>
     <p class="note">${areas.length} area${areas.length>1?"s":""}, ${fmtB(areaBytes)} in total.</p>`
     :'<p class="note">None yet.</p>'}
   <p class="note">To download an area: Map › Boundary › Download imagery for offline use, or zoom the map to your project › Offline areas › Download.</p>
+  <h3>Past data and species photos</h3>
+  ${PAST.length?`<ul class="dareas">${PAST.map(d=>`<li><div><b>${esc(d.file)}</b> <span class="sz">${fmtB(JSON.stringify(d.points).length)}</span></div><small>${d.points.length} points · imported ${new Date(d.imported).toLocaleDateString()}${d.unmatched.length?` · ${d.unmatched.length} unmatched species names`:""}</small>
+    <div class="row"><button class="btn quiet" data-pdel2="${d.id}">Delete</button></div></li>`).join("")}</ul>`:'<p class="note">No past data imported. Import an Excel file from Map › Past data.</p>'}
+  <p class="note">${(n=>`${n} species photo${n===1?"":"s"}`)([...PHOTOS.values()].flat().length)}, ${fmtB([...PHOTOS.values()].flat().reduce((a,p)=>a+(p.blob?p.blob.size:0)+p.thumb.length,0))}. Stored only on this phone and included in backups.</p>
   <h3>Project boundaries</h3>
   ${BND.size?`<ul class="dareas">${[...BND.values()].map(b=>{const sel=b.selected.map(i=>b.features[i]).filter(Boolean);return `<li><div><b>${esc(b.project)}</b> <span class="sz">${fmtB(JSON.stringify(b).length)}</span></div>
     <small>${esc(b.file)} · ${sel.length} of ${b.features.length} features · ${sel.reduce((a,f)=>a+featAcres(f),0).toFixed(2)} acres · ${esc(b.crs.name)} · loaded ${new Date(b.imported).toLocaleDateString()} · ${(n=>`${n} point${n===1?"":"s"}`)(points.filter(q=>projKey(q.site.project)===b.key).length)}</small>
@@ -1985,6 +2311,7 @@ main.addEventListener("click",async e=>{
   if(t.id==="askPersist"){try{await navigator.storage.persist()}catch(err){}await checkStorage();renderDevice();toast(RISK.persisted?"Storage is now protected":"The browser didn’t grant protection yet")}
   if(t.id==="clrViewed"&&confirm("Clear imagery you’ve viewed online? Downloaded project areas are kept.")){await caches.delete(VIEW_CACHE);renderDevice()}
   if(t.dataset.dshow){const a=(await listAreas()).find(x=>x.cache===t.dataset.dshow);if(a){pendingFit=a.bbox;tab="site";renderAll();window.scrollTo(0,0)}}
+  if(t.dataset.pdel2){const d=PAST.find(x=>x.id===t.dataset.pdel2);if(d&&confirm(`Delete ${d.file} from this phone? Species photos are kept.`)){await stDel("past",d.id);PAST=PAST.filter(x=>x!==d);renderDevice()}}
   if(t.dataset.bdel){const b=BND.get(t.dataset.bdel);if(b&&confirm(`Delete the boundary for “${b.project}”?`)){BND.delete(b.key);dbBndDel(b.key);bndCache={sig:null};recheckProject(b.key);updateBoundaryLayer();renderDevice()}}
   if(t.dataset.ddel){const a=(await listAreas()).find(x=>x.cache===t.dataset.ddel);
     if(a&&confirm(`Delete the offline imagery for “${a.name}” (${fmtB(a.bytes||0)})? You can download it again later.`)){await caches.delete(a.cache);refreshAreaOutlines();renderDevice();toast("Area deleted")}}
@@ -1999,7 +2326,7 @@ function renderAll(){renderPointSel();renderTabs();renderPanel();renderStatus()}
   idb=await openDB();
   await loadSpecies();
   Object.values(DS).forEach(dsInit); // background: checks for and downloads the offline soil and NWI data
-  await loadBoundaries();
+  await loadBoundaries();await loadPast();
   points=(await dbAll()).sort((a,b)=>a.created-b.created);
   if(!points.length){const p=blank(1);points.push(p);dbPut(p)}
   cur=points[points.length-1].id;renderAll();

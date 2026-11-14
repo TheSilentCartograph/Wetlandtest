@@ -1,6 +1,6 @@
 /* Service worker: makes the wetland form work offline.
    Bump VERSION whenever index.html or other app files change so phones pick up the update. */
-const VERSION = "v7";
+const VERSION = "v8";
 const APP_CACHE = "wetland-app-" + VERSION;
 const FONT_CACHE = "wetland-fonts";
 const TILE_CACHE = "wetland-basemap";
