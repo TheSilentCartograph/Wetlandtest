@@ -1456,6 +1456,94 @@ async function unzip(buf){
   }
   return out;
 }
+/* ---------- Checking chosen files ----------
+   The file pickers accept any file: iPhone and iPad grey out types they don't recognise (such as .kmz) when a picker
+   lists allowed types. So the app looks at what was chosen, by its first bytes as well as its name (iOS sometimes drops
+   or changes the extension and gives no file type), and explains anything it can't use. */
+const extOf=n=>(String(n||"").toLowerCase().match(/\.([a-z0-9]+)$/)||[])[1]||"";
+const baseName=n=>String(n||"").split("/").pop();
+function sniff(name,u8){
+  const b=u8,tx=new TextDecoder().decode(u8.subarray(0,4096)).replace(/^﻿/,""),head=tx.trimStart(),e=extOf(name);
+  const asc=(i,n)=>String.fromCharCode(...u8.subarray(i,i+n));
+  if(b[0]===0x50&&b[1]===0x4b&&(b[2]===3||b[2]===5||b[2]===7))return "zip";
+  if(b[0]===0xd0&&b[1]===0xcf&&b[2]===0x11&&b[3]===0xe0)return "ole";
+  if(b.length>=100&&b[0]===0&&b[1]===0&&b[2]===0x27&&b[3]===0x0a)return e==="shx"?"shx":"shp";
+  if(b[0]===0xff&&b[1]===0xd8&&b[2]===0xff)return "jpeg";
+  if(b[0]===0x89&&asc(1,3)==="PNG")return "png";
+  if(asc(4,4)==="ftyp")return /hei|hev|mif|avif/.test(asc(8,4))?"heic":"video";
+  if(asc(0,4)==="RIFF"&&asc(8,4)==="WEBP")return "webp";
+  if(asc(0,4)==="GIF8")return "gif";
+  if(asc(0,4)==="%PDF")return "pdf";
+  if(/<kml[\s>]/i.test(tx))return "kml";
+  if(/^[{[]/.test(head))return "json";
+  if(e==="dbf"||e==="prj"||e==="cpg"||e==="shx"||e==="sbn"||e==="sbx"||e==="qix"||e==="qpj")return e;
+  if(/^(PROJCS|GEOGCS|PROJCRS|GEOGCRS)\s*\[/i.test(head))return "prj";
+  if(e==="xml"&&/\.shp\.xml$/i.test(name))return "shpxml";
+  if(e==="csv")return "csv";
+  return "other";
+}
+const KIND_TEXT={jpeg:"a photo",png:"an image",heic:"a photo",webp:"an image",gif:"an image",pdf:"a PDF",video:"a video",ole:"an older Office file (.xls or .doc)",csv:"a CSV text file",excel:"an Excel workbook",numbers:"a Numbers spreadsheet",docx:"a Word or PowerPoint file"};
+const GEO_HELP="Choose a KMZ or KML file, a zipped shapefile, a zip of KMZ or KML files, or the shapefile’s .shp, .shx, .dbf and .prj files together (GeoJSON also works).";
+async function bytesOf(f){return new Uint8Array(await f.arrayBuffer())}
+const ab=u8=>u8.byteOffset===0&&u8.byteLength===u8.buffer.byteLength?u8.buffer:u8.buffer.slice(u8.byteOffset,u8.byteOffset+u8.byteLength);
+function zipKind(z){const ks=Object.keys(z);
+  if(z["xl/workbook.xml"])return "excel";if(ks.some(k=>/^word\/|^ppt\//.test(k)))return "docx";if(ks.some(k=>/^Index\/|\.iwa$/i.test(k)))return "numbers";return "zip"}
+/* Map files (project boundary and delineated wetlands): returns the datasets found, plus messages about anything unusable */
+async function geoGroups(files){
+  const kmls=[],jsons=[],parts=new Map(),problems=[];let ignored=0;
+  const add=async(name,u8,depth,parent)=>{
+    const k=sniff(name,u8),e=extOf(name),nm=baseName(name);
+    if(k==="zip"){
+      let z;try{z=await unzip(ab(u8))}catch(err){problems.push(`“${nm}” couldn’t be opened as a zip file (${err.message}).`);return}
+      const zk=zipKind(z);if(zk!=="zip"){if(depth===0)problems.push(`“${nm}” is ${KIND_TEXT[zk]}, not a map file.${zk==="excel"?" Load past data under Past data › Import Excel file.":""}`);else ignored++;return}
+      const kml=Object.keys(z).filter(n=>/\.kml$/i.test(n)),other=Object.keys(z).filter(n=>/\.(kmz|zip|shp|geojson|json)$/i.test(n));
+      if(kml.length===1&&!other.length){kmls.push({name:nm,u8:z[kml[0]]});return} // a KMZ (its pictures and styles are ignored)
+      if(depth>3)return;
+      for(const [n,v] of Object.entries(z))await add(n,v,depth+1,nm);
+      return}
+    if(k==="kml"){kmls.push({name:nm,u8});return}
+    if(k==="json"){jsons.push({name:nm,u8});return}
+    if(["shp","shx","dbf","prj","cpg","sbn","sbx","qix","qpj","shpxml"].includes(k)){
+      const key=(parent?parent+"/":"")+name.toLowerCase().replace(/\.shp\.xml$/,"").replace(/\.[a-z0-9]+$/,"");
+      if(!parts.has(key))parts.set(key,{name:nm.replace(/\.shp\.xml$/i,"").replace(/\.[^.]+$/,"")+".shp",parts:{}});
+      parts.get(key).parts["."+(k==="shpxml"?"xml":k)]=u8;return}
+    if(depth===0)problems.push(`“${nm}” is ${KIND_TEXT[k]||"a kind of file the app can’t read"}${KIND_TEXT[k]?", not a map file":""}.`);else ignored++;
+  };
+  for(const f of files)await add(f.name,await bytesOf(f),0,null);
+  const groups=[...kmls.map(x=>({kind:"kml",name:x.name,label:x.name,u8:x.u8})),...jsons.map(x=>({kind:"geojson",name:x.name,label:x.name,u8:x.u8}))];
+  for(const s of parts.values()){
+    if(!s.parts[".shp"]){const has=Object.keys(s.parts).join(", ");problems.push(`Shapefile “${s.name.replace(/\.shp$/,"")}” is missing its .shp file (only ${has} chosen). Choose all its files together, or a zip of them.`);continue}
+    groups.push({kind:"shp",name:s.name,label:s.name,parts:s.parts})}
+  return {groups,problems,ignored};
+}
+/* Excel workbook for past data */
+async function checkXlsx(f){
+  const u8=await bytesOf(f),k=sniff(f.name,u8),nm=f.name;
+  if(k==="zip"){let z;try{z=await unzip(ab(u8))}catch(err){throw new Error(`“${nm}” couldn’t be opened (${err.message}).`)}
+    const zk=zipKind(z);if(zk==="excel")return ab(u8);
+    if(zk==="numbers")throw new Error(`“${nm}” is a Numbers spreadsheet. In Numbers, choose Export To › Excel, then import the .xlsx file.`);
+    const inner=Object.keys(z).find(n=>/\.xlsx$/i.test(n)&&!/(^|\/)__MACOSX\//.test(n));if(inner)return ab(z[inner]); // a zip holding the workbook
+    if(Object.keys(z).some(n=>/\.(kml|kmz|shp)$/i.test(n)))throw new Error(`“${nm}” is a map file (KMZ or zipped shapefile), not an Excel workbook. Load it on the map under Boundary.`);
+    throw new Error(`“${nm}” is a zip file without an Excel workbook in it.`)}
+  if(k==="ole")throw new Error(`“${nm}” is an older Excel file (.xls). Open it in Excel and save it as Excel Workbook (.xlsx), then import that.`);
+  if(k==="csv")throw new Error(`“${nm}” is a CSV file, which holds only one sheet. Save the workbook with its Points, Vegetation and Soils sheets as .xlsx.`);
+  throw new Error(`“${nm}” is ${KIND_TEXT[k]||"not an Excel workbook"}${KIND_TEXT[k]?", not an Excel workbook":""}. Choose the past data workbook saved as .xlsx.`);
+}
+/* Species photos: pictures, also inside a zip (on iPhone, compress a folder in the Files app and choose the .zip) */
+async function photoFiles(files){
+  const ok=[],skipped=[];
+  const add=async(name,blob,depth)=>{
+    const u8=new Uint8Array(await blob.slice(0,4096).arrayBuffer()),k=sniff(name,u8),nm=baseName(name);
+    if(["jpeg","png","heic","webp","gif"].includes(k)){ok.push(blob instanceof File&&blob.name===nm?blob:new File([blob],nm,{type:{jpeg:"image/jpeg",png:"image/png",heic:"image/heic",webp:"image/webp",gif:"image/gif"}[k]}));return}
+    if(k==="zip"&&depth<2){let z;try{z=await unzip(await blob.arrayBuffer())}catch(err){skipped.push(`${nm} (couldn’t be opened)`);return}
+      const before=ok.length;for(const [n,v] of Object.entries(z))await add(n,new Blob([v]),depth+1);
+      if(ok.length===before&&depth===0)skipped.push(`${nm} (${Object.keys(z).some(n=>/\.kml$/i.test(n))?"a map file":"a zip"} with no photos in it)`);return}
+    if(depth===0)skipped.push(`${nm} (${KIND_TEXT[k]||(k==="kml"?"a map file":"not a photo")})`);
+  };
+  for(const f of files)await add(f.webkitRelativePath||f.name,f,0);
+  return {ok,skipped:skipped.filter(s=>!/^\._/.test(s))};
+}
+
 /* Shapefile geometry (.shp): polygons, or closed polylines treated as polygons */
 function readShp(u8){
   const dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength);
@@ -1544,31 +1632,25 @@ function readGeoJSON(text){
     if(polys.length||lines.length)feats.push({props:f.properties||{},polys:polys.map(p=>p.map(r=>r.map(v=>[v[0],v[1]]))),lines:lines.map(l=>l.map(v=>[v[0],v[1]]))})}
   return feats;
 }
-/* Read whatever was chosen into {label, kind, feats:[{props,polys}], prj} (shapefile coordinates still in the file's system) */
-async function readBoundaryFiles(files){
-  files=[...files];const ent={};
-  for(const f of files){const n=f.name.toLowerCase();
-    if(n.endsWith(".zip")||n.endsWith(".kmz"))Object.assign(ent,await unzip(await f.arrayBuffer()));
-    else ent[f.name]=new Uint8Array(await f.arrayBuffer())}
-  const keys=Object.keys(ent),find=ext=>keys.filter(k=>k.toLowerCase().endsWith(ext)),txt=u=>new TextDecoder().decode(u);
-  const label=files.map(f=>f.name).join(", ");
-  const shp=find(".shp");
-  if(shp.length){
-    const base=shp[0].slice(0,-4).toLowerCase(),get=ext=>ent[keys.find(k=>k.toLowerCase()===base+ext)];
-    const shapes=readShp(get(".shp")),dbf=get(".dbf"),cpg=get(".cpg"),prj=get(".prj");
+/* Read one dataset (from geoGroups), or the files chosen for the project boundary, into {label, kind, name, feats, prj}.
+   Shapefile coordinates are still in the file's own system here. */
+async function readBoundaryFiles(src){
+  let g=src,others=[];
+  if(!src.kind){const r=await geoGroups([...src]);
+    if(!r.groups.length)throw new Error((r.problems.join(" ")||"No map data was found in the chosen files.")+" "+GEO_HELP);
+    g=r.groups[0];others=r.groups.slice(1).map(x=>x.label);if(r.problems.length)toast(r.problems.join(" "),8000,true)}
+  const txt=u=>new TextDecoder().decode(u);
+  if(g.kind==="shp"){
+    const shapes=readShp(g.parts[".shp"]),dbf=g.parts[".dbf"],cpg=g.parts[".cpg"],prj=g.parts[".prj"];
     const enc=cpg&&/utf-?8|65001/i.test(txt(cpg))?"utf-8":"windows-1252";
     const rows=dbf?readDbf(dbf,enc):[];
     const feats=shapes.map((s,i)=>s&&rows[i]!==null?{props:rows[i]||{},polys:ringsToPolys(s.rings),lines:s.lines}:null).filter(f=>f&&(f.polys.length||f.lines.length));
-    if(!feats.length)throw new Error("No polygons or lines found in "+shp[0]+".");
-    return {label,kind:"shp",name:shp[0].split("/").pop(),feats,prj:prj?txt(prj).trim():null,others:shp.slice(1).map(s=>s.split("/").pop())};
+    if(!feats.length)throw new Error("No polygons or lines found in "+g.name+".");
+    return {label:g.label,kind:"shp",name:g.name,feats,prj:prj?txt(prj).trim():null,others};
   }
-  const kml=find(".kml");
-  if(kml.length){const k=kml.find(x=>/(^|\/)doc\.kml$/i.test(x))||kml[0],feats=readKml(txt(ent[k]));
-    if(!feats.length)throw new Error("No polygons or lines found in the KML.");return {label,kind:"kml",name:files.length===1?files[0].name:k.split("/").pop(),feats}}
-  const gj=[...find(".geojson"),...find(".json")];
-  if(gj.length){const feats=readGeoJSON(txt(ent[gj[0]]));if(!feats.length)throw new Error("No polygons or lines found in the GeoJSON.");return {label,kind:"geojson",name:gj[0],feats}}
-  if(find(".dbf").length||find(".shx").length||find(".prj").length)throw new Error("The .shp file is missing. Choose the .shp together with its .shx, .dbf and .prj files, or a zip of them.");
-  throw new Error("No shapefile, KML, KMZ or GeoJSON found in "+label+".");
+  if(g.kind==="kml"){const feats=readKml(txt(g.u8));if(!feats.length)throw new Error(`No polygons or lines found in ${g.name}.`);return {label:g.label,kind:"kml",name:g.name,feats,others}}
+  const feats=readGeoJSON(txt(g.u8));if(!feats.length)throw new Error(`No polygons or lines found in ${g.name}.`);
+  return {label:g.label,kind:"geojson",name:g.name,feats,others};
 }
 /* Coordinate systems offered when a shapefile has no .prj (no guessing: the user picks) */
 const CRS_CHOICES=[
@@ -1678,13 +1760,11 @@ function wetName(props){ // the wetland's name, if the file gives a real one
   const ks=Object.keys(props||{}),k=ks.find(k=>/^(name|label|title|wetland|wetland_?id|wetland_?name|site|site_?name|id)$/i.test(k)&&String(props[k]).trim());
   const v=k?String(props[k]).trim():"";return /^(unlabel(l?ed)?|untitled|unnamed|no name|polygon|feature)\b/i.test(v)?"":v;
 }
-function groupFiles(files){ // each zip/KMZ/KML/GeoJSON is one file; loose shapefile parts are grouped by name
-  const groups=[],shp=new Map();
-  for(const f of files){const m=f.name.toLowerCase().match(/^(.*?)\.(shp|shx|dbf|prj|cpg|sbn|sbx|qix|qpj|shp\.xml)$/);
-    if(m){if(!shp.has(m[1])){shp.set(m[1],[]);groups.push(shp.get(m[1]))}shp.get(m[1]).push(f)}else groups.push([f])}
-  return groups;
+async function queueWet(files){
+  const r=await geoGroups([...files]);
+  if(r.problems.length)toast(r.problems.join(" ")+(r.groups.length?"":" "+GEO_HELP),9000,true);
+  wetQueue.push(...r.groups);if(!imp)nextWet();
 }
-function queueWet(files){wetQueue.push(...groupFiles([...files]));if(!imp)nextWet()}
 function nextWet(){const g=wetQueue.shift();if(g)startImport(g,"wet")}
 async function saveWetImport(){
   const name=(mapWrap.querySelector("#impProj").value||"").trim();
@@ -1709,8 +1789,8 @@ function wetSectionHTML(){
       <p class="note" style="margin:.1rem 0">${np?`${np} polygon wetland${np>1?"s":""}`:""}${np&&nl?", ":""}${nl?`${nl} line${nl>1?"s":""}`:""} · ${esc(w.crs.name)} · loaded ${new Date(w.imported).toLocaleDateString()}</p>
       <div class="row"><button class="btn quiet" data-wfit="${w.id}">Zoom to</button><button class="btn quiet" data-wdel="${w.id}">Delete</button></div></div>`}).join("")
       :`<p class="note" style="margin:0">${p.site.project.trim()?`None loaded for “${esc(p.site.project.trim())}”.`:"None loaded. You’ll name the project when you save."}</p>`}
-    <label class="btn ${ws.length?"quiet":""}" style="display:flex;align-items:center;justify-content:center;min-height:3rem">Load wetland files<input type="file" id="wetIn" multiple accept="${BND_ACCEPT}" style="position:absolute;left:-9999px"></label>
-    <p class="note" style="margin:0">KML, KMZ or shapefile (zipped, or its files chosen together). You can choose several files at once; each is checked in turn. They show as their own layer, separate from the project boundary.</p>`;
+    <label class="btn ${ws.length?"quiet":""}" style="display:flex;align-items:center;justify-content:center;min-height:3rem">Load wetland files<input type="file" id="wetIn" multiple style="position:absolute;left:-9999px"></label>
+    <p class="note" style="margin:0">KML, KMZ or shapefile (zipped, or its files chosen together), or a zip holding several of them. You can choose several files at once; each is checked in turn. They show as their own layer, separate from the project boundary.</p>`;
 }
 function wetGeom(w,fi){const k=w.id+"|"+fi;if(!wetGeoms.has(k))wetGeoms.set(k,makeGeom(w.features[fi].polys,w.features[fi].polys.length>1));return wetGeoms.get(k)}
 function labelPoint(poly){ // a point inside the polygon: middle of the widest inside span across its middle
@@ -1829,23 +1909,24 @@ mapWrap.addEventListener("click",e=>{
   if(t.id==="pgDrop")dropPoint();
   if(t.id==="pgCenter"){if(me&&me.lat!=null){follow=true;map.easeTo({center:[me.lon,me.lat],zoom:Math.max(map.getZoom(),17),duration:500})}else toast(meErr||"Waiting for a GPS fix…")}
   if(t.id==="pgLayers")togglePanel("mPanel",t);
-  if(t.id==="pgBnd"){sheetMode="bnd";if(togglePanel("pgSheet",t))renderBndSheet()}
-  if(t.id==="pgPast"){sheetMode="past";if(togglePanel("pgSheet",t))renderPastSheet()}
+  if(t.id==="pgBnd"||t.id==="pgPast"){ // switch the panel between Boundary and Past data, or open/close it
+    const want=t.id==="pgBnd"?"bnd":"past",sh=mapWrap.querySelector("#pgSheet"),draw=()=>want==="bnd"?renderBndSheet():renderPastSheet();
+    if(!sh.hidden&&sheetMode!==want){if(mapReady)map.getSource("wetsel").setData({type:"FeatureCollection",features:[]});draw();mapWrap.querySelectorAll(".pgrow [aria-expanded]").forEach(x=>x.setAttribute("aria-expanded",String(x===t)))}
+    else{sheetMode=want;if(togglePanel("pgSheet",t))draw()}}
 });
 main.addEventListener("click",e=>{if(e.target.id==="openMapPg")openMapPage()});
 
 /* Boundary sheet: view, import (pick coordinate system if needed, then choose features), replace, delete */
 let imp=null; // import in progress
-const BND_ACCEPT=".zip,.kmz,.kml,.shp,.shx,.dbf,.prj,.cpg,.geojson,.json";
 function renderBndSheet(){
   sheetMode="bnd";const sh=mapWrap.querySelector("#pgSheet"),p=P(),b=curBnd();
   if(imp&&imp.step==="crs")return renderCrsSheet(sh);
   if(imp&&imp.step==="feats")return renderFeatSheet(sh);
-  const fileBtn=label=>`<label class="btn ${b?"quiet":"primary"}" style="display:flex;align-items:center;justify-content:center;min-height:3rem">${label}<input type="file" id="bndIn" multiple accept="${BND_ACCEPT}" style="position:absolute;left:-9999px"></label>`;
+  const fileBtn=label=>`<label class="btn ${b?"quiet":"primary"}" style="display:flex;align-items:center;justify-content:center;min-height:3rem">${label}<input type="file" id="bndIn" multiple style="position:absolute;left:-9999px"></label>`;
   if(!b){sh.innerHTML=`<h4>Project boundary</h4>
     <p class="note" style="margin:0">${p.site.project.trim()?`Project “${esc(p.site.project.trim())}” has no boundary yet.`:"This point has no project name yet; you’ll name the project when you save the boundary."}</p>
     ${fileBtn("Load boundary file")}
-    <p class="note" style="margin:0">A zipped shapefile, the shapefile’s files chosen together (.shp, .shx, .dbf and .prj), a KMZ or a KML. Shapefile coordinates are converted using the .prj; Illinois State Plane East (feet) and other systems work.</p>${wetSectionHTML()}`;return}
+    <p class="note" style="margin:0">A KMZ or KML, a zipped shapefile, a zip of KMZ or KML files, or the shapefile’s files chosen together (.shp, .shx, .dbf and .prj). Shapefile coordinates are converted using the .prj; Illinois State Plane East (feet) and other systems work.</p>${wetSectionHTML()}`;return}
   const sel=b.selected.map(i=>b.features[i]).filter(Boolean),ac=sel.reduce((a,f)=>a+featAcres(f),0);
   sh.innerHTML=`<h4>Boundary: ${esc(b.project)}</h4>
     <p class="note" style="margin:0">${esc(b.file)} · ${sel.length} of ${b.features.length} feature${b.features.length>1?"s":""} · ${ac.toFixed(2)} acres<br>Coordinate system: ${esc(b.crs.name)} (${esc(b.crs.how)})<br>Loaded ${new Date(b.imported).toLocaleString()}. Saved on this phone; works offline.</p>
@@ -2032,7 +2113,7 @@ function findTable(sheets,names,cols){ // the sheet (by name, else by its column
 function xlDate(v,d1904){if(typeof v!=="number")return String(v||"");const d=new Date(Date.UTC(d1904?1904:1899,d1904?0:11,d1904?1:30)+Math.round(v*864e5));return d.toISOString().slice(0,10)}
 const yesNo=v=>{const s=String(v??"").trim().toLowerCase();return /^(y|yes|true|1|x)$/.test(s)?"yes":/^(n|no|false|0)$/.test(s)?"no":""};
 async function importPastFile(f){
-  const {sheets,d1904}=await readXlsx(await f.arrayBuffer());
+  const {sheets,d1904}=await readXlsx(await checkXlsx(f));
   const pt=findTable(sheets,/point|site|location|plot/i,PAST_COLS.points);
   if(!pt||pt.map.lat==null||pt.map.lon==null)throw new Error(`Couldn’t find a Points sheet with Point ID, Latitude and Longitude columns. Sheets in the file: ${Object.keys(sheets).join(", ")}.`);
   const vg=findTable(sheets,/veg|species|plant/i,PAST_COLS.veg),so=findTable(sheets,/soil/i,PAST_COLS.soil);
@@ -2119,17 +2200,18 @@ function renderPastSheet(){
       ${ds.skipped&&ds.skipped.length?`<details><summary style="cursor:pointer">Skipped rows</summary><p class="note">${esc(ds.skipped.join("; "))}</p></details>`:""}
       <div class="row" style="margin-top:.3rem"><button class="btn quiet" data-pfit="${ds.id}">Zoom to points</button><button class="btn quiet" data-pdelds="${ds.id}">Delete</button></div></div>`).join("")
       :'<p class="note" style="margin:0">None yet. Import an Excel workbook with Points, Vegetation and Soils sheets linked by point ID.</p>'}
-    <label class="btn ${PAST.length?"quiet":"primary"}" style="display:flex;align-items:center;justify-content:center;min-height:3rem">Import Excel file (.xlsx)<input type="file" id="pastIn" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="position:absolute;left:-9999px"></label>
+    <label class="btn ${PAST.length?"quiet":"primary"}" style="display:flex;align-items:center;justify-content:center;min-height:3rem">Import Excel file (.xlsx)<input type="file" id="pastIn" style="position:absolute;left:-9999px"></label>
     ${PAST.length?`<button class="btn" id="spSum">Site species summary</button>`:""}
     <h4>My species photos (${nPh})</h4>
     <div class="row"><label class="btn quiet" style="display:inline-flex;align-items:center">Import a folder<input type="file" id="phDir" webkitdirectory multiple style="position:absolute;left:-9999px"></label>
-      <label class="btn quiet" style="display:inline-flex;align-items:center">Choose photo files<input type="file" id="phFiles" accept="image/*" multiple style="position:absolute;left:-9999px"></label></div>
-    <p class="note" style="margin:0">Name photos by scientific name, like Phalaris_arundinacea_1.jpg. Or tap any species in a point’s popup to take or add a photo.</p>
+      <label class="btn quiet" style="display:inline-flex;align-items:center">Choose photos or a .zip<input type="file" id="phFiles" multiple style="position:absolute;left:-9999px"></label></div>
+    <p class="note" style="margin:0">Name photos by scientific name, like Phalaris_arundinacea_1.jpg. On iPhone or iPad, folders can’t be picked: in the Files app, long-press the folder, choose Compress, then choose the .zip here. Or tap any species in a point’s popup to take or add a photo.</p>
     <p class="note" style="margin:0">Past data and photos are stored only on this phone, never uploaded. They work offline and are included in backups and in the boundary’s offline download.</p>`;
 }
 async function importPhotos(files){
-  files=[...files].filter(f=>/^image\//.test(f.type)||/\.(jpe?g|png|webp|heic|heif)$/i.test(f.name));
-  if(!files.length){toast("No photos found in that selection.",4000,true);return}
+  const chk=await photoFiles([...files]);files=chk.ok;
+  const skipMsg=chk.skipped.length?` Skipped ${chk.skipped.length} file${chk.skipped.length>1?"s":""} that aren’t photos: ${chk.skipped.slice(0,5).join(", ")}${chk.skipped.length>5?"…":""}.`:"";
+  if(!files.length){toast(`No photos found in that selection.${skipMsg} Choose JPEG, PNG or HEIC photos, or a .zip of them.`,8000,true);return}
   const known=new Map();for(const p of allPast())for(const v of p.veg)known.set(key(v.sp),v);
   let added=0,dup=0;const bad=[];toast(`Importing ${files.length} photos…`,60000);
   for(const f of files){
@@ -2139,7 +2221,7 @@ async function importPhotos(files){
     if((PHOTOS.get(sp)||[]).some(x=>x.file===f.name&&x.size===f.size)){dup++;continue}
     if(await savePhoto(f,sp,m?m.x.sci:v.sp,"import"))added++;else{bad.push(f.name+" (couldn’t be saved)");break}
   }
-  toast(`${added} photo${added===1?"":"s"} added${dup?`, ${dup} already there`:""}${bad.length?`. ${bad.length} not matched to a species: ${bad.slice(0,6).join(", ")}${bad.length>6?"…":""}`:""}.`,bad.length?9000:4000,!!bad.length);
+  toast(`${added} photo${added===1?"":"s"} added${dup?`, ${dup} already there`:""}${bad.length?`. ${bad.length} not matched to a species: ${bad.slice(0,6).join(", ")}${bad.length>6?"…":""}`:""}.${skipMsg}`,bad.length||skipMsg?9000:4000,!!(bad.length||skipMsg));
   checkStorage();
 }
 async function savePhoto(f,sp,name,src){
@@ -2360,7 +2442,9 @@ async function backupNow(share){
   if(exportFile(name,data))markBackedUp();
 }
 async function restoreFile(file){
-  let data=null;try{data=JSON.parse(await file.text())}catch(e){}
+  let data=null;const u8=await bytesOf(file),k=sniff(file.name,u8);
+  if(k!=="json"){alert(`“${file.name}” is ${KIND_TEXT[k]||"not a backup file"}${KIND_TEXT[k]?", not a backup":""}. Choose a wetland_backup_….json file saved from this app.`);return}
+  try{data=JSON.parse(new TextDecoder().decode(u8))}catch(e){}
   const list=Array.isArray(data)?data:data&&data.points; // also accepts the older “all points” download
   if(!Array.isArray(list)||!list.length||!list.every(p=>p&&p.id&&p.site&&p.veg&&p.soil&&p.hydro)){alert("That file isn’t a backup from this app.");return}
   const nPh=list.reduce((a,p)=>a+((p.photos||[]).length),0);
@@ -2419,7 +2503,7 @@ async function renderDevice(){
   <h3>Your points and photos</h3>
   <p>Last backup: <b>${RISK.lastBackup?new Date(RISK.lastBackup).toLocaleString():"never"}</b>${u.length?` · <span class="bad">${u.length} point${u.length>1?"s":""} changed since</span>`:points.some(p=>p.modified)?' · <span class="good">all points backed up</span>':""}</p>
   <div class="row"><button class="btn primary" id="bkDown">Back up to a file</button>${canShareFiles()?'<button class="btn" id="bkShare">Send backup (Drive, email, Files…)</button>':""}
-   <label class="btn quiet" style="display:inline-flex;align-items:center">Restore from a backup file<input type="file" id="bkIn" accept=".json,application/json" style="position:absolute;left:-9999px"></label></div>
+   <label class="btn quiet" style="display:inline-flex;align-items:center">Restore from a backup file<input type="file" id="bkIn" style="position:absolute;left:-9999px"></label></div>
   <p class="note">A backup is one file with every point, all form data and all photos. Keep it off the phone (Google Drive, iCloud, email to yourself). Restoring adds the points back without deleting anything already on the phone.</p>
   <p class="note">${prot}</p>
   ${isIOS&&!isInstalled()?'<p class="note warn">On iPhone and iPad, Safari deletes a website’s saved data after 7 days without a visit. Add this app to your Home Screen (Share › Add to Home Screen) and open it from there so that doesn’t happen.</p>':""}
