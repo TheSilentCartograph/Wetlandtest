@@ -107,7 +107,7 @@ td.num{width:6rem}
 .summary dt{color:var(--muted)}.summary dd{margin:0;font-weight:700}
 .toast{position:fixed;z-index:60;max-width:min(92vw,30rem);text-align:center;left:50%;bottom:calc(1rem + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:.6rem 1rem;border-radius:6px;font-size:.9rem;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.show{opacity:1}
-body.mapfull .toast{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 7.5rem);font-size:1rem}
+body.mapfull .toast{font-size:1rem}
 .toast.alert{background:#b3261e;color:#fff;font-weight:700}
 img{max-width:100%}
 @media (max-width:640px){.status{grid-template-columns:repeat(2,1fr)}.factor:nth-child(2){border-right:0}.factor:nth-child(-n+2){border-bottom:1px solid var(--line)}}
@@ -177,7 +177,7 @@ body.mapfull{overflow:hidden}
 .dev .good{color:var(--gley);font-weight:700}.dev .bad{color:var(--no);font-weight:700}
 #devBtn[aria-pressed="true"]{background:var(--gley);color:var(--gley-ink)}
 /* Full-screen map page: banner at the top, large buttons in thumb reach at the bottom */
-.mapwrap.page{position:fixed;inset:0;height:auto;margin:0;border:0;border-radius:0;z-index:40;--pgbar:140px}
+.mapwrap.page{position:fixed;inset:0;height:auto;margin:0;border:0;border-radius:0;z-index:40}
 .mapwrap.page .mapbar{display:none}
 .pgtop{position:absolute;top:0;left:0;right:0;z-index:4;padding:calc(env(safe-area-inset-top,0px) + 8px) 8px 0;pointer-events:none}
 .pgtop[hidden],.pgbar[hidden]{display:none}
@@ -188,14 +188,13 @@ body.mapfull{overflow:hidden}
 .wetlbl{pointer-events:none;display:none;font-weight:700;font-size:12px;color:#e9fdff;text-shadow:0 0 3px #00363c,0 0 3px #00363c,0 0 2px #000;white-space:nowrap;font-style:italic}
 .mapwrap.lbl .wetlbl{display:block}
 .pgban .sub{display:block;font-size:.78rem;font-weight:400;opacity:.85;margin-top:.2rem}
-.pgban[data-s="in"]{background:#1d6b38}.pgban[data-s="out"]{background:#b3261e}.pgban[data-s="near"]{background:#a65f00}
+
 .pgbar{position:absolute;left:0;right:0;bottom:0;z-index:4;padding:10px 8px calc(env(safe-area-inset-bottom,0px) + 8px);background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.4) 30%);display:flex;flex-direction:column;gap:8px}
 .pgbar button{border-radius:12px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 6px rgba(0,0,0,.3)}
 .pgbig{min-height:60px;font-size:1.15rem;background:var(--gley);color:var(--gley-ink);border:0}
 .pgrow{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
 .pgrow button{min-height:58px;font-size:.9rem;line-height:1.1;background:#fff;color:#1c2a26;border:1px solid rgba(0,0,0,.25);padding:0 .2rem}
 .pgrow button[aria-expanded="true"]{background:#1c2a26;color:#fff}
-.mapwrap.page .mappanel{top:auto;left:8px;right:8px;width:auto;bottom:calc(var(--pgbar) + 6px);max-height:min(60vh,calc(100% - var(--pgbar) - 120px));font-size:1rem;gap:.55rem}
 .mapwrap.page .mappanel label.ck{min-height:2.6rem}.mapwrap.page .mappanel input[type=checkbox]{width:1.4rem;height:1.4rem}
 .mapwrap.page .mappanel .btn{min-height:3rem}
 .mapwrap.page .maplibregl-ctrl-top-right{top:auto;bottom:calc(var(--pgbar) + 34px)}
@@ -236,6 +235,60 @@ body.mapfull{overflow:hidden}
 .pgsheet .crs small{display:block;color:var(--muted)}.pgsheet textarea{width:100%;min-height:4rem;font:inherit;font-size:.8rem}
 .pgsheet .row{display:flex;gap:.5rem;flex-wrap:wrap}.pgsheet input[type=text]{width:100%;min-height:2.6rem;font:inherit;padding:.3rem .5rem}
 .pgsheet input[type=radio]{width:1.3rem;height:1.3rem;flex:none;margin-top:.15rem}
+/* ===== Full-screen map on small phones: designed at 375 × 812 (iPhone 13 mini), portrait and landscape =====
+   Safe areas keep controls clear of the notch and home bar; --pgbar and --pgtop are set from the real bar sizes. */
+:root{--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--sal:env(safe-area-inset-left,0px);--sar:env(safe-area-inset-right,0px);--pgbar:76px;--pgtop:60px}
+/* Every panel: a scrolling body plus a 'Close pop up' bar that stays in view however long the content is */
+.pbox{position:absolute;top:56px;left:8px;z-index:5;width:min(20rem,calc(100% - 16px));max-height:calc(100% - 64px);display:flex;flex-direction:column;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.3);overflow:hidden}
+.pbox:has(> .mappanel[hidden]){display:none}
+.pbox > .mappanel{position:static;width:auto;max-height:none;flex:1 1 auto;min-height:0;overflow:auto;border:0;border-radius:0;box-shadow:none;overscroll-behavior:contain}
+.closepop{flex:none;display:block;width:calc(100% - 16px);margin:6px 8px 8px;min-height:48px;border-radius:10px;border:0;background:var(--ink);color:var(--bg);font:inherit;font-weight:700;font-size:17px;cursor:pointer}
+.pop .closepop{width:100%;margin:.5rem 0 0}
+.mapwrap.page .pbox{top:auto;left:calc(var(--sal) + 8px);right:calc(var(--sar) + 8px);width:auto;bottom:calc(var(--pgbar) + 6px);max-height:calc(100% - var(--pgbar) - var(--pgtop) - 14px)}
+.mapwrap.page .mappanel{font-size:15px;gap:.55rem;padding:.7rem .8rem}
+.mapwrap.page .mappanel .note,.mapwrap.page .pp .meta,.mapwrap.page .pp td,.mapwrap.page .pp th,.mapwrap.page .lg,.mapwrap.page .years,.pgsheet .feats small,.pgsheet .crs small,.sprow small,.mapwrap.page .mappanel small{font-size:14px}
+.mapwrap.page .mappanel details.about p,.mapwrap.page .mappanel ul,.mapwrap.page .mappanel li,.mapwrap.page .mappanel label.f,.mapwrap.page .pp .fac div{font-size:14px!important}
+.mapwrap.page .dom{font-size:13px}
+.mapwrap.page .pgsheet .shut{display:none}.mapwrap.page .pp h4{padding-right:0}
+.mapwrap input,.mapwrap select,.mapwrap textarea,.ovl input{font-size:16px!important} /* 16px stops iPhone zooming in when a field is tapped */
+.pgtop{padding:calc(var(--sat) + 6px) calc(var(--sar) + 8px) 0 calc(var(--sal) + 8px)}
+.pgban{font-size:16px;padding:.45rem .7rem;line-height:1.3;background:rgba(40,52,48,.92);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.pgban small{display:inline;font-size:14px;font-weight:400;margin:0}
+.pgban .wl{font-size:14px;margin-top:.25rem;padding:.15rem .4rem}.pgban .wl small{font-size:14px}
+.pgban[data-s="out"],.pgban[data-s="none"]{background:rgba(40,52,48,.92)}
+.pgban[data-s="in"]{background:rgba(29,107,56,.94)}.pgban[data-s="near"]{background:rgba(166,95,0,.95)}
+.pgbar{display:grid;grid-template-columns:68px 1fr 56px 78px;gap:6px;padding:8px calc(var(--sar) + 8px) calc(var(--sab) + 8px) calc(var(--sal) + 8px);background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.35) 35%)}
+.pgbar[hidden]{display:none}
+.pgbar .pgb{min-height:52px;font-size:16px;line-height:1.1;background:#fff;color:#1c2a26;border:1px solid rgba(0,0,0,.25);padding:0 .3rem;display:flex;align-items:center;justify-content:center;gap:.3rem}
+.pgbar .pgbig{background:var(--gley);color:var(--gley-ink);border:0;font-size:17px}
+.pgbar .pgb[aria-expanded="true"]{background:#1c2a26;color:#fff}
+.pgbar svg{width:24px;height:24px;flex:none}
+.mapwrap.page .maplibregl-ctrl-top-right{top:auto;bottom:calc(var(--pgbar) + 30px);right:var(--sar)}
+.mapwrap.page .maplibregl-ctrl-group button{width:44px;height:44px}
+.mapwrap.page .maplibregl-ctrl-bottom-left{bottom:calc(var(--pgbar) - 4px);left:var(--sal)}
+.mapwrap.page .maplibregl-ctrl-bottom-right{bottom:calc(var(--pgbar) - 4px);right:var(--sar)}
+.mapwrap.page .mapimg{bottom:calc(var(--pgbar) + 6px);left:calc(var(--sal) + 116px);right:auto;font-size:13px;padding:.1rem .4rem;text-align:left}
+.mapwrap.page .maphint{bottom:calc(var(--pgbar) + 44px);font-size:14px}
+.pastpt span{font-size:13px}.wetlbl{font-size:13px}
+.pgmenu .mhead{margin:0;color:var(--muted)}
+.pgmenu .mitem{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:52px;padding:0 .9rem;border:1px solid var(--line);border-radius:10px;background:var(--soft);color:var(--ink);font:inherit;font-size:17px;font-weight:700;cursor:pointer;text-align:left}
+.pgmenu .mitem small{font-weight:400;color:var(--muted);font-size:14px}
+body.mapfull .toast{top:calc(var(--pgtop) + 8px);bottom:auto}
+/* Photo views */
+.ovl{padding:calc(var(--sat) + 10px) calc(var(--sar) + 12px) calc(var(--sab) + 140px) calc(var(--sal) + 12px)}
+.ovl .x{top:calc(var(--sat) + 8px);right:calc(var(--sar) + 10px)}
+.ovl .bot{flex-direction:column;padding:8px calc(var(--sar) + 12px) calc(var(--sab) + 8px) calc(var(--sal) + 12px)}
+.ovl .bot .acts{display:flex;gap:8px}.ovl .bot .closepop{width:100%;margin:0}
+.ovl .note,.ovl small{font-size:14px}.ovl .bigph{max-height:55vh}
+/* Landscape: status on the left, panels down the right, so the map stays in the middle */
+@media (orientation:landscape) and (max-height:520px){
+  .pgtop{right:auto;width:min(46%,380px)}
+  .mapwrap.page .pbox{left:auto;width:min(400px,54%);top:calc(var(--sat) + 8px);max-height:none}
+  .pgbar{grid-template-columns:84px 1fr 60px 90px;padding-top:6px}
+  .pgbar .pgb{min-height:46px}
+  .ovl{padding-bottom:calc(var(--sab) + 124px)}.ovl .bot{gap:6px;padding-top:6px}.ovl .bot .btn{min-height:46px}.ovl .bot .closepop{min-height:46px}
+  .ovl .bigph{max-height:calc(100vh - 220px)}
+}
 </style>
 </head>
 <body>
@@ -1201,7 +1254,7 @@ async function refreshAreaOutlines(){
 }
 document.addEventListener("click",async e=>{
   const t=e.target;if(!mapWrap.contains(t))return;
-  if(t.id==="mAreasBtn"||t.dataset.areas){mapWrap.querySelector("#pgSheet").hidden=true;const pn=mapWrap.querySelector("#mAreas");pn.hidden=!pn.hidden;t.setAttribute("aria-expanded",!pn.hidden);mapWrap.querySelector("#mPanel").hidden=true;renderAreas()}
+  if(t.id==="mAreasBtn"||t.dataset.areas){mapWrap.querySelector("#pgSheet").hidden=true;mapWrap.querySelector("#pgMenu").hidden=true;const pn=mapWrap.querySelector("#mAreas");pn.hidden=!pn.hidden;t.setAttribute("aria-expanded",!pn.hidden);mapWrap.querySelector("#mPanel").hidden=true;renderAreas()}
   if(t.id==="aDownload"){if(!navigator.onLine){toast("Connect to the internet to download an area.");return}
     const name=(mapWrap.querySelector("#aName").value||"Project area").trim(),b=viewBox(),mb=areaPlan(b,areaIdsForView()).mb;
     await checkStorage();const free=freeMB(); // leave room for points and photos
@@ -1230,8 +1283,8 @@ let mapCenteredFor=null,map=null,mapReady=false,marker=null,placing=false,mapLib
 const mapWrap=document.createElement("div");mapWrap.className="mapwrap";
 mapWrap.innerHTML=`<div id="map" aria-label="Map of sampling points, soils and wetlands"></div>
   <div class="mapbar"><button class="mbtn" id="mLayers" aria-expanded="false" aria-controls="mPanel">Layers</button><button class="mbtn" id="mAreasBtn" aria-expanded="false" aria-controls="mAreas">Offline areas</button><button class="mbtn" id="mFull">Full map</button></div>
-  <div class="mappanel" id="mAreas" hidden><h4 style="margin-top:0">Offline imagery for a project area</h4><p class="note" style="margin:0">Downloads NAIP, county aerials and USGS imagery for the current map view, so the basemap loads instantly in the field without signal.</p><div id="mAreaBody"></div></div>
-  <div class="mappanel" id="mPanel" hidden>
+  <div class="pbox"><div class="mappanel" id="mAreas" hidden><h4 style="margin-top:0">Offline imagery for a project area</h4><p class="note" style="margin:0">Downloads NAIP, county aerials and USGS imagery for the current map view, so the basemap loads instantly in the field without signal.</p><div id="mAreaBody"></div></div><button class="closepop" type="button">Close pop up</button></div>
+  <div class="pbox"><div class="mappanel" id="mPanel" hidden>
     <label>Basemap <select id="mBase"><option value="county">Aerial: county + NAIP + USGS (sharpest)</option><option value="naip">Aerial: NAIP 2019 + USGS</option><option value="usgs">Aerial: USGS only</option><option value="topo">Topo / streets (USGS)</option><option value="none">None</option></select></label>
     <p class="years">Imagery years: ${["cook","lake","kane","dupage","naip","usgs"].map(id=>`${esc(IMG[id].short)} ${esc(IMG[id].year)}`).join(" · ")}. The “Imagery” label on the map shows which one you’re looking at.</p>
     <label class="ck site-only"><input type="checkbox" id="mSoils"> Mapped soils</label>
@@ -1248,13 +1301,16 @@ mapWrap.innerHTML=`<div id="map" aria-label="Map of sampling points, soils and w
     <button class="btn quiet" data-areas="1">Offline areas…</button>
     <p class="note site-only" style="margin:.3rem 0 0">Soils and NWI always work offline. Imagery needs a connection unless you download the area (Offline areas) or have already viewed it.</p>
     <details class="about"><summary>About imagery and terms of use</summary>${IMG_ORDER.slice().reverse().map(id=>`<p><b>${esc(IMG[id].label)}</b>${IMG[id].bounds?"":" (all counties)"}: ${esc(IMG[id].terms)} <a href="${IMG[id].link}" target="_blank" rel="noopener">Source</a></p>`).join("")}<p>County layers show only inside their county; NAIP fills in where a county layer is missing, and USGS fills in beyond that.</p></details>
-  </div>
+  </div><button class="closepop" type="button">Close pop up</button></div>
   <div class="maphint" id="mHint" hidden></div><div class="mapmsg" id="mMsg" hidden></div><div class="mapimg" id="mImg" hidden></div>
   <div class="pgtop" id="pgTop" hidden><div class="pgban" id="pgBan" role="status" aria-live="polite"></div></div>
-  <div class="mappanel pgsheet" id="pgSheet" hidden></div>
+  <div class="pbox"><div class="mappanel pgsheet" id="pgSheet" hidden></div><button class="closepop" type="button">Close pop up</button></div>
+  <div class="pbox"><div class="mappanel pgmenu" id="pgMenu" hidden></div><button class="closepop" type="button">Close pop up</button></div>
   <div class="pgbar" id="pgBar" hidden>
-    <button class="pgbig" id="pgDrop">Drop point at my location</button>
-    <div class="pgrow"><button id="pgBack">‹ Form</button><button id="pgLayers" aria-expanded="false">Layers</button><button id="pgBnd" aria-expanded="false">Boundary</button><button id="pgPast" aria-expanded="false">Past data</button><button id="pgCenter">◎ Center</button></div>
+    <button class="pgb" id="pgBack">‹ Form</button>
+    <button class="pgb pgbig" id="pgDrop">Drop point</button>
+    <button class="pgb" id="pgCenter" aria-label="Center on my location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="2" fill="currentColor"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4"/></svg></button>
+    <button class="pgb" id="pgMenuBtn" aria-expanded="false" aria-controls="pgMenu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg>Menu</button>
   </div>`;
 function loadMapLib(){
   if(!mapLibP)mapLibP=new Promise((res,rej)=>{
@@ -1346,7 +1402,7 @@ mapWrap.addEventListener("click",e=>{
   if(e.target.id==="mLayers"){const pn=mapWrap.querySelector("#mPanel");pn.hidden=!pn.hidden;e.target.setAttribute("aria-expanded",!pn.hidden);mapWrap.querySelector("#mAreas").hidden=true}
   if(e.target.id==="mFull")openMapPage();
 });
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&mapPage&&!document.querySelector(".maplibregl-popup"))closeMapPage()});
+document.addEventListener("keydown",e=>{if(e.key!=="Escape")return;if(anyPanelOpen())closeAllPanels();else if(mapPage&&!document.querySelector(".maplibregl-popup"))closeMapPage()});
 function setHint(t){const h=mapWrap.querySelector("#mHint");h.hidden=!t;h.textContent=t||""}
 function setPlacing(on){
   placing=on;const b=document.getElementById("placePt");if(b){b.setAttribute("aria-pressed",on);b.textContent=on?"Cancel placing":"Tap map to place point"}
@@ -1391,11 +1447,12 @@ function updateMapPoint(){
 }
 async function onMapClick(e){
   const {lng,lat}=e.lngLat;
+  if(!placing&&anyPanelOpen()){closeAllPanels();return} // a tap on the map outside a panel closes it
   if(mapPage){ // map page: past points (their own markers) and wetlands open popups
     const hits=!mapPrefs.wet?[]:[...map.queryRenderedFeatures(e.point,{layers:["wet-fill"]}),
       ...map.queryRenderedFeatures([[e.point.x-10,e.point.y-10],[e.point.x+10,e.point.y+10]],{layers:["wet-line"]}).filter(f=>f.properties.t==="l")];
     const uniq=[...new Map(hits.map(h=>[h.properties.w+"|"+h.properties.f,h.properties])).values()];
-    if(uniq.length)openWetland(uniq,lat,lng);else if(sheetMode==="pastpt"||sheetMode==="wet")closeSheet();return}
+    if(uniq.length)openWetland(uniq,lat,lng);return}
   if(placing){setPlacing(false);movePoint(lat,lng,"map tap");return}
   const ml=window.maplibregl,box=document.createElement("div");box.className="pop";
   const pt=mapPrefs.pts&&map.queryRenderedFeatures(e.point,{layers:["pts"]})[0];
@@ -1415,7 +1472,8 @@ async function onMapClick(e){
     box.innerHTML=(parts.join("")||'<div class="note">Turn on soils or NWI in Layers to see what is mapped here.</div>')+(imgHere?`<div><small>Basemap imagery here: ${esc(imgHere)}</small></div>`:"")+
       `<button class="btn quiet" data-place="1">Move ${esc(P()?.site.point||"point")} here</button>`;
   }
-  box.addEventListener("click",ev=>{const t=ev.target;
+  box.insertAdjacentHTML("beforeend",'<button class="closepop" type="button" data-closepop="1">Close pop up</button>');
+  box.addEventListener("click",ev=>{const t=ev.target;if(t.dataset.closepop){mapPopup.remove();return}
     if(t.dataset.place){mapPopup.remove();movePoint(lat,lng,"map tap")}
     if(t.dataset.open){mapPopup.remove();cur=t.dataset.open;renderAll();window.scrollTo(0,0)}});
   if(mapPopup)mapPopup.remove();
@@ -1726,8 +1784,8 @@ function runBoundaryCheck(p,warn){
   if(JSON.stringify(p.site.bnd||null)!==before){p.modified=Date.now();dirty.add(p.id);clearTimeout(saveT);saveT=setTimeout(flushSave,350)}
   if(p.id===cur){const n=document.getElementById("bndNote");if(n)n.innerHTML=bndNoteHTML(p)}
   const r=p.site.bnd,nm=p.site.point||"Point";
-  if(warn&&r){if(r.near)toast(`${nm} is near the project boundary: ${fmtDist(r.d)} from the line, within the GPS accuracy (±${Math.round(r.acc)} m). Check on the ground.`,6000,true);
-    else if(!r.inside)toast(`⚠ ${nm} is OUTSIDE the project boundary, ${fmtDist(r.d)} from it.`,7000,true);
+  if(warn&&r){if(r.near)toast(`${nm} is near the project boundary: ${fmtDist(r.d)} from the line, within the GPS accuracy (±${Math.round(r.acc)} m).`,5000);
+    else if(!r.inside)toast(`${nm} placed outside the project boundary (${fmtDist(r.d)} from it).`,3500);
     else toast(`${nm} placed inside the project boundary (${fmtDist(r.d)} from the line).`,3500)}
   if(mapPage)updatePageBanner();
   return r;
@@ -1850,7 +1908,7 @@ async function openMapPage(){
   try{history.pushState({mapPage:1},"")}catch(e){}
   updatePageBanner();
   try{await initMap()}catch(e){const m=mapWrap.querySelector("#mMsg");m.hidden=false;m.textContent=e.message;return}
-  mapWrap.style.setProperty("--pgbar",mapWrap.querySelector("#pgBar").offsetHeight+"px");
+  {const r=document.documentElement.style;r.setProperty("--pgbar",mapWrap.querySelector("#pgBar").offsetHeight+"px");r.setProperty("--pgtop",mapWrap.querySelector("#pgTop").offsetHeight+"px")}
   map.resize();syncMapPanel();applyMapPrefs();updateMapPoint();updateBoundaryLayer();refreshMapData();updateImgChip();drawPastMarkers();drawWetlands();
   const b=curBnd(),p=P();if(b)fitBnd(b);else if(p&&p.site.lat&&p.site.lon)map.jumpTo({center:[+p.site.lon,+p.site.lat],zoom:Math.max(map.getZoom(),16)});
   startWatch();banT=setInterval(updatePageBanner,5000);
@@ -1858,8 +1916,8 @@ async function openMapPage(){
 function closeMapPage(fromHistory){
   if(!mapPage)return;mapPage=false;stopWatch();clearInterval(banT);imp=null;
   if(mapReady)map.getSource("bndprev").setData({type:"FeatureCollection",features:[]});
-  ["pgTop","pgBar","pgSheet","mPanel","mAreas"].forEach(id=>mapWrap.querySelector("#"+id).hidden=true);
-  mapWrap.querySelectorAll(".pgrow [aria-expanded]").forEach(x=>x.setAttribute("aria-expanded","false"));
+  ["pgTop","pgBar","pgSheet","mPanel","mAreas","pgMenu"].forEach(id=>mapWrap.querySelector("#"+id).hidden=true);
+  mapWrap.querySelectorAll(".pgbar [aria-expanded]").forEach(x=>x.setAttribute("aria-expanded","false"));
   mapWrap.classList.remove("page");document.body.classList.remove("mapfull");clearPastMarkers();clearWetLabels();closeOvl();applyMapPrefs();
   if(!fromHistory&&history.state&&history.state.mapPage)history.back();
   const slot=document.getElementById("mapSlot");if(slot){slot.appendChild(mapWrap);setTimeout(()=>{if(map)map.resize()},50)}else mapWrap.remove();
@@ -1878,16 +1936,15 @@ function stopWatch(){if(watchId!=null)navigator.geolocation.clearWatch(watchId);
 function drawMe(){if(!mapReady||!me)return;
   map.getSource("me").setData({type:"Feature",properties:{},geometry:{type:"Point",coordinates:[me.lon,me.lat]}});
   map.getSource("meacc").setData(circle(me.lat,me.lon,Math.max(1,me.acc)))}
-function updatePageBanner(){
+function updatePageBanner(){ // one compact status line (plus the wetland line); outside is shown plainly, without a warning
   if(!mapPage)return;const el=mapWrap.querySelector("#pgBan"),p=P(),b=curBnd();
-  const sub=`<span class="sub">${esc(p&&p.site.project.trim()||"No project name")} · ${esc(p&&p.site.point||"")}${b?` · ${esc(b.file)}`:""}</span>`;
   let s="none",h;
-  if(!b)h=`${p&&p.site.project.trim()?`No boundary for “${esc(p.site.project.trim())}”`:"No project boundary"}<small>Tap Boundary to load a shapefile, KMZ or KML.${me&&me.lat!=null?` GPS ±${esc(fmtDist(me.acc))}.`:""}</small>`;
+  if(!b)h=`${p&&p.site.project.trim()?"No boundary loaded":"No project boundary"} <small>· Menu › Boundary &amp; wetlands${me&&me.lat!=null?` · GPS ±${esc(fmtDist(me.acc))}`:""}</small>`;
   else if(!me||me.lat==null)h=`${meErr?esc(meErr):"Waiting for GPS…"}`;
   else{const r=bndCheck(b,me.lat,me.lon),near=r.d<me.acc,age=(Date.now()-me.t)/1000;
     s=near?"near":r.inside?"in":"out";
-    h=`${near?"Near boundary":r.inside?"Inside project area":"Outside project area"}<small>${esc(fmtDist(r.d))} to the boundary line · GPS ±${esc(fmtDist(me.acc))}${age>20?` · last fix ${Math.round(age)} s ago`:""}${meErr&&age>20?` · ${esc(meErr)}`:""}</small>`}
-  el.dataset.s=s;el.innerHTML=h+wetBannerHTML()+sub;
+    h=`${near?"Near boundary":r.inside?"Inside project area":"Outside project area"} <small>· ${esc(fmtDist(r.d))} to boundary · GPS ±${esc(fmtDist(me.acc))}${age>20?` · fix ${Math.round(age)} s old`:""}</small>`}
+  el.dataset.s=s;el.innerHTML=`<div>${h}</div>`+wetBannerHTML();
 }
 function dropPoint(){
   if(!me||me.lat==null){toast(meErr||"No GPS fix yet. Wait for your location to appear, or tap the map and choose “Move … here”.",5000);return}
@@ -1897,10 +1954,24 @@ function dropPoint(){
   if(!p.site.bnd)toast(`${p.site.point} placed (±${Math.round(me.acc)} m)${fresh?". It’s a new sampling point; fill in the form under ‹ Form.":""}`,4000);
   renderPanel();
 }
+function renderMenu(){
+  const p=P(),b=curBnd(),nw=curWet().reduce((a,w)=>a+w.features.length,0),np=allPast().length;
+  mapWrap.querySelector("#pgMenu").innerHTML=`<p class="mhead">${esc(p&&p.site.project.trim()||"No project name")} · point ${esc(p&&p.site.point||"")}</p>
+    <button class="mitem" data-go="layers">Layers <small>imagery, boundary, wetlands, points</small></button>
+    <button class="mitem" data-go="bnd">Boundary &amp; wetlands <small>${b?"loaded":"none"}${nw?` · ${nw} wetlands`:""}</small></button>
+    <button class="mitem" data-go="past">Past data &amp; species <small>${np?`${np} points`:"none"}</small></button>
+    <button class="mitem" data-go="areas">Offline imagery <small>download this area</small></button>`;
+}
+function anyPanelOpen(){return ["mPanel","mAreas","pgSheet","pgMenu"].some(id=>!mapWrap.querySelector("#"+id).hidden)}
+function closeAllPanels(){closeSheet();["mPanel","mAreas","pgMenu"].forEach(id=>mapWrap.querySelector("#"+id).hidden=true);
+  mapWrap.querySelectorAll(".pgbar [aria-expanded],.mapbar [aria-expanded]").forEach(x=>x.setAttribute("aria-expanded","false"))}
+const barRO=typeof ResizeObserver!=="undefined"?new ResizeObserver(()=>{if(!mapPage)return;const r=document.documentElement.style;
+  r.setProperty("--pgbar",mapWrap.querySelector("#pgBar").offsetHeight+"px");r.setProperty("--pgtop",mapWrap.querySelector("#pgTop").offsetHeight+"px")}):null;
+if(barRO){barRO.observe(mapWrap.querySelector("#pgBar"));barRO.observe(mapWrap.querySelector("#pgTop"))}
 function togglePanel(id,btn){
-  const ids=["mPanel","pgSheet","mAreas"];ids.forEach(x=>{if(x!==id)mapWrap.querySelector("#"+x).hidden=true});
-  const pn=mapWrap.querySelector("#"+id);pn.hidden=!pn.hidden;
-  mapWrap.querySelectorAll(".pgrow [aria-expanded]").forEach(x=>x.setAttribute("aria-expanded",String(x===btn&&!pn.hidden)));
+  const ids=["mPanel","pgSheet","mAreas","pgMenu"];ids.forEach(x=>{if(x!==id)mapWrap.querySelector("#"+x).hidden=true});
+  const pn=mapWrap.querySelector("#"+id);pn.hidden=!pn.hidden;pn.scrollTop=0;
+  mapWrap.querySelectorAll(".pgbar [aria-expanded]").forEach(x=>x.setAttribute("aria-expanded",String(x===btn&&!pn.hidden)));
   return !pn.hidden;
 }
 mapWrap.addEventListener("click",e=>{
@@ -1908,6 +1979,13 @@ mapWrap.addEventListener("click",e=>{
   if(t.id==="pgBack")closeMapPage();
   if(t.id==="pgDrop")dropPoint();
   if(t.id==="pgCenter"){if(me&&me.lat!=null){follow=true;map.easeTo({center:[me.lon,me.lat],zoom:Math.max(map.getZoom(),17),duration:500})}else toast(meErr||"Waiting for a GPS fix…")}
+  if(t.id==="pgMenuBtn"){if(togglePanel("pgMenu",t))renderMenu()}
+  if(t.classList.contains("closepop")&&!t.closest(".pop"))closeAllPanels();
+  if(t.dataset.go){const menu=mapWrap.querySelector("#pgMenuBtn"),go=t.dataset.go;
+    if(go==="layers"){togglePanel("mPanel",menu);syncMapPanel()}
+    if(go==="bnd"){sheetMode="bnd";togglePanel("pgSheet",menu);renderBndSheet()}
+    if(go==="past"){sheetMode="past";togglePanel("pgSheet",menu);renderPastSheet()}
+    if(go==="areas"){togglePanel("mAreas",menu);renderAreas()}}
   if(t.id==="pgLayers")togglePanel("mPanel",t);
   if(t.id==="pgBnd"||t.id==="pgPast"){ // switch the panel between Boundary and Past data, or open/close it
     const want=t.id==="pgBnd"?"bnd":"past",sh=mapWrap.querySelector("#pgSheet"),draw=()=>want==="bnd"?renderBndSheet():renderPastSheet();
@@ -2250,7 +2328,7 @@ function openSpecies(k,at=0,back=null){
       <p class="note" style="margin:.3rem 0">${ovlAt+1} of ${ph.length} · ${esc(ph[ovlAt].file||"")} · added ${new Date(ph[ovlAt].added).toLocaleDateString()}</p>
       ${ph.length>1?`<div class="strip">${ph.map((x,i)=>`<img src="${x.thumb}" class="${i===ovlAt?"on":""}" data-ovi="${i}" alt="Photo ${i+1}">`).join("")}</div>`:""}
       <button class="btn quiet" data-ov="del">Delete this photo</button>`:'<p class="note">No photos of this species yet.</p>'}
-    <div class="bot">${ovlBack?'<button class="btn" data-ov="back">‹ Back</button>':""}<label class="btn primary" style="display:flex;align-items:center;justify-content:center;flex:1">Take or add photo<input type="file" id="ovPh" accept="image/*" multiple style="position:absolute;left:-9999px"></label></div>`;
+    <div class="bot"><div class="acts">${ovlBack?'<button class="btn" data-ov="back">‹ Back</button>':""}<label class="btn primary" style="display:flex;align-items:center;justify-content:center;flex:1">Take or add photo<input type="file" id="ovPh" accept="image/*" multiple style="position:absolute;left:-9999px"></label></div><button class="closepop" data-ov="close">Close pop up</button></div>`;
   o.hidden=false;o.scrollTop=0;
 }
 async function ovlClick(e){
@@ -2280,7 +2358,8 @@ function openSummary(){
     ${b?`<label class="ck" style="display:flex;gap:.5rem;align-items:center;min-height:2.6rem"><input type="checkbox" data-sumf="1" ${sumInside?"checked":""} style="width:1.3rem;height:1.3rem"> Only points inside the “${esc(b.project)}” boundary</label>`:""}
     <ol class="sum">${list.map((s,i)=>{const ph=thumbFor(s.k),mc=s.cov.length?Math.round(s.cov.reduce((a,c)=>a+c,0)/s.cov.length):null;
       return `<li><div class="sprow"><span class="rank">${i+1}</span>${ph?`<img src="${ph.thumb}" alt="" data-spv="${esc(s.k)}">`:""}<button class="spn" data-spv="${esc(s.k)}"><i>${esc(s.name)}</i> ${s.s?`<span class="dom" style="background:var(--soft);color:var(--ink)">${esc(s.s)}</span>`:""}
-        <small>${esc(s.com)}${s.com?" · ":""}${s.pts.size} of ${pts.length} points (${Math.round(s.pts.size/Math.max(1,pts.length)*100)}%) · dominant at ${s.dom.size}${mc!=null?` · mean cover ${mc}%`:""}${PHOTOS.get(s.k)?` · ${PHOTOS.get(s.k).length} photo${PHOTOS.get(s.k).length>1?"s":""}`:""}</small></button></div></li>`}).join("")}</ol>`;
+        <small>${esc(s.com)}${s.com?" · ":""}${s.pts.size} of ${pts.length} points (${Math.round(s.pts.size/Math.max(1,pts.length)*100)}%) · dominant at ${s.dom.size}${mc!=null?` · mean cover ${mc}%`:""}${PHOTOS.get(s.k)?` · ${PHOTOS.get(s.k).length} photo${PHOTOS.get(s.k).length>1?"s":""}`:""}</small></button></div></li>`}).join("")}</ol>
+    <div class="bot"><button class="closepop" data-ov="close">Close pop up</button></div>`;
   o.hidden=false;
 }
 mapWrap.addEventListener("click",async e=>{
