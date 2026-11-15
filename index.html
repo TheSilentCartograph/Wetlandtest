@@ -183,6 +183,10 @@ body.mapfull{overflow:hidden}
 .pgtop[hidden],.pgbar[hidden]{display:none}
 .pgban{pointer-events:auto;border-radius:10px;padding:.6rem .85rem;font-size:1.2rem;font-weight:700;line-height:1.25;color:#fff;background:#3d4a46;box-shadow:0 3px 12px rgba(0,0,0,.35)}
 .pgban small{display:block;font-size:.88rem;font-weight:400;margin-top:.15rem}
+.pgban .wl{display:block;font-size:.9rem;font-weight:700;margin-top:.3rem;padding:.2rem .45rem;border-left:4px solid #5ff3ff;background:rgba(0,0,0,.22);border-radius:4px}
+.pgban .wl small{display:inline;font-weight:400;margin:0}
+.wetlbl{pointer-events:none;display:none;font-weight:700;font-size:12px;color:#e9fdff;text-shadow:0 0 3px #00363c,0 0 3px #00363c,0 0 2px #000;white-space:nowrap;font-style:italic}
+.mapwrap.lbl .wetlbl{display:block}
 .pgban .sub{display:block;font-size:.78rem;font-weight:400;opacity:.85;margin-top:.2rem}
 .pgban[data-s="in"]{background:#1d6b38}.pgban[data-s="out"]{background:#b3261e}.pgban[data-s="near"]{background:#a65f00}
 .pgbar{position:absolute;left:0;right:0;bottom:0;z-index:4;padding:10px 8px calc(env(safe-area-inset-bottom,0px) + 8px);background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.4) 30%);display:flex;flex-direction:column;gap:8px}
@@ -309,9 +313,10 @@ const TABS=[["site","Site"],["veg","Vegetation"],["soil","Soil"],["hydro","Hydro
 
 /* ---------- Storage (IndexedDB, falls back to memory) ---------- */
 let idb=null;
-function openDB(){return new Promise(res=>{try{const r=indexedDB.open("wetland-form",4);
+function openDB(){return new Promise(res=>{try{const r=indexedDB.open("wetland-form",5);
   r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains("points"))d.createObjectStore("points",{keyPath:"id"});if(!d.objectStoreNames.contains("meta"))d.createObjectStore("meta");if(!d.objectStoreNames.contains("boundaries"))d.createObjectStore("boundaries",{keyPath:"key"});
-  if(!d.objectStoreNames.contains("past"))d.createObjectStore("past",{keyPath:"id"});if(!d.objectStoreNames.contains("photos"))d.createObjectStore("photos",{keyPath:"id"}).createIndex("sp","sp")};
+  if(!d.objectStoreNames.contains("past"))d.createObjectStore("past",{keyPath:"id"});if(!d.objectStoreNames.contains("photos"))d.createObjectStore("photos",{keyPath:"id"}).createIndex("sp","sp");
+  if(!d.objectStoreNames.contains("wetlands"))d.createObjectStore("wetlands",{keyPath:"id"})};
   r.onsuccess=()=>res(r.result);r.onerror=()=>res(null)}catch(e){res(null)}})}
 function dbAll(){return new Promise(res=>{if(!idb)return res([]);try{const q=idb.transaction("points").objectStore("points").getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([])}catch(e){res([])}})}
 /* Resolves true only once the write is committed to disk. A full disk shows up as an aborted transaction
@@ -1159,7 +1164,8 @@ function areaPast(b){ // past data points that belong with a project area: withi
   return allPast().filter(p=>p.lon>bb[0]-dx&&p.lon<bb[2]+dx&&p.lat>bb[1]-dy&&p.lat<bb[3]+dy);
 }
 function bndAreaBox(b){ // project area to download: boundary plus its past points, with 100 m around
-  let bb=b?bndBBox(b):null;for(const p of areaPast(b))bb=bb?[Math.min(bb[0],p.lon),Math.min(bb[1],p.lat),Math.max(bb[2],p.lon),Math.max(bb[3],p.lat)]:[p.lon,p.lat,p.lon,p.lat];
+  let bb=b?bndBBox(b):null;const ws=curWet();if(ws.length){const w=featsBBox(ws.flatMap(x=>x.features));bb=bb?[Math.min(bb[0],w[0]),Math.min(bb[1],w[1]),Math.max(bb[2],w[2]),Math.max(bb[3],w[3])]:w}
+  for(const p of areaPast(b))bb=bb?[Math.min(bb[0],p.lon),Math.min(bb[1],p.lat),Math.max(bb[2],p.lon),Math.max(bb[3],p.lat)]:[p.lon,p.lat,p.lon,p.lat];
   if(!bb)return null;const [kx,ky]=mPerDeg((bb[1]+bb[3])/2),dx=100/kx,dy=100/ky;return [bb[0]-dx,bb[1]-dy,bb[2]+dx,bb[3]+dy].map(v=>+v.toFixed(6));
 }
 const viewBox=()=>{const b=map.getBounds();return [b.getWest(),b.getSouth(),b.getEast(),b.getNorth()].map(v=>+v.toFixed(6))};
@@ -1180,7 +1186,7 @@ async function renderAreas(){
   }
   const bnd=curBnd(),np=areaPast(bnd).length;let bhtml="";
   if((bnd||np)&&mapReady){const bb=bndAreaBox(bnd),pl=areaPlan(bb,areaIdsForView()),has=bnd&&(await listAreas()).some(a=>a.boundary&&a.boundary.key===bnd.key&&a.boundary.imported===bnd.imported);
-    const what=bnd?`The boundary${np?` and ${np} past data point${np>1?"s":""} near it`:""}`:`The ${np} past data points`;
+    const nw=curWet().length,what=bnd?`The boundary${nw?`, delineated wetlands`:""}${np?` and ${np} past data point${np>1?"s":""} near it`:""}`:`The ${np} past data points`;
     bhtml=`<h4>${bnd?`Project: ${esc(bnd.project)}`:"Past data points"}</h4>${has?'<p class="note">Imagery for this boundary is downloaded (see the list below).</p>':""}`+(pl.tiles>AREA_MAX_TILES?`<p class="note warn">${what}, plus 100 m around, need ${pl.tiles.toLocaleString()} tiles, over the ${AREA_MAX_TILES.toLocaleString()} limit. Download it in parts using map views instead.</p>`
       :`<p class="note">${what}, plus 100 m around: ${pl.tiles.toLocaleString()} tiles, about ${pl.mb.toFixed(0)} MB. ${bnd?"The boundary is saved with the download. ":""}Past data and species photos are already stored on this phone and work offline.</p><button class="btn primary" id="aBndDl">${has?"Download again":bnd?"Download imagery for the project":"Download imagery around past points"}</button>`)+"<h4>Or the current map view</h4>"}
   const areas=await listAreas();
@@ -1206,7 +1212,7 @@ document.addEventListener("click",async e=>{
     const b=bndAreaBox(bnd),mb=areaPlan(b,areaIdsForView()).mb;await checkStorage();const free=freeMB();
     if(free!=null&&mb>free-200){alert(`Not enough space: this area needs about ${mb.toFixed(0)} MB and only ${Math.max(0,free).toFixed(0)} MB is free for the app.`);return}
     const sel=bnd?bnd.selected.map(i=>bnd.features[i]).filter(Boolean):[],pp=areaPast(bnd);
-    const extra={past:{points:pp.length,files:[...new Set(pp.map(p=>p.ds.file))],species:new Set(pp.flatMap(p=>p.veg.map(v=>v.spk))).size,photos:[...new Set(pp.flatMap(p=>p.veg.map(v=>v.spk)))].reduce((a,k)=>a+(PHOTOS.get(k)||[]).length,0)}};
+    const extra={wetlands:curWet().map(w=>({file:w.file,features:w.features.length})),past:{points:pp.length,files:[...new Set(pp.map(p=>p.ds.file))],species:new Set(pp.flatMap(p=>p.veg.map(v=>v.spk))).size,photos:[...new Set(pp.flatMap(p=>p.veg.map(v=>v.spk)))].reduce((a,k)=>a+(PHOTOS.get(k)||[]).length,0)}};
     if(bnd)extra.boundary={key:bnd.key,project:bnd.project,file:bnd.file,imported:bnd.imported,crs:bnd.crs,
       geojson:{type:"FeatureCollection",features:sel.map(f=>({type:"Feature",properties:{label:f.label},geometry:{type:"MultiPolygon",coordinates:f.polys}}))}};
     downloadArea(bnd?bnd.project+" (project area)":"Past data points",b,areaIdsForView(),extra).then(checkStorage);renderAreas()}
@@ -1215,7 +1221,7 @@ document.addEventListener("click",async e=>{
     if(a&&confirm(`Delete the offline imagery for “${a.name}” (${(a.bytes/1048576).toFixed(1)} MB)? You can download it again later.`)){await caches.delete(a.cache);renderAreas();refreshAreaOutlines()}}
 });
 
-const mapPrefs=Object.assign({base:"county",soils:true,nwi:true,pts:true,bnd:true,past:true},(()=>{try{return JSON.parse(localStorage.getItem("mapPrefs"))||{}}catch(e){return {}}})());
+const mapPrefs=Object.assign({base:"county",soils:true,nwi:true,pts:true,bnd:true,past:true,wet:true},(()=>{try{return JSON.parse(localStorage.getItem("mapPrefs"))||{}}catch(e){return {}}})());
 if(!(mapPrefs.base in BASES))mapPrefs.base="county"; // older saved value "aerial"
 const saveMapPrefs=()=>{try{localStorage.setItem("mapPrefs",JSON.stringify(mapPrefs))}catch(e){}};
 const NWI_COLORS=["match",["get","t"],"Freshwater Emergent Wetland","#7fc31c","Freshwater Forested/Shrub Wetland","#008837","Freshwater Pond","#688cc0","Lake","#13007c","Riverine","#0190bf","#b28653"];
@@ -1233,6 +1239,8 @@ mapWrap.innerHTML=`<div id="map" aria-label="Map of sampling points, soils and w
     <label class="ck site-only"><input type="checkbox" id="mNwi"> NWI wetlands</label>
     <div class="lg site-only"><span><i style="background:#7fc31c"></i>Emergent</span><span><i style="background:#008837"></i>Forested/shrub</span><span><i style="background:#688cc0"></i>Pond</span><span><i style="background:#13007c"></i>Lake</span><span><i style="background:#0190bf"></i>Riverine</span></div>
     <label class="ck site-only"><input type="checkbox" id="mPts"> Sampling points</label>
+    <label class="ck page-only"><input type="checkbox" id="mWet"> Delineated wetlands</label>
+    <div class="lg page-only"><span><i style="background:rgba(20,200,216,.35);border-color:#5ff3ff;border-style:dashed"></i>Wetlands loaded under Boundary</span></div>
     <label class="ck page-only"><input type="checkbox" id="mPast"> Past data points</label>
     <div class="lg page-only"><span><i style="background:#2b6cb0;border-radius:50%"></i>Wetland</span><span><i style="background:#dd6b20;border-radius:50%"></i>Not wetland</span><span><i style="background:#8a8f8c;border-radius:50%"></i>Not determined</span></div>
     <label class="ck"><input type="checkbox" id="mBnd"> Project boundary</label>
@@ -1276,7 +1284,7 @@ async function initMap(){
   map=new ml.Map({container:mapWrap.querySelector("#map"),attributionControl:{compact:true},maxZoom:20,
     ...(hasPt?{center:[+p.site.lon,+p.site.lat],zoom:16}:{bounds:[[bb[0],bb[1]],[bb[2],bb[3]]]}),
     style:{version:8,sources:{...imgSources(),topo:usgs("USGSTopo"),
-      soils:gj("Soils: USDA-NRCS SSURGO"),nwi:gj("Wetlands: USFWS NWI"),sel:gj(),acc:gj(),pts:gj(),areas:gj(),bnd:gj(),bndprev:gj(),me:gj(),meacc:gj()},
+      soils:gj("Soils: USDA-NRCS SSURGO"),nwi:gj("Wetlands: USFWS NWI"),sel:gj(),acc:gj(),pts:gj(),areas:gj(),bnd:gj(),bndprev:gj(),me:gj(),meacc:gj(),wet:gj(),wetsel:gj()},
       layers:[{id:"bg",type:"background",paint:{"background-color":"#e4e9e4"}},
         ...imgLayers(),{id:"topo",type:"raster",source:"topo"},
         {id:"areas",type:"line",source:"areas",paint:{"line-color":"#f4a261","line-width":2,"line-dasharray":[3,2]}},
@@ -1284,6 +1292,10 @@ async function initMap(){
         {id:"nwi-fill",type:"fill",source:"nwi",paint:{"fill-color":NWI_COLORS,"fill-opacity":.35}},
         {id:"soil-line",type:"line",source:"soils",paint:{"line-color":"#f6c445","line-width":["interpolate",["linear"],["zoom"],12,.6,17,1.8]}},
         {id:"nwi-line",type:"line",source:"nwi",paint:{"line-color":NWI_COLORS,"line-width":["interpolate",["linear"],["zoom"],11,.8,17,2.2]}},
+        {id:"wet-fill",type:"fill",source:"wet",filter:["==",["get","t"],"p"],paint:{"fill-color":"#14c8d8","fill-opacity":.3}},
+        {id:"wet-casing",type:"line",source:"wet",paint:{"line-color":"#003a40","line-opacity":.7,"line-width":["case",["==",["get","t"],"l"],6,4]}},
+        {id:"wet-line",type:"line",source:"wet",paint:{"line-color":"#5ff3ff","line-width":["case",["==",["get","t"],"l"],3.5,2],"line-dasharray":[3,1.5]}},
+        {id:"wet-sel",type:"line",source:"wetsel",paint:{"line-color":"#ffffff","line-width":4}},
         {id:"bnd-fill",type:"fill",source:"bnd",paint:{"fill-color":"#ff3dd2","fill-opacity":.06}},
         {id:"bnd-casing",type:"line",source:"bnd",paint:{"line-color":"#000","line-opacity":.55,"line-width":5.5}},
         {id:"bnd-line",type:"line",source:"bnd",paint:{"line-color":"#ff3dd2","line-width":2.6}},
@@ -1319,14 +1331,15 @@ function applyMapPrefs(){
   ["sel","acc-fill","acc-line","areas"].forEach(id=>vis(id,!pg));["me","meacc-fill","meacc-line"].forEach(id=>vis(id,pg));
   if(marker)marker.getElement().style.display=pg?"none":"";
   ["bnd-fill","bnd-casing","bnd-line"].forEach(id=>vis(id,mapPrefs.bnd));
+  ["wet-fill","wet-casing","wet-line","wet-sel"].forEach(id=>vis(id,mapPage&&mapPrefs.wet));
 }
 function syncMapPanel(){
   mapWrap.querySelector("#mBase").value=mapPrefs.base;
-  mapWrap.querySelector("#mSoils").checked=mapPrefs.soils;mapWrap.querySelector("#mNwi").checked=mapPrefs.nwi;mapWrap.querySelector("#mPts").checked=mapPrefs.pts;mapWrap.querySelector("#mBnd").checked=mapPrefs.bnd;mapWrap.querySelector("#mPast").checked=mapPrefs.past;
+  mapWrap.querySelector("#mSoils").checked=mapPrefs.soils;mapWrap.querySelector("#mNwi").checked=mapPrefs.nwi;mapWrap.querySelector("#mPts").checked=mapPrefs.pts;mapWrap.querySelector("#mBnd").checked=mapPrefs.bnd;mapWrap.querySelector("#mPast").checked=mapPrefs.past;mapWrap.querySelector("#mWet").checked=mapPrefs.wet;
 }
 mapWrap.addEventListener("change",e=>{
   const t=e.target;
-  if(t.id==="mBase")mapPrefs.base=t.value;if(t.id==="mSoils")mapPrefs.soils=t.checked;if(t.id==="mNwi")mapPrefs.nwi=t.checked;if(t.id==="mPts")mapPrefs.pts=t.checked;if(t.id==="mBnd")mapPrefs.bnd=t.checked;if(t.id==="mPast"){mapPrefs.past=t.checked;drawPastMarkers()}
+  if(t.id==="mBase")mapPrefs.base=t.value;if(t.id==="mSoils")mapPrefs.soils=t.checked;if(t.id==="mNwi")mapPrefs.nwi=t.checked;if(t.id==="mPts")mapPrefs.pts=t.checked;if(t.id==="mBnd")mapPrefs.bnd=t.checked;if(t.id==="mPast"){mapPrefs.past=t.checked;drawPastMarkers()}if(t.id==="mWet"){mapPrefs.wet=t.checked;drawWetlands()}
   saveMapPrefs();applyMapPrefs();refreshMapData();updateImgChip();
 });
 mapWrap.addEventListener("click",e=>{
@@ -1378,7 +1391,11 @@ function updateMapPoint(){
 }
 async function onMapClick(e){
   const {lng,lat}=e.lngLat;
-  if(mapPage){if(sheetMode==="pastpt")closeSheet();return} // map page: only past points open popups
+  if(mapPage){ // map page: past points (their own markers) and wetlands open popups
+    const hits=!mapPrefs.wet?[]:[...map.queryRenderedFeatures(e.point,{layers:["wet-fill"]}),
+      ...map.queryRenderedFeatures([[e.point.x-10,e.point.y-10],[e.point.x+10,e.point.y+10]],{layers:["wet-line"]}).filter(f=>f.properties.t==="l")];
+    const uniq=[...new Map(hits.map(h=>[h.properties.w+"|"+h.properties.f,h.properties])).values()];
+    if(uniq.length)openWetland(uniq,lat,lng);else if(sheetMode==="pastpt"||sheetMode==="wet")closeSheet();return}
   if(placing){setPlacing(false);movePoint(lat,lng,"map tap");return}
   const ml=window.maplibregl,box=document.createElement("div");box.className="pop";
   const pt=mapPrefs.pts&&map.queryRenderedFeatures(e.point,{layers:["pts"]})[0];
@@ -1445,7 +1462,7 @@ function readShp(u8){
   if(u8.length<100||dv.getInt32(0,false)!==9994)throw new Error("The .shp file isn’t a valid shapefile.");
   const type=dv.getInt32(32,true)%10;
   if(type===1||type===8)throw new Error("This shapefile contains points, not a boundary polygon.");
-  if(type!==3&&type!==5)throw new Error("This shapefile type isn’t supported (polygons only).");
+  if(type!==3&&type!==5)throw new Error("This shapefile type isn’t supported (polygons or lines only).");
   const shapes=[];let p=100;
   while(p+12<=u8.length){
     const len=dv.getInt32(p+4,false)*2,s=p+8;p=s+len;const t=dv.getInt32(s,true);
@@ -1453,7 +1470,7 @@ function readShp(u8){
     const np=dv.getInt32(s+36,true),nv=dv.getInt32(s+40,true),parts=[];for(let i=0;i<np;i++)parts.push(dv.getInt32(s+44+4*i,true));
     const v0=s+44+4*np,rings=[];
     for(let i=0;i<np;i++){const a=parts[i],b=i+1<np?parts[i+1]:nv,r=[];for(let j=a;j<b;j++)r.push([dv.getFloat64(v0+16*j,true),dv.getFloat64(v0+16*j+8,true)]);rings.push(r)}
-    shapes.push(type===3?rings.filter(closedRing):rings);
+    shapes.push(type===3?{rings:rings.filter(closedRing),lines:rings.filter(r=>r.length>=2&&!closedRing(r))}:{rings,lines:[]});
   }
   return shapes;
 }
@@ -1491,24 +1508,40 @@ function readKml(text){
   const feats=[];
   for(const pm of all(doc,"Placemark")){
     const props={},nm=child(pm,"name");if(nm&&nm.textContent.trim())props.name=nm.textContent.trim();
+    const ds=child(pm,"description");if(ds&&ds.textContent.trim())Object.assign(props,kmlDescProps(ds.textContent,props.name));
     for(const d of all(pm,"Data")){const v=child(d,"value");if(v&&v.textContent.trim())props[d.getAttribute("name")]=v.textContent.trim()}
     for(const d of all(pm,"SimpleData"))if(d.textContent.trim())props[d.getAttribute("name")]=d.textContent.trim();
-    const polys=[];
+    const polys=[],lines=[];
     for(const pg of all(pm,"Polygon")){
       const ob=child(pg,"outerBoundaryIs"),outer=ob&&coords(all(ob,"coordinates")[0]);if(!outer||outer.length<4)continue;
       const poly=[outer];for(const ib of all(pg,"innerBoundaryIs"))for(const c of all(ib,"coordinates")){const r=coords(c);if(r.length>=4)poly.push(r)}
       polys.push(poly)}
-    if(!polys.length)for(const ls of all(pm,"LineString")){const r=coords(all(ls,"coordinates")[0]);if(closedRing(r))polys.push([r])}
-    if(polys.length)feats.push({props,polys});
+    const hadPolys=polys.length>0;
+    for(const ls of all(pm,"LineString")){const r=coords(all(ls,"coordinates")[0]);if(closedRing(r)){if(!hadPolys)polys.push([r])}else if(r.length>=2)lines.push(r)}
+    if(polys.length||lines.length)feats.push({props,polys,lines});
   }
   return feats;
+}
+/* Attributes kept in a KML description, as exported by ArcGIS and Google Earth: two-column tables (also nested HTML
+   such as an ArcGIS PopupInfo field) become attributes; other text becomes Notes. Export bookkeeping fields are dropped. */
+const KML_SKIP=/^(name|folderpath|symbolid|altmode|extruded|snippet|popupinfo|begin|end|timestamp|description)$/i;
+function kmlDescProps(html,name,depth=0){
+  const out={},doc=new DOMParser().parseFromString(html,"text/html");
+  for(const tr of doc.querySelectorAll("tr")){const td=[...tr.children].filter(c=>/^t[dh]$/i.test(c.tagName));if(td.length!==2)continue;
+    const k=td[0].textContent.trim(),v=td[1].textContent.trim();if(!k)continue;
+    if(depth<2&&/<\w+[^>]*>/.test(v)){Object.assign(out,kmlDescProps(v,name,depth+1));continue}
+    if(!KML_SKIP.test(k)&&v!==""&&v!==name)out[k]=v}
+  const notes=[...doc.querySelectorAll("p")].map(p=>p.textContent.trim()).filter(Boolean).join(" ");
+  if(notes)out.Notes=notes;
+  if(!Object.keys(out).length&&!doc.querySelector("table")){const t=doc.body.textContent.trim();if(t&&t!==name)out.Description=t.slice(0,600)}
+  return out;
 }
 function readGeoJSON(text){
   let g;try{g=JSON.parse(text)}catch(e){throw new Error("The GeoJSON file couldn’t be read.")}
   const list=g.type==="FeatureCollection"?g.features:g.type==="Feature"?[g]:[{properties:{},geometry:g}],feats=[];
   for(const f of list){const t=f&&f.geometry&&f.geometry.type,c=f&&f.geometry&&f.geometry.coordinates;
-    const polys=t==="Polygon"?[c]:t==="MultiPolygon"?c:null;
-    if(polys)feats.push({props:f.properties||{},polys:polys.map(p=>p.map(r=>r.map(v=>[v[0],v[1]])))})}
+    const polys=t==="Polygon"?[c]:t==="MultiPolygon"?c:[],lines=t==="LineString"?[c]:t==="MultiLineString"?c:[];
+    if(polys.length||lines.length)feats.push({props:f.properties||{},polys:polys.map(p=>p.map(r=>r.map(v=>[v[0],v[1]]))),lines:lines.map(l=>l.map(v=>[v[0],v[1]]))})}
   return feats;
 }
 /* Read whatever was chosen into {label, kind, feats:[{props,polys}], prj} (shapefile coordinates still in the file's system) */
@@ -1525,15 +1558,15 @@ async function readBoundaryFiles(files){
     const shapes=readShp(get(".shp")),dbf=get(".dbf"),cpg=get(".cpg"),prj=get(".prj");
     const enc=cpg&&/utf-?8|65001/i.test(txt(cpg))?"utf-8":"windows-1252";
     const rows=dbf?readDbf(dbf,enc):[];
-    const feats=shapes.map((r,i)=>r&&r.length&&rows[i]!==null?{props:rows[i]||{},polys:ringsToPolys(r)}:null).filter(f=>f&&f.polys.length);
-    if(!feats.length)throw new Error("No polygons found in "+shp[0]+".");
+    const feats=shapes.map((s,i)=>s&&rows[i]!==null?{props:rows[i]||{},polys:ringsToPolys(s.rings),lines:s.lines}:null).filter(f=>f&&(f.polys.length||f.lines.length));
+    if(!feats.length)throw new Error("No polygons or lines found in "+shp[0]+".");
     return {label,kind:"shp",name:shp[0].split("/").pop(),feats,prj:prj?txt(prj).trim():null,others:shp.slice(1).map(s=>s.split("/").pop())};
   }
   const kml=find(".kml");
   if(kml.length){const k=kml.find(x=>/(^|\/)doc\.kml$/i.test(x))||kml[0],feats=readKml(txt(ent[k]));
-    if(!feats.length)throw new Error("No polygons found in the KML.");return {label,kind:"kml",name:files.length===1?files[0].name:k.split("/").pop(),feats}}
+    if(!feats.length)throw new Error("No polygons or lines found in the KML.");return {label,kind:"kml",name:files.length===1?files[0].name:k.split("/").pop(),feats}}
   const gj=[...find(".geojson"),...find(".json")];
-  if(gj.length){const feats=readGeoJSON(txt(ent[gj[0]]));if(!feats.length)throw new Error("No polygons found in the GeoJSON.");return {label,kind:"geojson",name:gj[0],feats}}
+  if(gj.length){const feats=readGeoJSON(txt(ent[gj[0]]));if(!feats.length)throw new Error("No polygons or lines found in the GeoJSON.");return {label,kind:"geojson",name:gj[0],feats}}
   if(find(".dbf").length||find(".shx").length||find(".prj").length)throw new Error("The .shp file is missing. Choose the .shp together with its .shx, .dbf and .prj files, or a zip of them.");
   throw new Error("No shapefile, KML, KMZ or GeoJSON found in "+label+".");
 }
@@ -1553,9 +1586,11 @@ const wktName=w=>((w||"").match(/^\s*(?:PROJCS|PROJCRS|GEOGCS|GEOGCRS)\s*\[\s*"(
 async function makeConverter(def){const p4=await loadProj4();const c=p4(def,"EPSG:4326");c.forward([0,0]);return xy=>c.forward([xy[0],xy[1]])}
 function convertFeats(feats,fn){
   const r7=v=>Math.round(v*1e7)/1e7;
-  return feats.map(f=>({props:f.props,polys:f.polys.map(p=>p.map(r=>r.map(xy=>{const [x,y]=fn?fn(xy):xy;return [r7(x),r7(y)]})))}));
+  const cv=xy=>{const [x,y]=fn?fn(xy):xy;return [r7(x),r7(y)]};
+  return feats.map(f=>({props:f.props,polys:f.polys.map(p=>p.map(r=>r.map(cv))),lines:(f.lines||[]).map(l=>l.map(cv))}));
 }
-const featsBBox=feats=>{let b=[Infinity,Infinity,-Infinity,-Infinity];for(const f of feats)for(const p of f.polys)for(const [x,y] of p[0]){if(x<b[0])b[0]=x;if(y<b[1])b[1]=y;if(x>b[2])b[2]=x;if(y>b[3])b[3]=y}return b};
+const featsBBox=feats=>{let b=[Infinity,Infinity,-Infinity,-Infinity];const add=([x,y])=>{if(x<b[0])b[0]=x;if(y<b[1])b[1]=y;if(x>b[2])b[2]=x;if(y>b[3])b[3]=y};
+  for(const f of feats){for(const p of f.polys||[])p[0].forEach(add);for(const l of f.lines||[])l.forEach(add)}return b};
 const validLL=b=>b.every(isFinite)&&b[0]>=-180&&b[2]<=180&&b[1]>=-90&&b[3]<=90;
 async function placeName(lon,lat){ // where a converted boundary lands, to help pick the right coordinate system
   if(!isFinite(lon)||!isFinite(lat)||Math.abs(lat)>90||Math.abs(lon)>180)return {ok:false,text:"nowhere real (coordinates out of range)"};
@@ -1567,7 +1602,9 @@ async function placeName(lon,lat){ // where a converted boundary lands, to help 
 /* Polygon maths in local metres (accurate to well under a metre across a project site) */
 const mPerDeg=lat=>{const f=lat*Math.PI/180;return [111412.84*Math.cos(f)-93.5*Math.cos(3*f),111132.954-559.822*Math.cos(2*f)+1.175*Math.cos(4*f)]}; // metres per degree of lon, lat
 const llPolyArea=(poly,kx,ky)=>poly.reduce((a,r,i)=>{const s=Math.abs(ringArea(r.map(([x,y])=>[x*kx,y*ky])));return i?a-s:a+s},0);
-const featAcres=f=>{const [kx,ky]=mPerDeg(f.polys[0][0][0][1]);return f.polys.reduce((a,p)=>a+llPolyArea(p,kx,ky),0)/4046.856};
+const featAcres=f=>{if(!f.polys||!f.polys.length)return 0;const [kx,ky]=mPerDeg(f.polys[0][0][0][1]);return f.polys.reduce((a,p)=>a+llPolyArea(p,kx,ky),0)/4046.856};
+const featFeet=f=>(f.lines||[]).reduce((a,l)=>{const [kx,ky]=mPerDeg(l[0][1]);for(let i=1;i<l.length;i++)a+=Math.hypot((l[i][0]-l[i-1][0])*kx,(l[i][1]-l[i-1][1])*ky);return a},0)*3.28084;
+const featSize=f=>[f.polys&&f.polys.length?`${featAcres(f).toFixed(2)} ac`:"",f.lines&&f.lines.length?`${Math.round(featFeet(f)).toLocaleString()} ft of line`:""].filter(Boolean).join(" + ");
 function featLabel(props,i){
   const ks=Object.keys(props||{}),has=k=>props[k]!==""&&props[k]!=null;
   const k=ks.find(k=>/^(name|label|title|parcel|parcel_?id|pin|site|project|tract)$/i.test(k)&&has(k))||ks.find(k=>/name|label|parcel|pin|tract/i.test(k)&&has(k));
@@ -1576,19 +1613,23 @@ function featLabel(props,i){
 let bndCache={sig:null};
 function bndGeom(b){ // selected polygons, plus the boundary edges in metres (edges shared by two selected features are inside the area, so dropped)
   const sig=b.key+"|"+b.imported+"|"+b.selected.join(",");if(bndCache.sig===sig)return bndCache;
-  const polys=b.selected.flatMap(i=>b.features[i]?b.features[i].polys:[]),bb=featsBBox([{polys}]);
+  bndCache={sig,...makeGeom(b.selected.flatMap(i=>b.features[i]?b.features[i].polys:[]),b.selected.length>1)};return bndCache;
+}
+function makeGeom(polys,dropShared){
+  const bb=featsBBox([{polys}]);
   const lat0=(bb[1]+bb[3])/2,lon0=(bb[0]+bb[2])/2,[kx,ky]=mPerDeg(lat0);
   const inside=(lon,lat)=>polys.some(p=>ptInRing([lon,lat],p[0])&&!p.slice(1).some(h=>ptInRing([lon,lat],h)));
   const segs=[];for(const p of polys)for(const r of p)for(let i=0;i<r.length-1;i++)segs.push((r[i][0]-lon0)*kx,(r[i][1]-lat0)*ky,(r[i+1][0]-lon0)*kx,(r[i+1][1]-lat0)*ky);
   const nv=segs.length/4,edges=[];
   for(let i=0;i<segs.length;i+=4){const [ax,ay,bx,by]=segs.slice(i,i+4),L=Math.hypot(bx-ax,by-ay);
-    if(b.selected.length>1&&L>0&&nv*nv<4e7){const mx=(ax+bx)/2,my=(ay+by)/2,nx=-(by-ay)/L*.3,ny=(bx-ax)/L*.3;
+    if(dropShared&&L>0&&nv*nv<4e7){const mx=(ax+bx)/2,my=(ay+by)/2,nx=-(by-ay)/L*.3,ny=(bx-ax)/L*.3;
       if(inside(lon0+(mx+nx)/kx,lat0+(my+ny)/ky)&&inside(lon0+(mx-nx)/kx,lat0+(my-ny)/ky))continue}
     edges.push(ax,ay,bx,by)}
-  bndCache={sig,polys,bb,lat0,lon0,kx,ky,inside,edges:Float64Array.from(edges)};return bndCache;
+  return {polys,bb,lat0,lon0,kx,ky,inside,edges:Float64Array.from(edges)};
 }
-function bndCheck(b,lat,lon){
-  const g=bndGeom(b),x=(lon-g.lon0)*g.kx,y=(lat-g.lat0)*g.ky,e=g.edges;let d2=Infinity;
+function bndCheck(b,lat,lon){return geomCheck(bndGeom(b),lat,lon)}
+function geomCheck(g,lat,lon){
+  const x=(lon-g.lon0)*g.kx,y=(lat-g.lat0)*g.ky,e=g.edges;let d2=Infinity;
   for(let i=0;i<e.length;i+=4){const ax=e[i],ay=e[i+1],dx=e[i+2]-ax,dy=e[i+3]-ay,l=dx*dx+dy*dy;
     let t=l?((x-ax)*dx+(y-ay)*dy)/l:0;t=t<0?0:t>1?1:t;const ex=ax+t*dx-x,ey=ay+t*dy-y,q=ex*ex+ey*ey;if(q<d2)d2=q}
   return {inside:g.inside(lon,lat),d:Math.sqrt(d2)};
@@ -1621,12 +1662,104 @@ function recheckProject(key){for(const q of points)if(projKey(q.site.project)===
 function updateBoundaryLayer(){
   if(!mapReady)return;const b=curBnd();
   map.getSource("bnd").setData({type:"FeatureCollection",features:b?b.selected.filter(i=>b.features[i]).map(i=>({type:"Feature",properties:{},geometry:{type:"MultiPolygon",coordinates:b.features[i].polys}})):[]});
+  drawWetlands();
   if(mapPage)updatePageBanner();
 }
 const bndBBox=b=>featsBBox(b.selected.map(i=>b.features[i]).filter(Boolean));
 function fitBnd(b){if(!mapReady||!b)return;const bb=bndBBox(b);map.fitBounds([[bb[0],bb[1]],[bb[2],bb[3]]],{padding:pagePad(),duration:0,maxZoom:18})}
 function pagePad(){if(!mapPage)return 30;const t=mapWrap.querySelector("#pgTop").offsetHeight,bt=mapWrap.querySelector("#pgBar").offsetHeight;return {top:t+20,bottom:bt+20,left:24,right:60}}
 async function loadBoundaries(){for(const b of await dbBndAll())BND.set(b.key,b)}
+
+/* ---------- Delineated wetlands: files loaded per project, shown as their own layer on the map page ----------
+   Same readers and projection handling as the project boundary. Stored only in this browser (IndexedDB), never in the app. */
+let WET=[],wetQueue=[],wetLabels=[];const wetGeoms=new Map();
+const curWet=()=>{const p=P();const k=p&&p.site.project.trim()?projKey(p.site.project):null;return k?WET.filter(w=>w.key===k):[]};
+function wetName(props){ // the wetland's name, if the file gives a real one
+  const ks=Object.keys(props||{}),k=ks.find(k=>/^(name|label|title|wetland|wetland_?id|wetland_?name|site|site_?name|id)$/i.test(k)&&String(props[k]).trim());
+  const v=k?String(props[k]).trim():"";return /^(unlabel(l?ed)?|untitled|unnamed|no name|polygon|feature)\b/i.test(v)?"":v;
+}
+function groupFiles(files){ // each zip/KMZ/KML/GeoJSON is one file; loose shapefile parts are grouped by name
+  const groups=[],shp=new Map();
+  for(const f of files){const m=f.name.toLowerCase().match(/^(.*?)\.(shp|shx|dbf|prj|cpg|sbn|sbx|qix|qpj|shp\.xml)$/);
+    if(m){if(!shp.has(m[1])){shp.set(m[1],[]);groups.push(shp.get(m[1]))}shp.get(m[1]).push(f)}else groups.push([f])}
+  return groups;
+}
+function queueWet(files){wetQueue.push(...groupFiles([...files]));if(!imp)nextWet()}
+function nextWet(){const g=wetQueue.shift();if(g)startImport(g,"wet")}
+async function saveWetImport(){
+  const name=(mapWrap.querySelector("#impProj").value||"").trim();
+  if(!name){toast("Enter a project name first.",4000,true);return}
+  const key=projKey(name),same=WET.find(w=>w.key===key&&w.file===imp.name);
+  if(same&&!confirm(`“${name}” already has wetlands from ${same.file}. Replace them?`))return;
+  const rec={id:"wl"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),key,project:name,file:imp.name,crs:imp.crs,imported:Date.now(),
+    features:[...imp.sel].sort((a,b)=>a-b).map(i=>{const f=imp.feats[i];return {name:wetName(f.props),
+      props:Object.fromEntries(Object.entries(f.props).slice(0,25).map(([k,v])=>[k,typeof v==="string"?v.slice(0,600):v])),polys:f.polys,lines:f.lines||[]}})};
+  if(!(await stPut("wetlands",rec))){toast("Couldn’t save the wetlands; the phone may be out of space.",6000,true);return}
+  if(same){await stDel("wetlands",same.id);WET=WET.filter(w=>w!==same)}
+  WET.push(rec);wetGeoms.clear();imp=null;map.getSource("bndprev").setData({type:"FeatureCollection",features:[]});
+  const p=P();if(projKey(p.site.project)!==key){p.site.project=name;save();renderPointSel();updateBoundaryLayer()}
+  drawWetlands();toast(`${rec.features.length} wetland${rec.features.length===1?"":"s"} from ${rec.file} saved for “${name}”. Stored on this phone; works offline.`,4500);
+  if(wetQueue.length)nextWet();else renderBndSheet();
+}
+function wetSectionHTML(){
+  const p=P(),ws=curWet();
+  return `<h4 style="margin-top:.5rem">Delineated wetlands</h4>
+    ${ws.length?ws.map(w=>{const np=w.features.filter(f=>f.polys.length).length,nl=w.features.filter(f=>f.lines.length).length;
+      return `<div style="border:1px solid var(--line);border-radius:8px;padding:.45rem .6rem"><b>${esc(w.file)}</b>
+      <p class="note" style="margin:.1rem 0">${np?`${np} polygon wetland${np>1?"s":""}`:""}${np&&nl?", ":""}${nl?`${nl} line${nl>1?"s":""}`:""} · ${esc(w.crs.name)} · loaded ${new Date(w.imported).toLocaleDateString()}</p>
+      <div class="row"><button class="btn quiet" data-wfit="${w.id}">Zoom to</button><button class="btn quiet" data-wdel="${w.id}">Delete</button></div></div>`}).join("")
+      :`<p class="note" style="margin:0">${p.site.project.trim()?`None loaded for “${esc(p.site.project.trim())}”.`:"None loaded. You’ll name the project when you save."}</p>`}
+    <label class="btn ${ws.length?"quiet":""}" style="display:flex;align-items:center;justify-content:center;min-height:3rem">Load wetland files<input type="file" id="wetIn" multiple accept="${BND_ACCEPT}" style="position:absolute;left:-9999px"></label>
+    <p class="note" style="margin:0">KML, KMZ or shapefile (zipped, or its files chosen together). You can choose several files at once; each is checked in turn. They show as their own layer, separate from the project boundary.</p>`;
+}
+function wetGeom(w,fi){const k=w.id+"|"+fi;if(!wetGeoms.has(k))wetGeoms.set(k,makeGeom(w.features[fi].polys,w.features[fi].polys.length>1));return wetGeoms.get(k)}
+function labelPoint(poly){ // a point inside the polygon: middle of the widest inside span across its middle
+  const r=poly[0],bb=featsBBox([{polys:[poly]}]),y=(bb[1]+bb[3])/2,xs=[];
+  for(const ring of poly)for(let i=0,j=ring.length-1;i<ring.length;j=i++){const [x1,y1]=ring[j],[x2,y2]=ring[i];if((y1>y)!==(y2>y))xs.push(x1+(y-y1)*(x2-x1)/(y2-y1))}
+  xs.sort((a,b)=>a-b);let best=null,bw=-1;for(let i=0;i+1<xs.length;i+=2)if(xs[i+1]-xs[i]>bw){bw=xs[i+1]-xs[i];best=[(xs[i]+xs[i+1])/2,y]}
+  return best||r[0];
+}
+function clearWetLabels(){wetLabels.forEach(m=>m.remove());wetLabels=[]}
+function drawWetlands(){
+  if(!mapReady)return;clearWetLabels();const ws=curWet(),feats=[];
+  for(const w of ws)w.features.forEach((f,fi)=>{
+    if(f.polys.length)feats.push({type:"Feature",properties:{w:w.id,f:fi,t:"p"},geometry:{type:"MultiPolygon",coordinates:f.polys}});
+    if(f.lines.length)feats.push({type:"Feature",properties:{w:w.id,f:fi,t:"l"},geometry:{type:"MultiLineString",coordinates:f.lines}});
+    if(mapPage&&mapPrefs.wet&&f.name){
+      const at=f.polys.length?labelPoint(f.polys.reduce((a,p)=>Math.abs(ringArea(p[0]))>Math.abs(ringArea(a[0]))?p:a)):f.lines[0][Math.floor(f.lines[0].length/2)];
+      const el=document.createElement("div");el.className="wetlbl";el.textContent=f.name;
+      wetLabels.push(new maplibregl.Marker({element:el,anchor:"center"}).setLngLat(at).addTo(map))}});
+  map.getSource("wet").setData({type:"FeatureCollection",features:feats});applyMapPrefs();
+  if(mapPage)updatePageBanner();
+}
+function openWetland(list,lat,lng){
+  sheetMode="wet";const sh=mapWrap.querySelector("#pgSheet"),sel=[];
+  const html=list.slice(0,3).map(h=>{const w=WET.find(x=>x.id===h.w),f=w&&w.features[h.f];if(!f)return "";
+    if(f.polys.length)sel.push({type:"Feature",properties:{},geometry:{type:"MultiPolygon",coordinates:f.polys}});
+    if(f.lines.length)sel.push({type:"Feature",properties:{},geometry:{type:"MultiLineString",coordinates:f.lines}});
+    const sz=[];if(f.polys.length){const ac=featAcres(f);sz.push(`<b>${ac.toFixed(2)} acres</b> (${Math.round(ac*4046.856).toLocaleString()} m²)${f.polys.length>1?`, ${f.polys.length} parts`:""}`)}
+    if(f.lines.length)sz.push(`<b>${Math.round(featFeet(f)).toLocaleString()} ft</b> long (line)`);
+    let rel="";if(f.polys.length){const r=geomCheck(wetGeom(w,h.f),lat,lng);rel=`Tapped point is ${r.inside?"inside":"outside"} it, ${fmtDist(r.d)} from its edge.`}
+    const attrs=Object.entries(f.props).filter(([k,v])=>!(k==="name"&&v===f.name)&&k!=="Notes");
+    return `<div class="pp"><h4>${esc(f.name||"Unnamed wetland")}</h4><p class="meta">${sz.join(" · ")} · from ${esc(w.file)}</p>${rel?`<p class="meta">${esc(rel)}</p>`:""}
+      ${attrs.length?`<table>${attrs.map(([k,v])=>`<tr><th style="width:42%">${esc(k)}</th><td>${esc(v)}</td></tr>`).join("")}</table>`:'<p class="meta">No other attributes in the file.</p>'}
+      ${f.props.Notes?`<p class="meta" style="margin-top:.3rem">${esc(f.props.Notes)}</p>`:""}</div>`}).join("<hr style='border:0;border-top:1px solid var(--line);width:100%'>");
+  map.getSource("wetsel").setData({type:"FeatureCollection",features:sel});
+  sh.innerHTML=`<button class="shut" aria-label="Close" data-shut="1">✕</button>${list.length>1?`<p class="note" style="margin:0 2.8rem 0 0">${list.length} wetlands here</p>`:""}${html}`;
+  sh.scrollTop=0;if(sh.hidden)togglePanel("pgSheet",mapWrap.querySelector("#pgBnd"));
+}
+function wetBannerHTML(){ // which delineated wetland I'm standing in, with the same near-edge rule as the boundary
+  if(!mapPrefs.wet||!me||me.lat==null)return "";const ws=curWet();if(!ws.length)return "";
+  let inn=null,near=null;
+  for(const w of ws)w.features.forEach((f,fi)=>{if(!f.polys.length)return;const r=geomCheck(wetGeom(w,fi),me.lat,me.lon),nm=f.name||"Unnamed wetland";
+    if(r.inside&&(!inn||r.d>inn.d))inn={nm,d:r.d};if(!r.inside&&(!near||r.d<near.d))near={nm,d:r.d}});
+  if(!inn&&!near)return "";
+  const acc=me.acc,fd=d=>esc(fmtDist(d));
+  if(inn&&inn.d<acc)return `<span class="wl">Near edge of wetland: ${esc(inn.nm)} <small>· ${fd(inn.d)} to its edge, within GPS ±${Math.round(acc)} m</small></span>`;
+  if(inn)return `<span class="wl">In wetland: ${esc(inn.nm)} <small>· ${fd(inn.d)} to its edge</small></span>`;
+  if(near.d<acc)return `<span class="wl">Near wetland: ${esc(near.nm)} <small>· ${fd(near.d)} outside its edge, within GPS ±${Math.round(acc)} m</small></span>`;
+  return `<span class="wl">Not in a delineated wetland <small>· nearest ${esc(near.nm)}, ${fd(near.d)}</small></span>`;
+}
 
 /* ---------- Full-screen map page ---------- */
 let mapPage=false,watchId=null,me=null,meErr="",follow=false,banT=null;
@@ -1638,7 +1771,7 @@ async function openMapPage(){
   updatePageBanner();
   try{await initMap()}catch(e){const m=mapWrap.querySelector("#mMsg");m.hidden=false;m.textContent=e.message;return}
   mapWrap.style.setProperty("--pgbar",mapWrap.querySelector("#pgBar").offsetHeight+"px");
-  map.resize();syncMapPanel();applyMapPrefs();updateMapPoint();updateBoundaryLayer();refreshMapData();updateImgChip();drawPastMarkers();
+  map.resize();syncMapPanel();applyMapPrefs();updateMapPoint();updateBoundaryLayer();refreshMapData();updateImgChip();drawPastMarkers();drawWetlands();
   const b=curBnd(),p=P();if(b)fitBnd(b);else if(p&&p.site.lat&&p.site.lon)map.jumpTo({center:[+p.site.lon,+p.site.lat],zoom:Math.max(map.getZoom(),16)});
   startWatch();banT=setInterval(updatePageBanner,5000);
 }
@@ -1647,7 +1780,7 @@ function closeMapPage(fromHistory){
   if(mapReady)map.getSource("bndprev").setData({type:"FeatureCollection",features:[]});
   ["pgTop","pgBar","pgSheet","mPanel","mAreas"].forEach(id=>mapWrap.querySelector("#"+id).hidden=true);
   mapWrap.querySelectorAll(".pgrow [aria-expanded]").forEach(x=>x.setAttribute("aria-expanded","false"));
-  mapWrap.classList.remove("page");document.body.classList.remove("mapfull");clearPastMarkers();closeOvl();applyMapPrefs();
+  mapWrap.classList.remove("page");document.body.classList.remove("mapfull");clearPastMarkers();clearWetLabels();closeOvl();applyMapPrefs();
   if(!fromHistory&&history.state&&history.state.mapPage)history.back();
   const slot=document.getElementById("mapSlot");if(slot){slot.appendChild(mapWrap);setTimeout(()=>{if(map)map.resize()},50)}else mapWrap.remove();
   renderPanel();renderPointSel();
@@ -1674,7 +1807,7 @@ function updatePageBanner(){
   else{const r=bndCheck(b,me.lat,me.lon),near=r.d<me.acc,age=(Date.now()-me.t)/1000;
     s=near?"near":r.inside?"in":"out";
     h=`${near?"Near boundary":r.inside?"Inside project area":"Outside project area"}<small>${esc(fmtDist(r.d))} to the boundary line · GPS ±${esc(fmtDist(me.acc))}${age>20?` · last fix ${Math.round(age)} s ago`:""}${meErr&&age>20?` · ${esc(meErr)}`:""}</small>`}
-  el.dataset.s=s;el.innerHTML=h+sub;
+  el.dataset.s=s;el.innerHTML=h+wetBannerHTML()+sub;
 }
 function dropPoint(){
   if(!me||me.lat==null){toast(meErr||"No GPS fix yet. Wait for your location to appear, or tap the map and choose “Move … here”.",5000);return}
@@ -1712,18 +1845,19 @@ function renderBndSheet(){
   if(!b){sh.innerHTML=`<h4>Project boundary</h4>
     <p class="note" style="margin:0">${p.site.project.trim()?`Project “${esc(p.site.project.trim())}” has no boundary yet.`:"This point has no project name yet; you’ll name the project when you save the boundary."}</p>
     ${fileBtn("Load boundary file")}
-    <p class="note" style="margin:0">A zipped shapefile, the shapefile’s files chosen together (.shp, .shx, .dbf and .prj), a KMZ or a KML. Shapefile coordinates are converted using the .prj; Illinois State Plane East (feet) and other systems work.</p>`;return}
+    <p class="note" style="margin:0">A zipped shapefile, the shapefile’s files chosen together (.shp, .shx, .dbf and .prj), a KMZ or a KML. Shapefile coordinates are converted using the .prj; Illinois State Plane East (feet) and other systems work.</p>${wetSectionHTML()}`;return}
   const sel=b.selected.map(i=>b.features[i]).filter(Boolean),ac=sel.reduce((a,f)=>a+featAcres(f),0);
   sh.innerHTML=`<h4>Boundary: ${esc(b.project)}</h4>
     <p class="note" style="margin:0">${esc(b.file)} · ${sel.length} of ${b.features.length} feature${b.features.length>1?"s":""} · ${ac.toFixed(2)} acres<br>Coordinate system: ${esc(b.crs.name)} (${esc(b.crs.how)})<br>Loaded ${new Date(b.imported).toLocaleString()}. Saved on this phone; works offline.</p>
     <div class="row"><button class="btn" id="bndFit">Zoom to boundary</button>${b.features.length>1?'<button class="btn" id="bndPick">Change features</button>':""}<button class="btn" data-areas="1">Download imagery for offline use</button></div>
     ${fileBtn("Replace with another file")}
-    <button class="btn quiet" id="bndDel">Delete this boundary</button>`;
+    <button class="btn quiet" id="bndDel">Delete this boundary</button>${wetSectionHTML()}`;
 }
-async function startImport(files){
+async function startImport(files,target="bnd"){
   const sh=mapWrap.querySelector("#pgSheet");sh.innerHTML='<p class="note">Reading the file…</p>';
   try{
-    const r=await readBoundaryFiles(files);imp={...r,step:"feats",filter:""};
+    const r=await readBoundaryFiles(files);imp={...r,step:"feats",filter:"",target};
+    if(target==="bnd"){r.feats=r.feats.filter(f=>f.polys.length).map(f=>({...f,lines:[]}));if(!r.feats.length)throw new Error("This file has only lines. A project boundary needs closed polygons; load it as delineated wetlands instead.");imp.feats=r.feats}
     if(r.kind==="shp"){
       if(r.prj){try{const fn=await makeConverter(r.prj);imp.feats=convertFeats(r.feats,fn);imp.crs={name:wktName(r.prj)||"from .prj",how:"read from the .prj file"}}
         catch(e){imp.raw=r.feats;imp.step="crs";imp.prjBad=e.message||"unreadable"}}
@@ -1731,7 +1865,7 @@ async function startImport(files){
     }else{imp.feats=convertFeats(r.feats,null);imp.crs={name:"WGS84 longitude/latitude",how:r.kind==="kml"?"KML is always WGS84":"GeoJSON is always WGS84"}}
     if(imp.step==="feats")await afterConvert();
     renderBndSheet();
-  }catch(e){imp=null;renderBndSheet();toast(e.message||String(e),6000,true)}
+  }catch(e){imp=null;renderBndSheet();toast(e.message||String(e),6000,true);if(target==="wet")setTimeout(nextWet,300)}
 }
 async function afterConvert(){
   const bb=featsBBox(imp.feats);
@@ -1744,31 +1878,32 @@ async function renderCrsSheet(sh){
   if(!imp.hints){imp.hints={};const p4=await loadProj4().catch(()=>null);const rb=featsBBox(imp.raw),c=[(rb[0]+rb[2])/2,(rb[1]+rb[3])/2];
     for(const o of CRS_CHOICES){try{const [lon,lat]=p4(o.def,"EPSG:4326",c);imp.hints[o.id]=await placeName(lon,lat)}catch(e){imp.hints[o.id]={ok:false,text:"can’t convert"}}}}
   sh.innerHTML=`<h4>Which coordinate system is this file in?</h4>
-    <p class="note warn" style="margin:0">${imp.prjBad?`The file’s .prj couldn’t be used (${esc(imp.prjBad)}).`:`${esc(imp.name)} has no .prj file, so the app can’t tell how to place it.`} Check with whoever made the file, then pick one. Each choice shows where the boundary would land.</p>
+    <p class="note warn" style="margin:0">${imp.prjBad?`The file’s .prj couldn’t be used (${esc(imp.prjBad)}).`:`${esc(imp.name)} has no .prj file, so the app can’t tell how to place it.`} Check with whoever made the file, then pick one. Each choice shows where the file’s shapes would land.</p>
     <div class="crs">${CRS_CHOICES.map(o=>{const h=imp.hints[o.id]||{};return `<label><input type="radio" name="crs" value="${o.id}"><span>${esc(o.name)}<small>${h.ok?"Lands in ":"Would land "}${esc(h.text||"")}</small></span></label>`}).join("")}
     <label><input type="radio" name="crs" value="wkt"><span>Paste the text of a .prj file<textarea id="crsWkt" placeholder='PROJCS["NAD_1983_StatePlane_Illinois_East_FIPS_1201_Feet",…'></textarea></span></label></div>
     <div class="row"><button class="btn primary" id="crsUse">Use this coordinate system</button><button class="btn quiet" id="impCancel">Cancel</button></div>`;
 }
 function showPreview(){
   if(!mapReady||!imp||!imp.feats)return;
-  map.getSource("bndprev").setData({type:"FeatureCollection",features:imp.feats.map((f,i)=>({type:"Feature",properties:{sel:imp.sel.has(i)},geometry:{type:"MultiPolygon",coordinates:f.polys}}))});
+  map.getSource("bndprev").setData({type:"FeatureCollection",features:imp.feats.flatMap((f,i)=>[...(f.polys.length?[{type:"Feature",properties:{sel:imp.sel.has(i)},geometry:{type:"MultiPolygon",coordinates:f.polys}}]:[]),
+    ...(f.lines&&f.lines.length?[{type:"Feature",properties:{sel:imp.sel.has(i)},geometry:{type:"MultiLineString",coordinates:f.lines}}]:[])])});
 }
 function renderFeatSheet(sh){
   const p=P(),n=imp.feats.length,q=imp.filter.toLowerCase();
   const rows=imp.feats.map((f,i)=>({f,i,label:featLabel(f.props,i)})).filter(x=>!q||x.label.toLowerCase().includes(q)||JSON.stringify(x.f.props).toLowerCase().includes(q));
-  const ac=[...imp.sel].reduce((a,i)=>a+featAcres(imp.feats[i]),0),holes=imp.feats.reduce((a,f)=>a+f.polys.reduce((c,pl)=>c+pl.length-1,0),0);
-  const parts=imp.feats.reduce((a,f)=>a+f.polys.length,0);
-  sh.innerHTML=`<h4>${n>1?"Which features are the project area?":"Check the boundary"}</h4>
-    <p class="note" style="margin:0">${esc(imp.name)}: ${n} feature${n>1?"s":""}, ${parts} polygon${parts>1?"s":""}${holes?`, ${holes} hole${holes>1?"s":""}`:""}. Coordinate system: ${esc(imp.crs.name)} (${esc(imp.crs.how)}).<br>
+  const wet=imp.target==="wet",ac=[...imp.sel].reduce((a,i)=>a+featAcres(imp.feats[i]),0),holes=imp.feats.reduce((a,f)=>a+f.polys.reduce((c,pl)=>c+pl.length-1,0),0);
+  const parts=imp.feats.reduce((a,f)=>a+f.polys.length,0),nl=imp.feats.reduce((a,f)=>a+(f.lines||[]).length,0),ft=[...imp.sel].reduce((a,i)=>a+featFeet(imp.feats[i]),0);
+  sh.innerHTML=`<h4>${wet?"Delineated wetlands: which features to keep?":n>1?"Which features are the project area?":"Check the boundary"}</h4>
+    <p class="note" style="margin:0">${esc(imp.name)}: ${n} feature${n>1?"s":""}, ${parts} polygon${parts===1?"":"s"}${holes?`, ${holes} hole${holes>1?"s":""}`:""}${nl?`, ${nl} line${nl>1?"s":""}`:""}.${wet&&wetQueue.length?` ${wetQueue.length} more file${wetQueue.length>1?"s":""} after this.`:""} Coordinate system: ${esc(imp.crs.name)} (${esc(imp.crs.how)}).<br>
     ${imp.where.ok?`Lands in ${esc(imp.where.text)}.`:`<span class="warn">Lands ${esc(imp.where.text)}. Check the coordinate system before using it.</span>`}${imp.others&&imp.others.length?`<br>Also in the zip, not used: ${esc(imp.others.join(", "))}.`:""}</p>
     ${n>1?`${n>8?`<input type="text" id="featFilter" placeholder="Filter by name or attribute" value="${esc(imp.filter)}">`:""}
     <div class="row"><button class="btn quiet" id="featAll">Select all</button><button class="btn quiet" id="featNone">Select none</button></div>
     <ul class="feats">${rows.slice(0,400).map(x=>{const extra=Object.entries(x.f.props).filter(([k,v])=>String(v)!==x.label&&v!=="").slice(0,3).map(([k,v])=>`${k}: ${v}`).join(" · ");
-      return `<li><label><input type="checkbox" data-feat="${x.i}" ${imp.sel.has(x.i)?"checked":""} style="width:1.4rem;height:1.4rem;flex:none"><span><b>${esc(x.label)}</b> · ${featAcres(x.f).toFixed(2)} ac${x.f.polys.length>1?` · ${x.f.polys.length} parts`:""}<small>${esc(extra)}</small></span></label></li>`}).join("")}</ul>
+      return `<li><label><input type="checkbox" data-feat="${x.i}" ${imp.sel.has(x.i)?"checked":""} style="width:1.4rem;height:1.4rem;flex:none"><span><b>${esc(x.label)}</b> · ${featSize(x.f)}${x.f.polys.length>1?` · ${x.f.polys.length} parts`:""}<small>${esc(extra)}</small></span></label></li>`}).join("")}</ul>
     ${rows.length>400?`<p class="note">Showing 400 of ${rows.length}; use the filter.</p>`:""}`:""}
-    <p style="margin:0"><b>Project area: ${imp.sel.size} feature${imp.sel.size===1?"":"s"}, ${ac.toFixed(2)} acres</b></p>
+    <p style="margin:0"><b>${wet?"Wetlands":"Project area"}: ${imp.sel.size} feature${imp.sel.size===1?"":"s"}${ac?`, ${ac.toFixed(2)} acres`:""}${ft?`, ${Math.round(ft).toLocaleString()} ft of line`:""}</b></p>
     <label class="f" style="color:var(--ink)">Project name (the Project/site field)<input type="text" id="impProj" value="${esc(p.site.project.trim())}" placeholder="Project name"></label>
-    <div class="row"><button class="btn primary" id="impSave" ${imp.sel.size?"":"disabled"}>Save boundary for this project</button><button class="btn quiet" id="impCancel">Cancel</button></div>`;
+    <div class="row"><button class="btn primary" id="impSave" ${imp.sel.size?"":"disabled"}>${wet?"Save wetlands for this project":"Save boundary for this project"}</button><button class="btn quiet" id="impCancel">Cancel</button></div>`;
 }
 async function saveImport(){
   const name=(mapWrap.querySelector("#impProj").value||"").trim();
@@ -1783,6 +1918,7 @@ async function saveImport(){
   const p=P();if(projKey(p.site.project)!==key){p.site.project=name;save();renderPointSel()}
   recheckProject(key);updateBoundaryLayer();fitBnd(rec);togglePanel("pgSheet",null);
   toast(`Boundary saved for “${name}”. It’s stored on this phone and works offline.`,4000);
+  if(wetQueue.length)setTimeout(()=>{togglePanel("pgSheet",mapWrap.querySelector("#pgBnd"));nextWet()},400); // wetland files chosen meanwhile
 }
 mapWrap.addEventListener("click",async e=>{
   const t=e.target;if(!mapWrap.querySelector("#pgSheet").contains(t))return;
@@ -1791,9 +1927,11 @@ mapWrap.addEventListener("click",async e=>{
   if(t.id==="bndPick"&&b){imp={step:"feats",name:b.file,crs:b.crs,feats:b.features.map(f=>({props:f.props,polys:f.polys})),sel:new Set(b.selected),filter:"",replacing:b.imported,where:{ok:true,text:b.project}};showPreview();renderBndSheet()}
   if(t.id==="bndDel"&&b&&confirm(`Delete the boundary for “${b.project}”? Points keep their location; their inside/outside record is removed.`)){
     BND.delete(b.key);dbBndDel(b.key);bndCache={sig:null};recheckProject(b.key);updateBoundaryLayer();renderBndSheet();toast("Boundary deleted")}
-  if(t.id==="impCancel"){imp=null;if(mapReady)map.getSource("bndprev").setData({type:"FeatureCollection",features:[]});renderBndSheet()}
+  if(t.id==="impCancel"){const w=imp&&imp.target==="wet";imp=null;if(mapReady)map.getSource("bndprev").setData({type:"FeatureCollection",features:[]});renderBndSheet();if(w)nextWet()}
   if(t.id==="featAll"||t.id==="featNone"){imp.sel=new Set(t.id==="featAll"?imp.feats.map((f,i)=>i):[]);showPreview();renderBndSheet()}
-  if(t.id==="impSave")saveImport();
+  if(t.id==="impSave")imp.target==="wet"?saveWetImport():saveImport();
+  if(t.dataset.wdel){const w=WET.find(x=>x.id===t.dataset.wdel);if(w&&confirm(`Delete the wetlands from ${w.file} for “${w.project}” from this phone?`)){await stDel("wetlands",w.id);WET=WET.filter(x=>x!==w);wetGeoms.clear();drawWetlands();renderBndSheet();toast("Wetlands deleted")}}
+  if(t.dataset.wfit){const w=WET.find(x=>x.id===t.dataset.wfit),bb=featsBBox(w.features);map.fitBounds([[bb[0],bb[1]],[bb[2],bb[3]]],{padding:pagePad(),duration:0,maxZoom:18})}
   if(t.id==="crsUse"){
     const v=(mapWrap.querySelector('input[name="crs"]:checked')||{}).value;if(!v){toast("Pick a coordinate system first.",3000,true);return}
     const o=CRS_CHOICES.find(c=>c.id===v),def=o?o.def:mapWrap.querySelector("#crsWkt").value.trim();
@@ -1805,6 +1943,7 @@ mapWrap.addEventListener("click",async e=>{
 mapWrap.addEventListener("change",e=>{
   const t=e.target;
   if(t.id==="bndIn"&&t.files.length){startImport(t.files);t.value=""}
+  if(t.id==="wetIn"&&t.files.length){queueWet(t.files);t.value=""}
   if(t.dataset.feat!=null&&imp){const i=+t.dataset.feat;t.checked?imp.sel.add(i):imp.sel.delete(i);showPreview();
     const ul=mapWrap.querySelector(".feats"),st=ul?ul.scrollTop:0;renderBndSheet();const u2=mapWrap.querySelector(".feats");if(u2)u2.scrollTop=st}
 });
@@ -1936,7 +2075,7 @@ function drawPastMarkers(){
   pastLabels();
 }
 function pastLabels(){if(mapReady)mapWrap.classList.toggle("lbl",map.getZoom()>=15.5)}
-function closeSheet(){const sh=mapWrap.querySelector("#pgSheet");if(!sh.hidden)togglePanel("pgSheet",null);if(pastSel){pastSel=null;drawPastMarkers()}}
+function closeSheet(){const sh=mapWrap.querySelector("#pgSheet");if(!sh.hidden)togglePanel("pgSheet",null);if(mapReady)map.getSource("wetsel").setData({type:"FeatureCollection",features:[]});if(pastSel){pastSel=null;drawPastMarkers()}}
 const STRATUM_ORDER=["tree","sapling/shrub","shrub","sapling","herb","woody vine","vine"];
 const strOrder=s=>{const i=STRATUM_ORDER.indexOf(s.toLowerCase());return i<0?99:i};
 const thumbFor=k=>{const a=PHOTOS.get(k);return a&&a.length?a[0]:null};
@@ -2208,7 +2347,7 @@ document.getElementById("risk").addEventListener("click",e=>{const a=e.target.da
   if(a==="later"){RISK.later=true;updateRisk()}});
 const canShareFiles=()=>{try{return !!(navigator.canShare&&navigator.canShare({files:[new File(["{}"],"t.json",{type:"application/json"})]}))}catch(e){return false}};
 const backupName=()=>`wetland_backup_${new Date().toISOString().slice(0,16).replace(/[:T]/g,"-")}.json`;
-async function backupJSON(){return JSON.stringify({app:"wetland-form",kind:"backup",format:1,exported:new Date().toISOString(),species_list:LIST?LIST.label:null,points,boundaries:[...BND.values()],past:PAST.map(d=>({...d,unmatched:undefined,loose:undefined,points:d.points.map(p=>({...p,veg:p.veg.map(({m,spk,...v})=>v)}))})),
+async function backupJSON(){return JSON.stringify({app:"wetland-form",kind:"backup",format:1,exported:new Date().toISOString(),species_list:LIST?LIST.label:null,points,boundaries:[...BND.values()],wetlands:WET,past:PAST.map(d=>({...d,unmatched:undefined,loose:undefined,points:d.points.map(p=>({...p,veg:p.veg.map(({m,spk,...v})=>v)}))})),
   speciesPhotos:await Promise.all([...PHOTOS.values()].flat().map(async ph=>({...ph,blob:undefined,data:await blobToDataURL(ph.blob)})))},null,1)}
 const blobToDataURL=b=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.onerror=()=>r(null);fr.readAsDataURL(b)});
 function markBackedUp(){RISK.lastBackup=Date.now();RISK.later=false;metaSet("lastBackup",RISK.lastBackup);updateRisk();if(tab==="device")renderDevice()}
@@ -2235,7 +2374,9 @@ async function restoreFile(file){
     if(i<0){points.push(q);added++}else{points[i]=q;updated++}}
   let nb=0;for(const b of (data&&Array.isArray(data.boundaries)?data.boundaries:[]))if(b&&b.key&&b.features&&(!BND.has(b.key)||BND.get(b.key).imported<b.imported)){if(await dbBndPut(b)){BND.set(b.key,b);nb++}}
   if(nb){bndCache={sig:null};updateBoundaryLayer()}
-  let npd=0,nph=0;
+  let npd=0,nph=0,nwl=0;
+  for(const w of (data&&Array.isArray(data.wetlands)?data.wetlands:[]))if(w&&w.id&&Array.isArray(w.features)&&!WET.some(x=>x.id===w.id)){if(await stPut("wetlands",w)){WET.push(w);nwl++}}
+  if(nwl)drawWetlands();
   for(const d of (data&&Array.isArray(data.past)?data.past:[]))if(d&&d.id&&Array.isArray(d.points)&&!PAST.some(x=>x.id===d.id)){if(await stPut("past",d)){prepPast(d);PAST.push(d);npd++}}
   for(const ph of (data&&Array.isArray(data.speciesPhotos)?data.speciesPhotos:[]))if(ph&&ph.id&&ph.data&&![...PHOTOS.values()].flat().some(x=>x.id===ph.id)){
     const rec={...ph,blob:await (await fetch(ph.data)).blob()};delete rec.data;if(await stPut("photos",rec)){addPhotoIdx(rec);nph++}}
@@ -2243,7 +2384,7 @@ async function restoreFile(file){
   for(const p of points.filter(p=>!p.modified&&!p.site.lat&&!list.some(q=>q.id===p.id)))if(points.length>1){dbDel(p.id);points=points.filter(x=>x!==p)}
   points.sort((a,b)=>a.created-b.created);if(!points.some(p=>p.id===cur))cur=points[points.length-1].id;
   renderAll();checkStorage();
-  alert(`Restore finished: ${added} added, ${updated} replaced with the newer backup copy, ${kept} already up to date on this phone.${nb?` ${nb} project boundar${nb>1?"ies":"y"} restored.`:""}${npd?` ${npd} past data file${npd>1?"s":""} restored.`:""}${nph?` ${nph} species photo${nph>1?"s":""} restored.`:""}${failed?`\n\n${failed} couldn’t be saved; the phone may be out of space.`:""}`);
+  alert(`Restore finished: ${added} added, ${updated} replaced with the newer backup copy, ${kept} already up to date on this phone.${nb?` ${nb} project boundar${nb>1?"ies":"y"} restored.`:""}${npd?` ${npd} past data file${npd>1?"s":""} restored.`:""}${nwl?` ${nwl} wetland file${nwl>1?"s":""} restored.`:""}${nph?` ${nph} species photo${nph>1?"s":""} restored.`:""}${failed?`\n\n${failed} couldn’t be saved; the phone may be out of space.`:""}`);
 }
 async function cacheSize(name,sample){ // bytes in a Cache Storage cache; large caches are estimated from a sample
   try{const c=await caches.open(name),ks=await c.keys();let b=0;const n=sample?Math.min(sample,ks.length):ks.length;
@@ -2295,6 +2436,9 @@ async function renderDevice(){
   ${PAST.length?`<ul class="dareas">${PAST.map(d=>`<li><div><b>${esc(d.file)}</b> <span class="sz">${fmtB(JSON.stringify(d.points).length)}</span></div><small>${d.points.length} points · imported ${new Date(d.imported).toLocaleDateString()}${d.unmatched.length?` · ${d.unmatched.length} unmatched species names`:""}</small>
     <div class="row"><button class="btn quiet" data-pdel2="${d.id}">Delete</button></div></li>`).join("")}</ul>`:'<p class="note">No past data imported. Import an Excel file from Map › Past data.</p>'}
   <p class="note">${(n=>`${n} species photo${n===1?"":"s"}`)([...PHOTOS.values()].flat().length)}, ${fmtB([...PHOTOS.values()].flat().reduce((a,p)=>a+(p.blob?p.blob.size:0)+p.thumb.length,0))}. Stored only on this phone and included in backups.</p>
+  <h3>Delineated wetland files</h3>
+  ${WET.length?`<ul class="dareas">${WET.map(w=>`<li><div><b>${esc(w.file)}</b> <span class="sz">${fmtB(JSON.stringify(w).length)}</span></div><small>Project ${esc(w.project)} · ${w.features.length} feature${w.features.length>1?"s":""} · loaded ${new Date(w.imported).toLocaleDateString()}</small>
+    <div class="row"><button class="btn quiet" data-wdel2="${w.id}">Delete</button></div></li>`).join("")}</ul>`:'<p class="note">None loaded. Load them from Map › Boundary.</p>'}
   <h3>Project boundaries</h3>
   ${BND.size?`<ul class="dareas">${[...BND.values()].map(b=>{const sel=b.selected.map(i=>b.features[i]).filter(Boolean);return `<li><div><b>${esc(b.project)}</b> <span class="sz">${fmtB(JSON.stringify(b).length)}</span></div>
     <small>${esc(b.file)} · ${sel.length} of ${b.features.length} features · ${sel.reduce((a,f)=>a+featAcres(f),0).toFixed(2)} acres · ${esc(b.crs.name)} · loaded ${new Date(b.imported).toLocaleDateString()} · ${(n=>`${n} point${n===1?"":"s"}`)(points.filter(q=>projKey(q.site.project)===b.key).length)}</small>
@@ -2311,6 +2455,7 @@ main.addEventListener("click",async e=>{
   if(t.id==="askPersist"){try{await navigator.storage.persist()}catch(err){}await checkStorage();renderDevice();toast(RISK.persisted?"Storage is now protected":"The browser didn’t grant protection yet")}
   if(t.id==="clrViewed"&&confirm("Clear imagery you’ve viewed online? Downloaded project areas are kept.")){await caches.delete(VIEW_CACHE);renderDevice()}
   if(t.dataset.dshow){const a=(await listAreas()).find(x=>x.cache===t.dataset.dshow);if(a){pendingFit=a.bbox;tab="site";renderAll();window.scrollTo(0,0)}}
+  if(t.dataset.wdel2){const w=WET.find(x=>x.id===t.dataset.wdel2);if(w&&confirm(`Delete the wetlands from ${w.file} from this phone?`)){await stDel("wetlands",w.id);WET=WET.filter(x=>x!==w);wetGeoms.clear();renderDevice()}}
   if(t.dataset.pdel2){const d=PAST.find(x=>x.id===t.dataset.pdel2);if(d&&confirm(`Delete ${d.file} from this phone? Species photos are kept.`)){await stDel("past",d.id);PAST=PAST.filter(x=>x!==d);renderDevice()}}
   if(t.dataset.bdel){const b=BND.get(t.dataset.bdel);if(b&&confirm(`Delete the boundary for “${b.project}”?`)){BND.delete(b.key);dbBndDel(b.key);bndCache={sig:null};recheckProject(b.key);updateBoundaryLayer();renderDevice()}}
   if(t.dataset.ddel){const a=(await listAreas()).find(x=>x.cache===t.dataset.ddel);
@@ -2326,7 +2471,7 @@ function renderAll(){renderPointSel();renderTabs();renderPanel();renderStatus()}
   idb=await openDB();
   await loadSpecies();
   Object.values(DS).forEach(dsInit); // background: checks for and downloads the offline soil and NWI data
-  await loadBoundaries();await loadPast();
+  await loadBoundaries();await loadPast();WET=(await stAll("wetlands")).sort((a,b)=>a.imported-b.imported);
   points=(await dbAll()).sort((a,b)=>a.created-b.created);
   if(!points.length){const p=blank(1);points.push(p);dbPut(p)}
   cur=points[points.length-1].id;renderAll();
